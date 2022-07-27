@@ -1,0 +1,14 @@
+﻿GameHud {
+    .clientCount {
+        position: absolute;
+        left: 5px;
+        bottom: 5%;
+        
+        text-align: left;
+        
+        font-family: Roboto, sans-serif;
+        font-size: 48px;
+        font-weight: bold;
+        color: white;
+    }
+}
