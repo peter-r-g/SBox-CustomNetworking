@@ -1,4 +1,6 @@
-﻿#if SERVER
+﻿
+using CustomNetworking.Shared.Entities;
+#if SERVER
 using System.IO;
 using CustomNetworking.Server;
 #endif
@@ -8,6 +10,8 @@ namespace CustomNetworking.Shared;
 public class NetworkClient : INetworkClient
 {
 	public long ClientId { get; }
+	public NetworkEntity Pawn { get; set; }
+	
 #if SERVER
 	public ClientSocket ClientSocket { get; }
 #endif
