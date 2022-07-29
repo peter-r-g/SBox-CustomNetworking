@@ -11,7 +11,16 @@ public class NetworkWriter : BinaryWriter
 
 	public void WriteNetworkable( INetworkable networkable )
 	{
-		Write( networkable.GetType().Name );
+		var networkableType = networkable.GetType();
+		Write( networkableType.Name );
+		if ( networkableType.IsGenericType )
+		{
+			var genericArguments = networkableType.GetGenericArguments();
+			Write( genericArguments.Length );
+			foreach ( var type in genericArguments )
+				Write( type.Name );
+		}
+		
 		networkable.Serialize( this );
 	}
 
