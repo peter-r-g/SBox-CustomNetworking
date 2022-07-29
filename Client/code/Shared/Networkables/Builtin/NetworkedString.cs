@@ -1,29 +1,27 @@
-using System.IO;
 using CustomNetworking.Shared.Utility;
 
 namespace CustomNetworking.Shared.Networkables.Builtin;
 
 public struct NetworkedString : INetworkable
 {
+	public event INetworkable.ChangedEventHandler? Changed = null;
+	
 	public string Value
 	{
 		get => _value;
 		set
 		{
 			_value = value;
-			HasChanged = true;
+			Changed?.Invoke( this );
 		}
 	}
 	private string _value;
-
-	public bool HasChanged { get; private set; } = false;
-	public bool CanChangePartially => false;
 
 	private NetworkedString( string s )
 	{
 		_value = s;
 	}
-	
+
 	public void Deserialize( NetworkReader reader )
 	{
 		_value = reader.ReadString();

@@ -1,5 +1,4 @@
-﻿using System.IO;
-using CustomNetworking.Shared.Utility;
+﻿using CustomNetworking.Shared.Utility;
 
 namespace CustomNetworking.Shared.Messages;
 

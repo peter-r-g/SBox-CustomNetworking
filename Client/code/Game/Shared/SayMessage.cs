@@ -1,4 +1,4 @@
-﻿using System.IO;
+﻿using CustomNetworking.Shared;
 using CustomNetworking.Shared.Utility;
 #if CLIENT
 using CustomNetworking.Client;
@@ -7,7 +7,7 @@ using CustomNetworking.Client;
 using CustomNetworking.Server;
 #endif
 
-namespace CustomNetworking.Shared.Messages;
+namespace CustomNetworking.Game;
 
 public class SayMessage : NetworkMessage
 {

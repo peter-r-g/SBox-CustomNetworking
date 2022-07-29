@@ -1,4 +1,3 @@
-using System.IO;
 using System.Numerics;
 using CustomNetworking.Shared.Utility;
 
@@ -6,13 +5,15 @@ namespace CustomNetworking.Shared.Networkables.Builtin;
 
 public struct NetworkedQuaternion : INetworkable
 {
+	public event INetworkable.ChangedEventHandler? Changed = null;
+	
 	public Quaternion Value
 	{
 		get => _value;
 		set
 		{
 			_value = value;
-			HasChanged = true;
+			Changed?.Invoke( this );
 		}
 	}
 	private Quaternion _value;
@@ -22,14 +23,11 @@ public struct NetworkedQuaternion : INetworkable
 	public float Z => _value.Z;
 	public float W => _value.W;
 
-	public bool HasChanged { get; private set; } = false;
-	public bool CanChangePartially => false;
-
 	private NetworkedQuaternion( Quaternion quaternion )
 	{
 		_value = quaternion;
 	}
-	
+
 	public void Deserialize( NetworkReader reader )
 	{
 		_value = new Quaternion( reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle() );

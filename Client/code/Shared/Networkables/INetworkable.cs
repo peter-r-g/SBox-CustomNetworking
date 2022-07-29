@@ -1,12 +1,11 @@
-using System.IO;
 using CustomNetworking.Shared.Utility;
 
 namespace CustomNetworking.Shared.Networkables;
 
 public interface INetworkable
 {
-	bool HasChanged { get; }
-	bool CanChangePartially { get; }
+	delegate void ChangedEventHandler( INetworkable networkable );
+	event ChangedEventHandler? Changed;
 	
 	void Deserialize( NetworkReader reader );
 	void DeserializeChanges( NetworkReader reader );

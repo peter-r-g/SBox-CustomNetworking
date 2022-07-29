@@ -2,7 +2,7 @@ using System;
 using System.Numerics;
 using CustomNetworking.Shared.Entities;
 
-namespace CustomNetworking.Server;
+namespace CustomNetworking.Game;
 
 public class TestCitizenEntity : NetworkModelEntity
 {

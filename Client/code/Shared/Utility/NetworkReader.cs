@@ -1,6 +1,8 @@
 using System;
 using System.IO;
+#if SERVER
 using CustomNetworking.Server;
+#endif
 using CustomNetworking.Shared.Entities;
 using CustomNetworking.Shared.Networkables;
 
@@ -19,6 +21,21 @@ public class NetworkReader : BinaryReader
 		var type = TypeHelper.GetTypeByName( typeName );
 		if ( type is null )
 			throw new InvalidOperationException( $"Failed to read networkable (\"{typeName}\" does not exist in the current assembly)." );
+
+		if ( type.IsGenericType )
+		{
+			var genericCount = ReadInt32();
+			var genericTypes = new Type[genericCount];
+			for ( var i = 0; i < genericCount; i++ )
+			{
+				var genericTypeName = ReadString();
+				var genericType = TypeHelper.GetTypeByName( genericTypeName );
+
+				genericTypes[i] = genericType ?? throw new InvalidOperationException( $"Failed to read networkable (Generic argument \"{genericTypeName}\" does not exist in the current assembly)" );
+			}
+
+			type = type.MakeGenericType( genericTypes );
+		}
 		
 		var networkable = (INetworkable?)Activator.CreateInstance( type );
 		if ( networkable is null )
@@ -26,6 +43,26 @@ public class NetworkReader : BinaryReader
 #endif
 #if CLIENT
 		var type = TypeLibrary.GetTypeByName( typeName );
+		if ( type is null )
+			throw new InvalidOperationException( $"Failed to read networkable (\"{typeName}\" does not exist in the {nameof(TypeLibrary)})." );
+		
+		if ( type.IsGenericType )
+		{
+			var genericCount = ReadInt32();
+			var genericTypes = new Type[genericCount];
+			for ( var i = 0; i < genericCount; i++ )
+			{
+				var genericTypeName = ReadString();
+				var genericType = TypeLibrary.GetTypeByName( genericTypeName );
+				if ( genericType is null )
+					throw new InvalidOperationException( $"Failed to read networkable (Generic argument \"{genericTypeName}\" does not exist in the current assembly)" );
+
+				genericTypes[i] = genericType;
+			}
+
+			type = type.MakeGenericType( genericTypes );
+		}
+		
 		var networkable = TypeLibrary.Create<INetworkable>( type );
 #endif
 		

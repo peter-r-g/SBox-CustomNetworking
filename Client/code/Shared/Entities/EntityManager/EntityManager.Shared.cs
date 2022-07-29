@@ -1,13 +1,16 @@
 using System;
 using System.Collections.Generic;
 using CustomNetworking.Shared.Entities;
+using CustomNetworking.Shared.Networkables;
 
 namespace CustomNetworking.Shared;
 
 public partial class EntityManager
 {
 	public readonly List<IEntity> Entities = new();
-	private static int _nextEntityId;
+	private int _nextEntityId;
+
+	public INetworkable.ChangedEventHandler? EntityChanged;
 
 	private T CreateInternal<T>( int entityId, Type? entityType = null ) where T : IEntity
 	{
@@ -21,6 +24,7 @@ public partial class EntityManager
 			throw new Exception( $"Failed to create instance of {entityType ?? typeof(T)}" );
 		
 		Entities.Add( entity );
+		entity.Changed += EntityOnChanged;
 		return entity;
 	}
 
@@ -50,5 +54,10 @@ public partial class EntityManager
 		}
 
 		return null;
+	}
+	
+	private void EntityOnChanged( INetworkable entity )
+	{
+		EntityChanged?.Invoke( entity );
 	}
 }
