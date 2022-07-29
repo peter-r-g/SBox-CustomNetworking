@@ -9,9 +9,8 @@ namespace CustomNetworking.Shared;
 
 public abstract class NetworkMessage : INetworkable
 {
-	public bool HasChanged => false;
-	public bool CanChangePartially => false;
-
+	public event INetworkable.ChangedEventHandler? Changed;
+	
 	public abstract void Deserialize( NetworkReader reader );
 	public void DeserializeChanges( NetworkReader reader )
 	{
