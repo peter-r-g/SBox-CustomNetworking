@@ -1,4 +1,4 @@
-using CustomNetworking.Shared.Messages;
+using CustomNetworking.Game;
 using Sandbox.UI.Construct;
 using Sandbox;
 using Sandbox.UI;
