@@ -46,7 +46,6 @@ public class PartialMessage : NetworkMessage
 
 	public override void Serialize( NetworkWriter writer )
 	{
-		writer.Write( nameof(PartialMessage) );
 #if SERVER
 		writer.Write( MessageGuid.ToByteArray() );
 		writer.Write( NumPieces );
