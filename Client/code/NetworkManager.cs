@@ -2,7 +2,9 @@
 using System.Buffers;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
+using CustomNetworking.Server.Shared.Messages;
 using CustomNetworking.Shared;
 using CustomNetworking.Shared.Messages;
 using CustomNetworking.Shared.Utility;
@@ -43,6 +45,7 @@ public class NetworkManager
 			throw new Exception( $"An instance of {nameof(NetworkManager)} already exists." );
 		
 		Instance = this;
+		HandleMessage<RpcCallMessage>( HandleRpcCallMessage );
 		HandleMessage<PartialMessage>( HandlePartialMessage );
 		HandleMessage<ShutdownMessage>( HandleShutdownMessage );
 		HandleMessage<ClientListMessage>( HandleClientListMessage );
@@ -107,6 +110,36 @@ public class NetworkManager
 
 	private void WebSocketOnMessageReceived( string message )
 	{
+	}
+	
+	private static void HandleRpcCallMessage( NetworkMessage message )
+	{
+		if ( message is not RpcCallMessage rpcCall )
+			return;
+
+		var type = TypeLibrary.GetTypeByName( rpcCall.ClassName );
+		if ( type is null )
+			throw new InvalidOperationException( $"Failed to handle RPC call (\"{rpcCall.ClassName}\" doesn't exist in the current assembly)." );
+
+		var instance = MyGame.Current.EntityManager?.GetEntityById( rpcCall.EntityId );
+		if ( instance is null && rpcCall.EntityId != -1 )
+			throw new InvalidOperationException( "Failed to handle RPC call (Attempted to call RPC on a non-existant entity)." );
+		
+		// TODO: Support instance methods https://github.com/Facepunch/sbox-issues/issues/2079
+		var method = TypeLibrary.FindStaticMethods( rpcCall.MethodName ).FirstOrDefault();
+		if ( method is null )
+			throw new InvalidOperationException( $"Failed to handle RPC call (\"{rpcCall.MethodName}\" does not exist on \"{type}\")." );
+
+		if ( instance is null )
+		{
+			method.Invoke( null, rpcCall.Parameters );
+			return;
+		}
+		
+		var newParameters = new object[rpcCall.Parameters.Length + 1];
+		newParameters[0] = instance;
+		Array.Copy( rpcCall.Parameters, 0, newParameters, 1, rpcCall.Parameters.Length );
+		method.Invoke( null, newParameters );
 	}
 
 	private void HandlePartialMessage( NetworkMessage message )
