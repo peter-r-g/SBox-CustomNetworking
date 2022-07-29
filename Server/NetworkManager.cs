@@ -36,41 +36,10 @@ public static class NetworkManager
 	public static async void NetworkingMain()
 	{
 		var options = new WebSocketListenerOptions
-			{
-				HttpAuthenticationHandler = ( request, response ) =>
-				{
-					var userAgent = request.Headers.Get( RequestHeader.UserAgent );
-					if ( userAgent != "facepunch-s&box" )
-					{
-						response.Status = HttpStatusCode.Unauthorized;
-						return Task.FromResult( false );
-					}
-					
-					var origin = request.Headers.Get( RequestHeader.Origin );
-					if ( origin != "https://sbox.facepunch.com/" )
-					{
-						response.Status = HttpStatusCode.Unauthorized;
-						return Task.FromResult( false );
-					}
-
-					var version = request.Headers.Get( RequestHeader.WebSocketVersion );
-					if ( version != "13" )
-					{
-						response.Status = HttpStatusCode.Unauthorized;
-						return Task.FromResult( false );
-					}
-
-					var steam = request.Headers.Get( "Steam" );
-					if ( !long.TryParse( steam, out var clientId ) || Clients.TryGetValue( clientId, out _ ) )
-					{
-						response.Status = HttpStatusCode.Unauthorized;
-						return Task.FromResult( false );
-					}
-					
-					return Task.FromResult( true );
-				},
-				PingTimeout = TimeSpan.FromSeconds( 5 )
-			};
+		{
+			HttpAuthenticationHandler = HttpAuthenticationHandler,
+			PingTimeout = TimeSpan.FromSeconds( 5 )
+		};
 		options.Standards.Add( new WebSocketFactoryRfc6455() );
 		options.Transports.ConfigureTcp( tcp =>
 		{
@@ -89,6 +58,39 @@ public static class NetworkManager
 
 		clientAcceptTask.Wait();
 		await server.StopAsync();
+	}
+	
+	private static Task<bool> HttpAuthenticationHandler( WebSocketHttpRequest request, WebSocketHttpResponse response )
+	{
+		var userAgent = request.Headers.Get( RequestHeader.UserAgent );
+		if ( userAgent != "facepunch-s&box" )
+		{
+			response.Status = HttpStatusCode.Unauthorized;
+			return Task.FromResult( false );
+		}
+					
+		var origin = request.Headers.Get( RequestHeader.Origin );
+		if ( origin != "https://sbox.facepunch.com/" )
+		{
+			response.Status = HttpStatusCode.Unauthorized;
+			return Task.FromResult( false );
+		}
+
+		var version = request.Headers.Get( RequestHeader.WebSocketVersion );
+		if ( version != "13" )
+		{
+			response.Status = HttpStatusCode.Unauthorized;
+			return Task.FromResult( false );
+		}
+
+		var steam = request.Headers.Get( "Steam" );
+		if ( !long.TryParse( steam, out var clientId ) || Clients.TryGetValue( clientId, out _ ) )
+		{
+			response.Status = HttpStatusCode.Unauthorized;
+			return Task.FromResult( false );
+		}
+					
+		return Task.FromResult( true );
 	}
 
 	private static async Task AcceptWebSocketClientsAsync( WebSocketListener server, CancellationToken token )
