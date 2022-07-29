@@ -1,14 +1,34 @@
 ﻿GameHud {
-    .clientCount {
-        position: absolute;
-        left: 5px;
-        bottom: 5%;
-        
+    .debugLabel {
         text-align: left;
-        
+
         font-family: Roboto, sans-serif;
         font-size: 48px;
         font-weight: bold;
         color: white;
+    }
+    
+    .clientCount {
+        position: absolute;
+        left: 5px;
+        bottom: 9%;
+    }
+
+    .netEntityCount {
+        position: absolute;
+        left: 5px;
+        bottom: 7%;
+    }
+
+    .netReceivedNum {
+        position: absolute;
+        left: 5px;
+        bottom: 5%;
+    }
+
+    .netSentNum {
+        position: absolute;
+        left: 5px;
+        bottom: 3%;
     }
 }

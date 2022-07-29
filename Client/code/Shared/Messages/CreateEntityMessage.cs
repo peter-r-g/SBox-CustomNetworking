@@ -1,11 +1,12 @@
 ﻿using System.IO;
+using CustomNetworking.Shared.Utility;
 
 namespace CustomNetworking.Shared.Messages;
 
 public class CreateEntityMessage : NetworkMessage
 {
-	public readonly string EntityClass;
-	public readonly int EntityId;
+	public string EntityClass { get; private set; }
+	public int EntityId { get; private set; }
 
 #if SERVER
 	public CreateEntityMessage( string entityClass, int entityId )
@@ -14,18 +15,15 @@ public class CreateEntityMessage : NetworkMessage
 		EntityId = entityId;
 	}
 #endif
-
-#if CLIENT
-	public CreateEntityMessage( BinaryReader reader )
+	
+	public override void Deserialize( NetworkReader reader )
 	{
 		EntityClass = reader.ReadString();
 		EntityId = reader.ReadInt32();
 	}
-#endif
-	
-	public override void Serialize( BinaryWriter writer )
+
+	public override void Serialize( NetworkWriter writer )
 	{
-		writer.Write( nameof(CreateEntityMessage) );
 		writer.Write( EntityClass );
 		writer.Write( EntityId );
 	}

@@ -13,25 +13,10 @@ public class BotClient : INetworkClient
 	
 	public long ClientId { get; }
 	public NetworkEntity? Pawn { get; set; }
-
-	private readonly int _speakIntervalMs = Random.Shared.Next( 10000, 120000 );
-	private Task _speakTask = Task.CompletedTask;
 	
 	public BotClient( long clientId )
 	{
 		ClientId = clientId;
-	}
-
-	public void Think()
-	{
-		if ( _speakTask.IsCompleted )
-			_speakTask = Task.Run( SpeakAsync );
-	}
-
-	private async Task SpeakAsync()
-	{
-		await Task.Delay( _speakIntervalMs );
-		NetworkManager.QueueIncoming( this, new SayMessage( null, "Bot go brr" ) );
 	}
 
 	public void SendMessage( byte[] bytes )
@@ -41,6 +26,9 @@ public class BotClient : INetworkClient
 
 	public void SendMessage( NetworkMessage message )
 	{
+#if DEBUG
+		NetworkManager.MessagesSentToClients++;
+#endif
 		if ( !MessageHandlers.TryGetValue( message.GetType(), out var cb ) )
 			throw new Exception( $"Unhandled message {message.GetType()}." );
 		

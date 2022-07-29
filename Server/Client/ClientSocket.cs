@@ -100,6 +100,8 @@ public sealed class ClientSocket
 				await message.CopyToAsync( stream );
 				stream.Position = 0;
 				OnDataReceived?.Invoke( stream );
+				message.Close();
+				stream.Close();
 				break;
 			case WebSocketMessageType.Text:
 				var sReader = new StreamReader( message, new UTF8Encoding( false, false ) );

@@ -1,6 +1,7 @@
 ﻿<link rel="stylesheet" href="GameHud.scss"/>
 <div>
-    <Label class="clientCount" @text="ClientCount"></Label>
-    
     <ClientChatBox></ClientChatBox>
+    
+    <Label class="debugLabel clientCount" @text="ClientCount"></Label>
+    <Label class="debugLabel netEntityCount" @text="NetworkedEntityCount"></Label>
 </div>

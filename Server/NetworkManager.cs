@@ -6,13 +6,20 @@ using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 using CustomNetworking.Shared;
+using CustomNetworking.Shared.Utility;
 using vtortola.WebSockets;
+using vtortola.WebSockets.Http;
 using vtortola.WebSockets.Rfc6455;
 
 namespace CustomNetworking.Server;
 
 public static class NetworkManager
 {
+#if DEBUG
+	public static int MessagesSent;
+	public static int MessagesSentToClients;
+#endif
+	
 	public static ConcurrentDictionary<long, INetworkClient> Clients { get; } = new();
 	public static ConcurrentDictionary<long, BotClient> Bots { get; } = new();
 
@@ -28,16 +35,49 @@ public static class NetworkManager
 
 	public static async void NetworkingMain()
 	{
-		var options = new WebSocketListenerOptions();
+		var options = new WebSocketListenerOptions
+			{
+				HttpAuthenticationHandler = ( request, response ) =>
+				{
+					var userAgent = request.Headers.Get( RequestHeader.UserAgent );
+					if ( userAgent != "facepunch-s&box" )
+					{
+						response.Status = HttpStatusCode.Unauthorized;
+						return Task.FromResult( false );
+					}
+					
+					var origin = request.Headers.Get( RequestHeader.Origin );
+					if ( origin != "https://sbox.facepunch.com/" )
+					{
+						response.Status = HttpStatusCode.Unauthorized;
+						return Task.FromResult( false );
+					}
+
+					var version = request.Headers.Get( RequestHeader.WebSocketVersion );
+					if ( version != "13" )
+					{
+						response.Status = HttpStatusCode.Unauthorized;
+						return Task.FromResult( false );
+					}
+					
+					return Task.FromResult( true );
+				},
+				PingTimeout = TimeSpan.FromSeconds( 5 )
+			};
 		options.Standards.Add( new WebSocketFactoryRfc6455() );
-		options.SendBufferSize = SharedConstants.MaxBufferSize;
+		options.Transports.ConfigureTcp( tcp =>
+		{
+			tcp.BacklogSize = 100;
+			tcp.ReceiveBufferSize = SharedConstants.MaxBufferSize;
+			tcp.SendBufferSize = SharedConstants.MaxBufferSize;
+		} );
+		
 		var server = new WebSocketListener( new IPEndPoint( IPAddress.Any, SharedConstants.Port ), options );
 		await server.StartAsync();
 		var clientAcceptTask = Task.Run( () => AcceptWebSocketClientsAsync( server, Program.ProgramCancellation.Token ) );
 
 		while ( !Program.ProgramCancellation.IsCancellationRequested )
-		{
-		}
+			Thread.Sleep( 1 );
 
 		clientAcceptTask.Wait();
 		await server.StopAsync();
@@ -115,6 +155,10 @@ public static class NetworkManager
 
 	private static void SendMessage( To to, NetworkMessage message )
 	{
+#if DEBUG
+		MessagesSent++;
+#endif
+		
 		foreach ( var client in to )
 		{
 			if ( client is BotClient )
@@ -122,8 +166,8 @@ public static class NetworkManager
 		}
 		
 		var stream = new MemoryStream();
-		var writer = new BinaryWriter( stream );
-		message.Serialize( writer );
+		var writer = new NetworkWriter( stream );
+		writer.WriteNetworkable( message );
 		var numBytes = stream.Length;
 		writer.Close();
 

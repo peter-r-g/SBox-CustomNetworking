@@ -1,6 +1,12 @@
+using CustomNetworking.Shared.Networkables;
+using CustomNetworking.Shared.Networkables.Builtin;
+
 namespace CustomNetworking.Shared.Entities;
 
-public interface IEntity
+public interface IEntity : INetworkable
 {
-	int EntityId { get; }
+	NetworkedInt EntityId { get; }
+
+	void Delete();
+	void Update();
 }

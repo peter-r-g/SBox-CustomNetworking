@@ -24,7 +24,7 @@
     "ProjectTemplate": null,
     "GameCategory": "None",
     "Compiler": {
-      "RootNamespace": "Sandbox",
+      "RootNamespace": "CustomNetworking.Client",
       "DefineConstants": "SANDBOX;ADDON;DEBUG;CLIENT",
       "NoWarn": "1701;1702;1591;",
       "Nullables": true

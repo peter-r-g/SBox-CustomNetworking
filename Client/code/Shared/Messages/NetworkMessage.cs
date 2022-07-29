@@ -1,40 +1,36 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using CustomNetworking.Shared.Messages;
-#if SERVER
-using CustomNetworking.Server;
-#endif
+using CustomNetworking.Shared.Networkables;
+using CustomNetworking.Shared.Utility;
 
 namespace CustomNetworking.Shared;
 
-public abstract class NetworkMessage
+public abstract class NetworkMessage : INetworkable
 {
-	public const string MessagesNamespace = "CustomNetworking.Shared.Messages";
-	
-	public abstract void Serialize( BinaryWriter writer );
+	public bool HasChanged => false;
+	public bool CanChangePartially => false;
 
-	public static NetworkMessage Deserialize( BinaryReader reader )
+	public abstract void Deserialize( NetworkReader reader );
+	public void DeserializeChanges( NetworkReader reader )
 	{
-		var typeName = reader.ReadString();
-#if CLIENT
-		return TypeLibrary.Create<NetworkMessage>( TypeLibrary.GetTypeByName( typeName ), new object[] {reader} );
-#endif
-#if SERVER
-		typeName = MessagesNamespace + "." + typeName;
-		var messageType = Type.GetType( typeName );
-		if ( messageType is null )
-			throw new InvalidOperationException( $"Failed to create instance of message (\"{typeName}\" does not exist in the current assembly)." );
-		
-		var message = (NetworkMessage)Activator.CreateInstance( messageType, reader )!;
-		if ( message is null )
-			throw new InvalidOperationException( $"Failed to create instance of message (instance creation failed)" );
-
-		return message;
-#endif
+		throw new NotImplementedException();
 	}
 
+	public abstract void Serialize( NetworkWriter writer );
+	public void SerializeChanges( NetworkWriter writer )
+	{
+		throw new NotImplementedException();
+	}
+
+	public static NetworkMessage DeserializeMessage( NetworkReader reader )
+	{
+		return reader.ReadNetworkable<NetworkMessage>();
+	}
+
+#if SERVER
+	// TODO: Manually chunk everything
 	public static PartialMessage[] Split( IEnumerable<byte> bytes )
 	{
 		var chunks = bytes.Chunk( SharedConstants.PartialMessagePayloadSize );
@@ -51,4 +47,5 @@ public abstract class NetworkMessage
 
 		return partialMessages;
 	}
+#endif
 }
