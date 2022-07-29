@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Buffers;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
@@ -58,7 +59,6 @@ public class NetworkManager
 		_webSocket.OnDisconnected += WebSocketOnDisconnected;
 		_webSocket.OnDataReceived += WebSocketOnDataReceived;
 		_webSocket.OnMessageReceived += WebSocketOnMessageReceived;
-		
 		try
 		{
 			var headers = new Dictionary<string, string> {{"Steam", Local.PlayerId.ToString()}};
@@ -126,7 +126,7 @@ public class NetworkManager
 		foreach ( var part in messages )
 			totalDataLength += part.Data.Length;
 
-		var bytes = new byte[totalDataLength];
+		var bytes = ArrayPool<byte>.Shared.Rent( totalDataLength );
 		var currentIndex = 0;
 		foreach ( var part in messages )
 		{
@@ -139,6 +139,8 @@ public class NetworkManager
 		var reader = new NetworkReader( new MemoryStream( bytes ) );
 		var finalMessage = NetworkMessage.DeserializeMessage( reader );
 		reader.Close();
+		ArrayPool<byte>.Shared.Return( bytes );
+		
 		DispatchMessage( finalMessage );
 	}
 
