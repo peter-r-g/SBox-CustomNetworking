@@ -1,13 +1,14 @@
-﻿using CustomNetworking.Client.UI;
+﻿using System.Buffers;
+using CustomNetworking.Client.UI;
+using CustomNetworking.Game;
 using CustomNetworking.Shared;
-using CustomNetworking.Shared.Messages;
 using Sandbox;
 
 namespace CustomNetworking.Client;
 
-public class MyGame : Game
+public class MyGame : Sandbox.Game
 {
-	public new static MyGame Current => (Game.Current as MyGame)!;
+	public new static MyGame Current => (Sandbox.Game.Current as MyGame)!;
 
 	public readonly NetworkManager? NetworkManager;
 	public readonly EntityManager? EntityManager;
