@@ -81,7 +81,7 @@ public partial class NetworkEntity : IEntity
 #if CLIENT
 		_ = reader.ReadInt32();
 		
-		foreach ( var property in _networkedProperties )
+		foreach ( var property in _propertyNameCache.Values )
 			property.SetValue( this, reader.ReadNetworkable() );
 #endif
 	}
