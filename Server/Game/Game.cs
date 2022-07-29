@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using CustomNetworking.Server;
+using CustomNetworking.Server.Shared.Messages;
 using CustomNetworking.Shared;
 using CustomNetworking.Shared.Entities;
 using CustomNetworking.Shared.Messages;
@@ -11,7 +12,7 @@ namespace CustomNetworking.Game;
 
 public class Game
 {
-	private const int BotLimit = 1000;
+	private const int BotLimit = 0;
 
 	public readonly EntityManager ServerEntityManager = new();
 	public readonly EntityManager SharedEntityManager = new();
