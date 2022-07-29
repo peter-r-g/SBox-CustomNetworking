@@ -5,20 +5,19 @@ namespace CustomNetworking.Shared.Networkables.Builtin;
 
 public class NetworkedList<T> : INetworkable where T : INetworkable
 {
+	public event INetworkable.ChangedEventHandler? Changed;
+	
 	public List<T> Value
 	{
 		get => _value;
 		set
 		{
 			_value = value;
-			HasChanged = true;
+			Changed?.Invoke( this );
 		}
 	}
-	private List<T> _value;
-	
-	public bool HasChanged { get; private set; }
-	public bool CanChangePartially => true;
-	
+	private List<T> _value = new();
+
 	public void Deserialize( NetworkReader reader )
 	{
 		Value = new List<T>();
