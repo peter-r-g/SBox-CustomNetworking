@@ -1,3 +1,6 @@
+#if CLIENT
+using System.Buffers;
+#endif
 using System.IO;
 using CustomNetworking.Shared.Utility;
 #if SERVER
@@ -19,8 +22,15 @@ public class EntityUpdateMessage : NetworkMessage
 		writer.Write( entity.EntityId );
 		writer.WriteNetworkableChanges( entity );
 		writer.Close();
-
+		
 		EntityData = stream.ToArray();
+	}
+#endif
+
+#if CLIENT
+	~EntityUpdateMessage()
+	{
+		ArrayPool<byte>.Shared.Return( EntityData, true );
 	}
 #endif
 	
@@ -28,9 +38,8 @@ public class EntityUpdateMessage : NetworkMessage
 	{
 		EntityId = reader.ReadInt32();
 		var dataLength = reader.ReadInt32();
-		var bytes = new byte[dataLength];
-		_ = reader.Read( bytes, 0, dataLength );
-		EntityData = bytes;
+		EntityData = ArrayPool<byte>.Shared.Rent( dataLength );
+		_ = reader.Read( EntityData, 0, dataLength );
 	}
 	
 	public override void Serialize( NetworkWriter writer )

@@ -1,4 +1,7 @@
 ﻿using System;
+#if CLIENT
+using System.Buffers;
+#endif
 using CustomNetworking.Shared.Utility;
 
 namespace CustomNetworking.Shared.Messages;
@@ -18,6 +21,13 @@ public class PartialMessage : NetworkMessage
 		Data = data;
 	}
 
+#if CLIENT
+	~PartialMessage()
+	{
+		ArrayPool<byte>.Shared.Return( Data, true );
+	}
+#endif
+
 	public override void Deserialize( NetworkReader reader )
 	{
 		var bytes = new byte[16];
@@ -28,7 +38,7 @@ public class PartialMessage : NetworkMessage
 		Piece = reader.ReadInt32();
 		
 		var dataLength = reader.ReadInt32();
-		Data = new byte[dataLength];
+		Data = ArrayPool<byte>.Shared.Rent( dataLength );
 		_ = reader.Read( Data, 0, dataLength );
 	}
 
