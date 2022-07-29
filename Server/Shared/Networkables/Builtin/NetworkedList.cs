@@ -18,6 +18,24 @@ public class NetworkedList<T> : INetworkable where T : INetworkable
 	}
 	private List<T> _value = new();
 
+	public void Add( T item )
+	{
+		Value.Add( item );
+		Changed?.Invoke( this );
+	}
+
+	public void Remove( T item )
+	{
+		Value.Remove( item );
+		Changed?.Invoke( this );
+	}
+
+	public void Clear()
+	{
+		Value.Clear();
+		Changed?.Invoke( this );
+	}
+
 	public void Deserialize( NetworkReader reader )
 	{
 		Value = new List<T>();
