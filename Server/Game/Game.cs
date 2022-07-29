@@ -1,20 +1,22 @@
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using CustomNetworking.Server;
 using CustomNetworking.Shared;
+using CustomNetworking.Shared.Entities;
 using CustomNetworking.Shared.Messages;
+using CustomNetworking.Shared.Networkables;
 
 namespace CustomNetworking.Game;
 
 public class Game
 {
-	public const int BotLimit = 1000;
+	private const int BotLimit = 1000;
 
 	public readonly EntityManager ServerEntityManager = new();
 	public readonly EntityManager SharedEntityManager = new();
 
-	public GameInformationEntity GameInformationEntity;
-	
+	private GameInformationEntity? _gameInformationEntity;
 	private readonly HashSet<IEntity> _changedEntities = new();
 
 	public void Start()
@@ -28,11 +30,15 @@ public class Game
 		BotClient.HandleBotMessage<ClientStateChangedMessage>( DumpBotMessage );
 		BotClient.HandleBotMessage<EntityUpdateMessage>( DumpBotMessage );
 		BotClient.HandleBotMessage<SayMessage>( DumpBotMessage );
-
-		GameInformationEntity = SharedEntityManager.Create<GameInformationEntity>();
+		
 		Task.Run( AddBotLoopAsync );
 		
 		SharedEntityManager.EntityChanged += SharedEntityChanged;
+
+		_gameInformationEntity = SharedEntityManager.Create<GameInformationEntity>();
+		for ( var i = 0; i < 100; i++ )
+			_gameInformationEntity.TestItems.Add( i );
+		
 		for ( var i = 0; i < 5; i++ )
 			SharedEntityManager.Create<TestCitizenEntity>();
 	}
