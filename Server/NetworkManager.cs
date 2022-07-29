@@ -84,7 +84,8 @@ public static class NetworkManager
 		var clientAcceptTask = Task.Run( () => AcceptWebSocketClientsAsync( server, Program.ProgramCancellation.Token ) );
 
 		while ( !Program.ProgramCancellation.IsCancellationRequested )
-			Thread.Sleep( 1 );
+		{
+		}
 
 		clientAcceptTask.Wait();
 		await server.StopAsync();
