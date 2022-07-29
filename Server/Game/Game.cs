@@ -22,6 +22,7 @@ public class Game
 	public void Start()
 	{
 		Program.SetTickRate( 60 );
+		NetworkManager.HandleMessage<RpcCallMessage>( HandleRpcCallMessage );
 		NetworkManager.HandleMessage<SayMessage>( HandleSayMessage );
 		
 		BotClient.HandleBotMessage<PartialMessage>( DumpBotMessage );
@@ -30,6 +31,7 @@ public class Game
 		BotClient.HandleBotMessage<EntityListMessage>( DumpBotMessage );
 		BotClient.HandleBotMessage<ClientStateChangedMessage>( DumpBotMessage );
 		BotClient.HandleBotMessage<EntityUpdateMessage>( DumpBotMessage );
+		BotClient.HandleBotMessage<RpcCallMessage>( DumpBotMessage );
 		
 		BotClient.HandleBotMessage<SayMessage>( DumpBotMessage );
 		
@@ -92,6 +94,26 @@ public class Game
 			NetworkManager.AcceptClient( Math.Abs( Random.Shared.NextInt64() ) );
 			await Task.Delay( 1 );
 		}
+	}
+		
+	private void HandleRpcCallMessage( INetworkClient client, NetworkMessage message )
+	{
+		if ( message is not RpcCallMessage rpcCall )
+			return;
+
+		var type = TypeHelper.GetTypeByName( rpcCall.ClassName );
+		if ( type is null )
+			throw new InvalidOperationException( $"Failed to handle RPC call (\"{rpcCall.ClassName}\" doesn't exist in the current assembly)." );
+
+		var instance = SharedEntityManager.GetEntityById( rpcCall.EntityId );
+		if ( instance is null && rpcCall.EntityId != -1 )
+			throw new InvalidOperationException( "Failed to handle RPC call (Attempted to call RPC on a non-existant entity)." );
+		
+		var method = type.GetMethod( rpcCall.MethodName );
+		if ( method is null )
+			throw new InvalidOperationException( $"Failed to handle RPC call (\"{rpcCall.MethodName}\" does not exist on \"{type}\")." );
+
+		method.Invoke( instance, rpcCall.Parameters );
 	}
 
 	private static void HandleSayMessage( INetworkClient client, NetworkMessage message )
