@@ -36,16 +36,20 @@ public class EntityUpdateMessage : NetworkMessage
 	
 	public override void Deserialize( NetworkReader reader )
 	{
+#if CLIENT
 		EntityId = reader.ReadInt32();
 		var dataLength = reader.ReadInt32();
 		EntityData = ArrayPool<byte>.Shared.Rent( dataLength );
 		_ = reader.Read( EntityData, 0, dataLength );
+#endif
 	}
 	
 	public override void Serialize( NetworkWriter writer )
 	{
+#if SERVER
 		writer.Write( EntityId );
 		writer.Write( EntityData.Length );
 		writer.Write( EntityData );
+#endif
 	}
 }

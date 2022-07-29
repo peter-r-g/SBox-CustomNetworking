@@ -42,6 +42,7 @@ public class EntityListMessage : NetworkMessage
 	
 	public override void Deserialize( NetworkReader reader )
 	{
+#if CLIENT
 		EntityData = new List<byte[]> {Capacity = reader.ReadInt32()};
 		for ( var i = 0; i < EntityData.Capacity; i++ )
 		{
@@ -50,15 +51,18 @@ public class EntityListMessage : NetworkMessage
 			_ = reader.Read( bytes, 0, dataLength );
 			EntityData.Add( bytes );
 		}
+#endif
 	}
 
 	public override void Serialize( NetworkWriter writer )
 	{
+#if SERVER
 		writer.Write( EntityData.Count );
 		foreach ( var data in EntityData )
 		{
 			writer.Write( data.Length );
 			writer.Write( data );
 		}
+#endif
 	}
 }
