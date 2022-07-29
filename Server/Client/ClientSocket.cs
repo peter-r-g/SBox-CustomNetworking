@@ -17,9 +17,7 @@ public sealed class ClientSocket
 	public delegate void OnMessageReceivedEventHandler( string message );
 	public event OnMessageReceivedEventHandler? OnMessageReceived;
 	
-	private bool _verified;
 	private readonly WebSocket _socket;
-
 	private readonly ConcurrentQueue<(WebSocketMessageType, byte[])> _dataQueue = new();
 	private Task _sendTask = Task.CompletedTask;
 	private Task _receiveTask = Task.CompletedTask;
@@ -49,7 +47,7 @@ public sealed class ClientSocket
 	{
 		try
 		{
-			Send( "Verify" );
+			NetworkManager.AcceptClient( long.Parse( _socket.HttpRequest.Headers.Get( "Steam" ) ), this );
 			
 			while ( _socket.IsConnected && !ClientTokenSource.Token.IsCancellationRequested )
 			{
@@ -79,16 +77,6 @@ public sealed class ClientSocket
 		if ( message is null )
 		{
 			await NetworkManager.AbandonClient( this );
-			return;
-		}
-		
-		if ( !_verified && message.MessageType == WebSocketMessageType.Text )
-		{
-			var reader = new StreamReader( message, new UTF8Encoding( false, false ) );
-			var verifyMessage = await reader.ReadToEndAsync().ConfigureAwait( false );
-			reader.Close();
-			
-			ProcessVerification( verifyMessage );
 			return;
 		}
 		
@@ -129,24 +117,5 @@ public sealed class ClientSocket
 			default:
 				throw new ArgumentOutOfRangeException( nameof(data.Item1) );
 		}
-	}
-
-	private void ProcessVerification( string verification )
-	{
-		var steamMatch = new Regex( "Steam: (.*)" ).Match( verification );
-		if ( !steamMatch.Success )
-		{
-			_ = NetworkManager.AbandonClient( this );
-			return;
-		}
-
-		if ( !long.TryParse( steamMatch.Groups[1].Value.Trim(), out var playerId ) )
-		{
-			_ = NetworkManager.AbandonClient( this );
-			return;
-		}
-		
-		_verified = true;
-		NetworkManager.AcceptClient( playerId, this );
 	}
 }

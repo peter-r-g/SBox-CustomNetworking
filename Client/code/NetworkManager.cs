@@ -61,7 +61,8 @@ public class NetworkManager
 		
 		try
 		{
-			await _webSocket.Connect( "ws://127.0.0.1:7087/" );
+			var headers = new Dictionary<string, string> {{"Steam", Local.PlayerId.ToString()}};
+			await _webSocket.Connect( "ws://127.0.0.1:7087/", headers );
 			Connected?.Invoke();
 		}
 		catch ( Exception e )
@@ -105,8 +106,6 @@ public class NetworkManager
 
 	private void WebSocketOnMessageReceived( string message )
 	{
-		if ( message == "Verify" )
-			_ = _webSocket!.Send( $"Steam: {Local.PlayerId}" );
 	}
 
 	private void HandlePartialMessage( NetworkMessage message )

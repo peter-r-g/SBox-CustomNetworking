@@ -59,6 +59,13 @@ public static class NetworkManager
 						response.Status = HttpStatusCode.Unauthorized;
 						return Task.FromResult( false );
 					}
+
+					var steam = request.Headers.Get( "Steam" );
+					if ( !long.TryParse( steam, out var clientId ) || Clients.TryGetValue( clientId, out _ ) )
+					{
+						response.Status = HttpStatusCode.Unauthorized;
+						return Task.FromResult( false );
+					}
 					
 					return Task.FromResult( true );
 				},
@@ -92,7 +99,7 @@ public static class NetworkManager
 				var ws = await server.AcceptWebSocketAsync( token ).ConfigureAwait( false );
 				if ( ws is null )
 					continue;
-
+				
 				var client = new ClientSocket( ws );
 				_ = Task.Run( () => client.HandleConnectionAsync(), client.ClientTokenSource.Token );
 			}
