@@ -17,18 +17,15 @@ public class EntityListMessage : NetworkMessage
 #if SERVER
 	public EntityListMessage( IEnumerable<IEntity> entityList )
 	{
-		var entityData = new List<byte[]>();
-
+		EntityData = new List<byte[]>();
 		foreach ( var entity in entityList )
 		{
 			var stream = new MemoryStream();
 			var writer = new NetworkWriter( stream );
 			writer.WriteNetworkable( entity );
 			writer.Close();
-			entityData.Add( stream.ToArray() );
+			EntityData.Add( stream.ToArray() );
 		}
-		
-		EntityData = entityData;
 	}
 #endif
 
