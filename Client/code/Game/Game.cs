@@ -1,5 +1,4 @@
-﻿using System.Buffers;
-using CustomNetworking.Client.UI;
+﻿using CustomNetworking.Client.UI;
 using CustomNetworking.Game;
 using CustomNetworking.Shared;
 using Sandbox;
