@@ -44,6 +44,7 @@ public class NetworkManager
 		
 		Instance = this;
 		HandleMessage<PartialMessage>( HandlePartialMessage );
+		HandleMessage<ShutdownMessage>( HandleShutdownMessage );
 		HandleMessage<ClientListMessage>( HandleClientListMessage );
 		HandleMessage<EntityListMessage>( HandleEntityListMessage );
 		HandleMessage<ClientStateChangedMessage>( HandleClientStateChangedMessage );
@@ -142,6 +143,14 @@ public class NetworkManager
 		ArrayPool<byte>.Shared.Return( bytes );
 		
 		DispatchMessage( finalMessage );
+	}
+		
+	private void HandleShutdownMessage( NetworkMessage message )
+	{
+		if ( message is not ShutdownMessage )
+			return;
+
+		Close();
 	}
 
 	private void HandleClientListMessage( NetworkMessage message )

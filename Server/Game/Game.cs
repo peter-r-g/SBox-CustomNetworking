@@ -25,10 +25,12 @@ public class Game
 		NetworkManager.HandleMessage<SayMessage>( HandleSayMessage );
 		
 		BotClient.HandleBotMessage<PartialMessage>( DumpBotMessage );
+		BotClient.HandleBotMessage<ShutdownMessage>( DumpBotMessage );
 		BotClient.HandleBotMessage<ClientListMessage>( DumpBotMessage );
 		BotClient.HandleBotMessage<EntityListMessage>( DumpBotMessage );
 		BotClient.HandleBotMessage<ClientStateChangedMessage>( DumpBotMessage );
 		BotClient.HandleBotMessage<EntityUpdateMessage>( DumpBotMessage );
+		
 		BotClient.HandleBotMessage<SayMessage>( DumpBotMessage );
 		
 		Task.Run( AddBotLoopAsync );
@@ -41,6 +43,10 @@ public class Game
 		
 		for ( var i = 0; i < 5; i++ )
 			SharedEntityManager.Create<TestCitizenEntity>();
+	}
+
+	public void Shutdown()
+	{
 	}
 
 	public void Update()

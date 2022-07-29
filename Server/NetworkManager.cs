@@ -6,6 +6,7 @@ using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 using CustomNetworking.Shared;
+using CustomNetworking.Shared.Messages;
 using CustomNetworking.Shared.Utility;
 using vtortola.WebSockets;
 using vtortola.WebSockets.Http;
@@ -57,6 +58,7 @@ public static class NetworkManager
 		}
 
 		clientAcceptTask.Wait();
+		SendMessage( To.All, new ShutdownMessage() );
 		await server.StopAsync();
 	}
 	

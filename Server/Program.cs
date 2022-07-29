@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
@@ -24,10 +25,15 @@ public static class Program
 	
 	private static Game.Game? _game;
 
+	private static Thread? _networkingThread;
+	private static Task? _drawConsoleTask;
+	private static Task? _logTask;
+
 	public static void Main( string[] args )
 	{
-		var networkingThread = new Thread( NetworkManager.NetworkingMain );
-		networkingThread.Start();
+		AppDomain.CurrentDomain.ProcessExit += OnProcessExit;
+		_networkingThread = new Thread( NetworkManager.NetworkingMain );
+		_networkingThread.Start();
 
 		_game = new Game.Game();
 		_game.Start();
@@ -35,8 +41,8 @@ public static class Program
 		NetworkManager.ClientConnected += OnClientConnected;
 		NetworkManager.ClientDisconnected += OnClientDisconnected;
 
-		Task.Run( DrawConsoleAsync );
-		Task.Run( LogAsync );
+		_drawConsoleTask = Task.Run( DrawConsoleAsync );
+		_logTask = Task.Run( LogAsync );
 
 		var sw = Stopwatch.StartNew();
 		while ( !ProgramCancellation.IsCancellationRequested )
@@ -53,6 +59,22 @@ public static class Program
 			_game?.Update();
 			NetworkManager.SendOutgoing();
 		}
+	}
+
+	private static void OnProcessExit( object? sender, EventArgs e )
+	{
+		_game?.Shutdown();
+		ProgramCancellation.Cancel();
+
+		var tasks = new List<Task>();
+		if ( _drawConsoleTask is not null )
+			tasks.Add( _drawConsoleTask );
+
+		if ( _logTask is not null )
+			tasks.Add( _logTask );
+		
+		Task.WaitAll( tasks.ToArray() );
+		_networkingThread?.Join();
 	}
 
 	public static void SetTickRate( int tickRate )
