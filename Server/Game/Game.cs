@@ -15,6 +15,8 @@ public class Game
 
 	public GameInformationEntity GameInformationEntity;
 	
+	private readonly HashSet<IEntity> _changedEntities = new();
+
 	public void Start()
 	{
 		Program.SetTickRate( 60 );
@@ -29,6 +31,8 @@ public class Game
 
 		GameInformationEntity = SharedEntityManager.Create<GameInformationEntity>();
 		Task.Run( AddBotLoopAsync );
+		
+		SharedEntityManager.EntityChanged += SharedEntityChanged;
 		for ( var i = 0; i < 5; i++ )
 			SharedEntityManager.Create<TestCitizenEntity>();
 	}
@@ -41,13 +45,9 @@ public class Game
 		foreach ( var sharedEntity in SharedEntityManager.Entities )
 			sharedEntity.Update();
 
-		foreach ( var sharedEntity in SharedEntityManager.Entities )
-		{
-			if ( !sharedEntity.HasChanged )
-				continue;
-			
-			NetworkManager.QueueMessage( To.All, new EntityUpdateMessage( sharedEntity ) );
-		}
+		foreach ( var entity in _changedEntities )
+			NetworkManager.QueueMessage( To.All, new EntityUpdateMessage( entity ) );
+		_changedEntities.Clear();
 	}
 
 	public void OnClientConnected( INetworkClient client )
@@ -66,6 +66,11 @@ public class Game
 		NetworkManager.QueueMessage( To.AllExcept( client ), message );
 		
 		Program.Logger.Enqueue( $"{client.ClientId} has disconnected" );
+	}
+	
+	private void SharedEntityChanged( INetworkable entity )
+	{
+		_changedEntities.Add( (entity as IEntity)! );
 	}
 	
 	private static async Task AddBotLoopAsync()

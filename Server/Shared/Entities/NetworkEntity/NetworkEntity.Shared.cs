@@ -9,16 +9,8 @@ namespace CustomNetworking.Shared.Entities;
 
 public partial class NetworkEntity : IEntity
 {
+	public event INetworkable.ChangedEventHandler? Changed;
 	public NetworkedInt EntityId { get; }
-
-	public bool HasChanged
-	{
-		get;
-#if SERVER
-		private set;
-#endif
-	}
-	public bool CanChangePartially => false;
 
 	public NetworkedVector3 Position
 	{
@@ -75,7 +67,7 @@ public partial class NetworkEntity : IEntity
 		UpdateClient();
 #endif
 	}
-	
+
 	public void Deserialize( NetworkReader reader )
 	{
 #if CLIENT
@@ -111,8 +103,6 @@ public partial class NetworkEntity : IEntity
 	public void SerializeChanges( NetworkWriter writer )
 	{
 #if SERVER
-		HasChanged = false;
-		
 		writer.Write( _changedProperties.Count );
 		foreach ( var propertyName in _changedProperties )
 		{

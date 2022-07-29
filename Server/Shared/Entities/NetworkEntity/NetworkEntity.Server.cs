@@ -15,7 +15,7 @@ public partial class NetworkEntity
 	protected void TriggerNetworkingChange( string propertyName )
 	{
 		_changedProperties.Add( propertyName );
-		HasChanged = true;
+		Changed?.Invoke( this );
 	}
 }
 #endif
