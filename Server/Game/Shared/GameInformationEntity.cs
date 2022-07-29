@@ -16,7 +16,7 @@ public class GameInformationEntity : NetworkEntity
 #endif
 		}
 	}
-	private NetworkedList<NetworkedInt> _testItems;
+	private NetworkedList<NetworkedInt> _testItems = new();
 
 	public GameInformationEntity( int entityId ) : base( entityId )
 	{
