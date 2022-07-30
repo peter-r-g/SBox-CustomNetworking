@@ -11,8 +11,8 @@ public class BaseGame
 {
 	public static BaseGame Current = null!;
 
-	public List<IEntity> LocalEntities => ServerEntityManager.Entities;
-	public List<IEntity> NetworkedEntities => SharedEntityManager.Entities;
+	public IReadOnlyList<IEntity> LocalEntities => ServerEntityManager.Entities;
+	public IReadOnlyList<IEntity> NetworkedEntities => SharedEntityManager.Entities;
 	protected virtual int TickRate => 60;
 	
 	protected readonly EntityManager ServerEntityManager = new();
