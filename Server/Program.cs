@@ -13,8 +13,8 @@ namespace CustomNetworking.Server;
 public static class Program
 {
 	public static readonly CancellationTokenSource ProgramCancellation = new();
-	
-	public static int TickRate { get; private set; } = int.MaxValue;
+
+	public static int TickRate = int.MaxValue;
 	private static double TickRateDt => (double)1000 / TickRate;
 
 	
@@ -77,11 +77,6 @@ public static class Program
 		
 		Task.WaitAll( tasks.ToArray() );
 		_networkingThread?.Join();
-	}
-
-	public static void SetTickRate( int tickRate )
-	{
-		TickRate = tickRate;
 	}
 
 	private static void OnClientConnected( INetworkClient client )

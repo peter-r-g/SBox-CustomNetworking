@@ -24,7 +24,7 @@ public class Game
 
 	public void Start()
 	{
-		Program.SetTickRate( 60 );
+		Program.TickRate = 60;
 		Program.Server.HandleMessage<RpcCallMessage>( HandleRpcCallMessage );
 		Program.Server.HandleMessage<RpcCallResponseMessage>( HandleRpcCallResponseMessage );
 		Program.Server.HandleMessage<SayMessage>( HandleSayMessage );
