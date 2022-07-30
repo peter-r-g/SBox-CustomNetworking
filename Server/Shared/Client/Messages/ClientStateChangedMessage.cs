@@ -2,7 +2,7 @@
 
 namespace CustomNetworking.Shared.Messages;
 
-public class ClientStateChangedMessage : NetworkMessage
+public sealed class ClientStateChangedMessage : NetworkMessage
 {
 	public long ClientId { get; private set; }
 	public ClientState ClientState { get; private set; }

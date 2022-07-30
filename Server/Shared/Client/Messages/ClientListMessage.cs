@@ -3,7 +3,7 @@ using CustomNetworking.Shared.Utility;
 
 namespace CustomNetworking.Shared.Messages;
 
-public class ClientListMessage : NetworkMessage
+public sealed class ClientListMessage : NetworkMessage
 {
 	public ICollection<long> ClientIds { get; private set; }
 
