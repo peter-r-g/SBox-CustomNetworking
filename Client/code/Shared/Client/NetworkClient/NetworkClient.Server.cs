@@ -26,7 +26,7 @@ public partial class NetworkClient
 	public void SendMessage( byte[] bytes )
 	{
 #if DEBUG
-		Program.Server.MessagesSentToClients++;
+		NetworkServer.Instance.MessagesSentToClients++;
 #endif
 		ClientSocket.Send( bytes );
 	}
@@ -34,7 +34,7 @@ public partial class NetworkClient
 	public void SendMessage( NetworkMessage message )
 	{
 #if DEBUG
-		Program.Server.MessagesSentToClients++;
+		NetworkServer.Instance.MessagesSentToClients++;
 #endif
 		var stream = new MemoryStream();
 		var writer = new NetworkWriter( stream );
@@ -50,7 +50,7 @@ public partial class NetworkClient
 		var message = NetworkMessage.DeserializeMessage( reader );
 		reader.Close();
 		
-		Program.Server.QueueIncoming( this, message );
+		NetworkServer.Instance.QueueIncoming( this, message );
 	}
 
 	protected virtual void OnMessageReceived( string message )
