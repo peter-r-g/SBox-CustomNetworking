@@ -16,6 +16,8 @@ namespace CustomNetworking.Server;
 
 public class NetworkServer
 {
+	public static NetworkServer Instance = null!;
+	
 #if DEBUG
 	public int MessagesReceived;
 	public int MessagesSent;
@@ -34,6 +36,14 @@ public class NetworkServer
 	private readonly Dictionary<Type, Action<INetworkClient, NetworkMessage>> _messageHandlers = new();
 	private readonly ConcurrentQueue<(To, NetworkMessage)> _outgoingQueue = new();
 	private readonly ConcurrentQueue<(INetworkClient, NetworkMessage)> _incomingQueue = new();
+
+	public NetworkServer()
+	{
+		if ( Instance is not null )
+			throw new Exception( $"An instance of {nameof(NetworkServer)} already exists" );
+		
+		Instance = this;
+	}
 
 	public async void NetworkingMain()
 	{
