@@ -14,7 +14,7 @@ using vtortola.WebSockets.Rfc6455;
 
 namespace CustomNetworking.Server;
 
-public class NetworkServer
+public sealed class NetworkServer
 {
 	public static NetworkServer Instance = null!;
 	
