@@ -25,19 +25,6 @@ public partial class NetworkEntity : IEntity
 	}
 	private NetworkedVector3 _position;
 
-	public NetworkedQuaternion Rotation
-	{
-		get => _rotation;
-		set
-		{
-			_rotation = value;
-#if SERVER
-			TriggerNetworkingChange( nameof(Rotation) );
-#endif
-		}
-	}
-	private NetworkedQuaternion _rotation;
-
 	private readonly Dictionary<string, PropertyInfo> _propertyNameCache = new();
 
 	public NetworkEntity( int entityId )
