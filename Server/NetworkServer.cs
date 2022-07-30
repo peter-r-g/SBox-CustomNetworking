@@ -27,11 +27,11 @@ public sealed class NetworkServer
 	public ConcurrentDictionary<long, INetworkClient> Clients { get; } = new();
 	public ConcurrentDictionary<long, BotClient> Bots { get; } = new();
 
-	public delegate void ClientConnectedEventHandler( INetworkClient client );
-	public event ClientConnectedEventHandler? ClientConnected;
+	internal delegate void ClientConnectedEventHandler( INetworkClient client );
+	internal event ClientConnectedEventHandler? ClientConnected;
 	
-	public delegate void ClientDisconnectedEventHandler( INetworkClient client );
-	public event ClientDisconnectedEventHandler? ClientDisconnected;
+	internal delegate void ClientDisconnectedEventHandler( INetworkClient client );
+	internal event ClientDisconnectedEventHandler? ClientDisconnected;
 	
 	private readonly Dictionary<Type, Action<INetworkClient, NetworkMessage>> _messageHandlers = new();
 	private readonly ConcurrentQueue<(To, NetworkMessage)> _outgoingQueue = new();
@@ -53,7 +53,6 @@ public sealed class NetworkServer
 		_incomingQueue.Enqueue( (client, message) );
 	}
 
-	public async void NetworkingMain()
 	public void HandleMessage<T>( Action<INetworkClient, NetworkMessage> cb ) where T : NetworkMessage
 	{
 		var messageType = typeof(T);
@@ -66,6 +65,8 @@ public sealed class NetworkServer
 	{
 		return Clients.ContainsKey( clientId ) ? Clients[clientId] : null;
 	}
+	
+	internal async void NetworkingMain()
 	{
 		var options = new WebSocketListenerOptions
 		{
@@ -145,8 +146,8 @@ public sealed class NetworkServer
 			}
 		}
 	}
-
-	public async Task AbandonClient( ClientSocket clientSocket )
+	
+	internal async Task AbandonClient( ClientSocket clientSocket )
 	{
 		// TODO: This needs to be better.
 		long? idToRemove = null;
@@ -170,7 +171,17 @@ public sealed class NetworkServer
 		
 		await clientSocket.CloseAsync();
 	}
-
+	
+	internal void AcceptClient( long clientId, ClientSocket clientSocket )
+	{
+		AcceptClient( new NetworkClient( clientId, clientSocket ) );
+	}
+	
+	internal void AcceptClient( long clientId )
+	{
+		AcceptClient( new BotClient( clientId ) );
+	}
+	
 	private void AcceptClient( INetworkClient client )
 	{
 		Clients.TryAdd( client.ClientId, client );
@@ -179,18 +190,19 @@ public sealed class NetworkServer
 		
 		ClientConnected?.Invoke( client );
 	}
-
-	public void AcceptClient( long clientId, ClientSocket clientSocket )
+	
+	internal void DispatchIncoming()
 	{
-		AcceptClient( new NetworkClient( clientId, clientSocket ) );
+		while ( _incomingQueue.TryDequeue( out var pair ) )
+		{
+			if ( !_messageHandlers.TryGetValue( pair.Item2.GetType(), out var cb ) )
+				throw new Exception( $"Unhandled message {pair.Item2.GetType()}." );
+		
+			cb.Invoke( pair.Item1, pair.Item2 );	
+		}
 	}
 
-	public void AcceptClient( long clientId )
-	{
-		AcceptClient( new BotClient( clientId ) );
-	}
-
-	public void SendOutgoing()
+	internal void DispatchOutgoing()
 	{
 		while ( _outgoingQueue.TryDequeue( out var pair ) )
 			SendMessage( pair.Item1, pair.Item2 );
