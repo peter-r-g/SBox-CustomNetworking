@@ -28,7 +28,7 @@ public class BaseGame
 		Current = this;
 	}
 
-	public void Start()
+	public virtual void Start()
 	{
 		Program.TickRate = TickRate;
 		NetworkServer.Instance.HandleMessage<RpcCallMessage>( Rpc.HandleRpcCallMessage );
