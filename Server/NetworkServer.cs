@@ -14,28 +14,28 @@ using vtortola.WebSockets.Rfc6455;
 
 namespace CustomNetworking.Server;
 
-public static class NetworkManager
+public class NetworkServer
 {
 #if DEBUG
-	public static int MessagesReceived;
-	public static int MessagesSent;
-	public static int MessagesSentToClients;
+	public int MessagesReceived;
+	public int MessagesSent;
+	public int MessagesSentToClients;
 #endif
 	
-	public static ConcurrentDictionary<long, INetworkClient> Clients { get; } = new();
-	public static ConcurrentDictionary<long, BotClient> Bots { get; } = new();
+	public ConcurrentDictionary<long, INetworkClient> Clients { get; } = new();
+	public ConcurrentDictionary<long, BotClient> Bots { get; } = new();
 
 	public delegate void ClientConnectedEventHandler( INetworkClient client );
-	public static event ClientConnectedEventHandler? ClientConnected;
+	public event ClientConnectedEventHandler? ClientConnected;
 	
 	public delegate void ClientDisconnectedEventHandler( INetworkClient client );
-	public static event ClientDisconnectedEventHandler? ClientDisconnected;
+	public event ClientDisconnectedEventHandler? ClientDisconnected;
 	
-	private static readonly Dictionary<Type, Action<INetworkClient, NetworkMessage>> MessageHandlers = new();
-	private static readonly ConcurrentQueue<(To, NetworkMessage)> OutgoingQueue = new();
-	private static readonly ConcurrentQueue<(INetworkClient, NetworkMessage)> IncomingQueue = new();
+	private readonly Dictionary<Type, Action<INetworkClient, NetworkMessage>> _messageHandlers = new();
+	private readonly ConcurrentQueue<(To, NetworkMessage)> _outgoingQueue = new();
+	private readonly ConcurrentQueue<(INetworkClient, NetworkMessage)> _incomingQueue = new();
 
-	public static async void NetworkingMain()
+	public async void NetworkingMain()
 	{
 		var options = new WebSocketListenerOptions
 		{
@@ -63,7 +63,7 @@ public static class NetworkManager
 		await server.StopAsync();
 	}
 	
-	private static Task<bool> HttpAuthenticationHandler( WebSocketHttpRequest request, WebSocketHttpResponse response )
+	private Task<bool> HttpAuthenticationHandler( WebSocketHttpRequest request, WebSocketHttpResponse response )
 	{
 		var userAgent = request.Headers.Get( RequestHeader.UserAgent );
 		if ( userAgent != "facepunch-s&box" )
@@ -96,7 +96,7 @@ public static class NetworkManager
 		return Task.FromResult( true );
 	}
 
-	private static async Task AcceptWebSocketClientsAsync( WebSocketListener server, CancellationToken token )
+	private async Task AcceptWebSocketClientsAsync( WebSocketListener server, CancellationToken token )
 	{
 		while ( !token.IsCancellationRequested )
 		{
@@ -116,7 +116,7 @@ public static class NetworkManager
 		}
 	}
 
-	public static async Task AbandonClient( ClientSocket clientSocket )
+	public async Task AbandonClient( ClientSocket clientSocket )
 	{
 		// TODO: This needs to be better.
 		long? idToRemove = null;
@@ -141,7 +141,7 @@ public static class NetworkManager
 		await clientSocket.CloseAsync();
 	}
 
-	private static void AcceptClient( INetworkClient client )
+	private void AcceptClient( INetworkClient client )
 	{
 		Clients.TryAdd( client.ClientId, client );
 		if ( client is BotClient bot )
@@ -150,23 +150,23 @@ public static class NetworkManager
 		ClientConnected?.Invoke( client );
 	}
 
-	public static void AcceptClient( long clientId, ClientSocket clientSocket )
+	public void AcceptClient( long clientId, ClientSocket clientSocket )
 	{
 		AcceptClient( new NetworkClient( clientId, clientSocket ) );
 	}
 
-	public static void AcceptClient( long clientId )
+	public void AcceptClient( long clientId )
 	{
 		AcceptClient( new BotClient( clientId ) );
 	}
 
-	public static void SendOutgoing()
+	public void SendOutgoing()
 	{
-		while ( OutgoingQueue.TryDequeue( out var pair ) )
+		while ( _outgoingQueue.TryDequeue( out var pair ) )
 			SendMessage( pair.Item1, pair.Item2 );
 	}
 
-	private static void SendMessage( To to, NetworkMessage message )
+	private void SendMessage( To to, NetworkMessage message )
 	{
 #if DEBUG
 		MessagesSent++;
@@ -208,37 +208,37 @@ public static class NetworkManager
 		}
 	}
 
-	public static void QueueMessage( To to, NetworkMessage message )
+	public void QueueMessage( To to, NetworkMessage message )
 	{
-		OutgoingQueue.Enqueue( (to, message) );
+		_outgoingQueue.Enqueue( (to, message) );
 	}
 
-	public static void DispatchIncoming()
+	public void DispatchIncoming()
 	{
-		while ( IncomingQueue.TryDequeue( out var pair ) )
+		while ( _incomingQueue.TryDequeue( out var pair ) )
 		{
-			if ( !MessageHandlers.TryGetValue( pair.Item2.GetType(), out var cb ) )
+			if ( !_messageHandlers.TryGetValue( pair.Item2.GetType(), out var cb ) )
 				throw new Exception( $"Unhandled message {pair.Item2.GetType()}." );
 		
 			cb.Invoke( pair.Item1, pair.Item2 );	
 		}
 	}
 
-	public static void QueueIncoming( INetworkClient client, NetworkMessage message )
+	public void QueueIncoming( INetworkClient client, NetworkMessage message )
 	{
-		IncomingQueue.Enqueue( (client, message) );
+		_incomingQueue.Enqueue( (client, message) );
 	}
 
-	public static void HandleMessage<T>( Action<INetworkClient, NetworkMessage> cb ) where T : NetworkMessage
+	public void HandleMessage<T>( Action<INetworkClient, NetworkMessage> cb ) where T : NetworkMessage
 	{
 		var messageType = typeof(T);
-		if ( MessageHandlers.ContainsKey( messageType ) )
+		if ( _messageHandlers.ContainsKey( messageType ) )
 			throw new Exception( $"Message type {messageType} is already being handled." );
 
-		MessageHandlers.Add( messageType, cb );
+		_messageHandlers.Add( messageType, cb );
 	}
 
-	public static INetworkClient? GetClientById( long playerId )
+	public INetworkClient? GetClientById( long playerId )
 	{
 		return playerId == -1 ? null : Clients[playerId];
 	}

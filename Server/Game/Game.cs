@@ -25,9 +25,9 @@ public class Game
 	public void Start()
 	{
 		Program.SetTickRate( 60 );
-		NetworkManager.HandleMessage<RpcCallMessage>( HandleRpcCallMessage );
-		NetworkManager.HandleMessage<RpcCallResponseMessage>( HandleRpcCallResponseMessage );
-		NetworkManager.HandleMessage<SayMessage>( HandleSayMessage );
+		Program.Server.HandleMessage<RpcCallMessage>( HandleRpcCallMessage );
+		Program.Server.HandleMessage<RpcCallResponseMessage>( HandleRpcCallResponseMessage );
+		Program.Server.HandleMessage<SayMessage>( HandleSayMessage );
 		
 		BotClient.HandleBotMessage<PartialMessage>( DumpBotMessage );
 		BotClient.HandleBotMessage<ShutdownMessage>( DumpBotMessage );
@@ -64,16 +64,16 @@ public class Game
 			sharedEntity.Update();
 
 		foreach ( var entity in _changedEntities )
-			NetworkManager.QueueMessage( To.All, new EntityUpdateMessage( entity ) );
+			Program.Server.QueueMessage( To.All, new EntityUpdateMessage( entity ) );
 		_changedEntities.Clear();
 	}
 
 	public void OnClientConnected( INetworkClient client )
 	{
 		var toClient = To.Single( client );
-		NetworkManager.QueueMessage( toClient, new ClientListMessage( NetworkManager.Clients.Keys ) );
-		NetworkManager.QueueMessage( toClient, new EntityListMessage( SharedEntityManager.Entities ) );
-		NetworkManager.QueueMessage( To.AllExcept( client ), new ClientStateChangedMessage( client.ClientId, ClientState.Connected ) );
+		Program.Server.QueueMessage( toClient, new ClientListMessage( Program.Server.Clients.Keys ) );
+		Program.Server.QueueMessage( toClient, new EntityListMessage( SharedEntityManager.Entities ) );
+		Program.Server.QueueMessage( To.AllExcept( client ), new ClientStateChangedMessage( client.ClientId, ClientState.Connected ) );
 		
 		Program.Logger.Enqueue( $"{client.ClientId} has connected" );
 	}
@@ -81,7 +81,7 @@ public class Game
 	public void OnClientDisconnected( INetworkClient client )
 	{
 		var message = new ClientStateChangedMessage( client.ClientId, ClientState.Disconnected );
-		NetworkManager.QueueMessage( To.AllExcept( client ), message );
+		Program.Server.QueueMessage( To.AllExcept( client ), message );
 		
 		Program.Logger.Enqueue( $"{client.ClientId} has disconnected" );
 	}
@@ -93,9 +93,9 @@ public class Game
 	
 	private static async Task AddBotLoopAsync()
 	{
-		while ( !Program.ProgramCancellation.IsCancellationRequested && NetworkManager.Bots.Count < BotLimit )
+		while ( !Program.ProgramCancellation.IsCancellationRequested && Program.Server.Bots.Count < BotLimit )
 		{
-			NetworkManager.AcceptClient( Math.Abs( Random.Shared.NextInt64() ) );
+			Program.Server.AcceptClient( Math.Abs( Random.Shared.NextInt64() ) );
 			await Task.Delay( 1 );
 		}
 	}
@@ -130,14 +130,14 @@ public class Game
 		if ( returnValue is not INetworkable && returnValue is not null )
 		{
 			var failedMessage = new RpcCallResponseMessage( rpcCall.CallGuid, RpcCallState.Failed );
-			NetworkManager.QueueMessage( To.Single( client ), failedMessage );
+			Program.Server.QueueMessage( To.Single( client ), failedMessage );
 			throw new InvalidOperationException(
 				$"Failed to handle RPC call (\"{rpcCall.MethodName}\" returned a non-networkable value)." );
 		}
 
 		var response = new RpcCallResponseMessage( rpcCall.CallGuid, RpcCallState.Completed,
 			returnValue as INetworkable ?? null );
-		NetworkManager.QueueMessage( To.Single( client ), response );
+		Program.Server.QueueMessage( To.Single( client ), response );
 	}
 
 	private void HandleRpcCallResponseMessage( INetworkClient client, NetworkMessage message )
@@ -154,7 +154,7 @@ public class Game
 		if ( message is not SayMessage sayMessage )
 			return;
 		
-		NetworkManager.QueueMessage( To.AllExcept( client ), new SayMessage( client, sayMessage.Message ) );
+		Program.Server.QueueMessage( To.AllExcept( client ), new SayMessage( client, sayMessage.Message ) );
 		Program.Logger.Enqueue( $"{client.ClientId}: {sayMessage.Message}" );
 	}
 

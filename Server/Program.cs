@@ -25,6 +25,8 @@ public static class Program
 	
 	private static Game.Game? _game;
 
+	public static NetworkServer Server;
+
 	private static Thread? _networkingThread;
 	private static Task? _drawConsoleTask;
 	private static Task? _logTask;
@@ -32,14 +34,15 @@ public static class Program
 	public static void Main( string[] args )
 	{
 		AppDomain.CurrentDomain.ProcessExit += OnProcessExit;
-		_networkingThread = new Thread( NetworkManager.NetworkingMain );
-		_networkingThread.Start();
-
+		Server = new NetworkServer();
 		_game = new Game.Game();
 		_game.Start();
 		
-		NetworkManager.ClientConnected += OnClientConnected;
-		NetworkManager.ClientDisconnected += OnClientDisconnected;
+		_networkingThread = new Thread( Server.NetworkingMain );
+		_networkingThread.Start();
+
+		Server.ClientConnected += OnClientConnected;
+		Server.ClientDisconnected += OnClientDisconnected;
 
 		_drawConsoleTask = Task.Run( DrawConsoleAsync );
 		_logTask = Task.Run( LogAsync );
@@ -55,9 +58,9 @@ public static class Program
 			Time.Delta = sw.Elapsed.TotalMilliseconds;
 			sw.Restart();
 
-			NetworkManager.DispatchIncoming();
+			Server.DispatchIncoming();
 			_game?.Update();
-			NetworkManager.SendOutgoing();
+			Server.SendOutgoing();
 		}
 	}
 
@@ -104,11 +107,11 @@ public static class Program
 		
 			// Client count
 			Console.SetCursorPosition( 1, 1 );
-			Console.Write( $"{NetworkManager.Clients.Count} clients connected" );
+			Console.Write( $"{Server.Clients.Count} clients connected" );
 			
 			// Bot count
 			Console.SetCursorPosition( 1, 2 );
-			Console.Write( $"{NetworkManager.Bots.Count} bots connected" );
+			Console.Write( $"{Server.Bots.Count} bots connected" );
 			
 			// Map
 			Console.SetCursorPosition( 1, 25 );
@@ -129,15 +132,15 @@ public static class Program
 			
 			// Messages sent
 			Console.SetCursorPosition( 1, 13 );
-			Console.Write( $"Network Messages Sent: {NetworkManager.MessagesSent}" );
+			Console.Write( $"Network Messages Sent: {Server.MessagesSent}" );
 			
 			// Messages sent to clients
 			Console.SetCursorPosition( 1, 14 );
-			Console.Write( $"{NetworkManager.MessagesSentToClients} messages sent to clients" );
+			Console.Write( $"{Server.MessagesSentToClients} messages sent to clients" );
 			
 			// Messages received
 			Console.SetCursorPosition( 1, 15 );
-			Console.Write( $"{NetworkManager.MessagesReceived} messages received" );
+			Console.Write( $"{Server.MessagesReceived} messages received" );
 #endif
 
 			// TPS

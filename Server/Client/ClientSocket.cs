@@ -47,7 +47,7 @@ public sealed class ClientSocket
 	{
 		try
 		{
-			NetworkManager.AcceptClient( long.Parse( _socket.HttpRequest.Headers.Get( "Steam" ) ), this );
+			Program.Server.AcceptClient( long.Parse( _socket.HttpRequest.Headers.Get( "Steam" ) ), this );
 			
 			while ( _socket.IsConnected && !ClientTokenSource.Token.IsCancellationRequested )
 			{
@@ -75,11 +75,11 @@ public sealed class ClientSocket
 	{
 		var message = await _socket.ReadMessageAsync( ClientTokenSource.Token ).ConfigureAwait( false );
 #if DEBUG
-		NetworkManager.MessagesReceived++;
+		Program.Server.MessagesReceived++;
 #endif
 		if ( message is null )
 		{
-			await NetworkManager.AbandonClient( this );
+			await Program.Server.AbandonClient( this );
 			return;
 		}
 		
