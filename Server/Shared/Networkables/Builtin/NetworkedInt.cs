@@ -42,6 +42,11 @@ public struct NetworkedInt : INetworkable
 		throw new System.NotImplementedException();
 	}
 
+	public override string ToString()
+	{
+		return Value.ToString();
+	}
+
 	public static implicit operator int( NetworkedInt networkedInt )
 	{
 		return networkedInt.Value;

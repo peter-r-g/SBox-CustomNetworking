@@ -50,7 +50,12 @@ public struct NetworkedQuaternion : INetworkable
 	{
 		throw new System.NotImplementedException();
 	}
-	
+
+	public override string ToString()
+	{
+		return Value.ToString();
+	}
+
 	public static implicit operator Quaternion( NetworkedQuaternion networkedQuaternion )
 	{
 		return networkedQuaternion.Value;
