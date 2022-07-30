@@ -60,7 +60,12 @@ public struct NetworkedVector3 : INetworkable
 	{
 		throw new System.NotImplementedException();
 	}
-	
+
+	public override string ToString()
+	{
+		return Value.ToString();
+	}
+
 	public static implicit operator Vector3( NetworkedVector3 networkedVector3 )
 	{
 		return networkedVector3.Value;

@@ -8,13 +8,15 @@ namespace CustomNetworking.Server.Shared.Messages;
 
 public class RpcCallMessage : NetworkMessage
 {
+	public Guid CallGuid { get; private set; }
 	public string ClassName { get; private set; }
 	public string MethodName { get; private set; }
 	public int EntityId { get; private set; }
 	public INetworkable[] Parameters { get; private set; }
 
-	public RpcCallMessage( Type entityType, IEntity? entity, string methodName, params INetworkable[] parameters )
+	public RpcCallMessage( bool respondable, Type entityType, IEntity? entity, string methodName, params INetworkable[] parameters )
 	{
+		CallGuid = respondable ? Guid.NewGuid() : Guid.Empty;
 		ClassName = entityType.Name;
 		if ( entity is null )
 			EntityId = -1;
@@ -27,6 +29,7 @@ public class RpcCallMessage : NetworkMessage
 
 	public RpcCallMessage()
 	{
+		CallGuid = Guid.Empty;
 		ClassName = string.Empty;
 		MethodName = string.Empty;
 		EntityId = -1;
@@ -35,6 +38,7 @@ public class RpcCallMessage : NetworkMessage
 	
 	public override void Deserialize( NetworkReader reader )
 	{
+		CallGuid = reader.ReadGuid();
 		ClassName = reader.ReadString();
 		MethodName = reader.ReadString();
 		EntityId = reader.ReadInt32();
@@ -46,6 +50,7 @@ public class RpcCallMessage : NetworkMessage
 
 	public override void Serialize( NetworkWriter writer )
 	{
+		writer.Write( CallGuid );
 		writer.Write( ClassName );
 		writer.Write( MethodName );
 		writer.Write( EntityId );

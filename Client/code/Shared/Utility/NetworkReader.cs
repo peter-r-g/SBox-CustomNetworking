@@ -14,6 +14,11 @@ public class NetworkReader : BinaryReader
 	{
 	}
 
+	public Guid ReadGuid()
+	{
+		return new Guid( ReadBytes( 16 ) );
+	}
+
 	public INetworkable ReadNetworkable()
 	{
 		var typeName = ReadString();

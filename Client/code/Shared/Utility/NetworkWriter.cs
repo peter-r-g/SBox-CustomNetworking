@@ -1,3 +1,4 @@
+using System;
 using System.IO;
 using CustomNetworking.Shared.Networkables;
 
@@ -7,6 +8,11 @@ public class NetworkWriter : BinaryWriter
 {
 	public NetworkWriter( Stream output ) : base( output )
 	{
+	}
+
+	public void Write( Guid guid )
+	{
+		Write( guid.ToByteArray() );
 	}
 
 	public void WriteNetworkable( INetworkable networkable )
