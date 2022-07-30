@@ -114,11 +114,11 @@ public static class Program
 			
 			// Server entities
 			Console.SetCursorPosition( 1, 27 );
-			Console.Write( $"{_game?.ServerEntityManager.Entities.Count} Server Entities" );
+			Console.Write( $"{_game.LocalEntities.Count} Server Entities" );
 			
 			// Shared entities
 			Console.SetCursorPosition( 1, 28 );
-			Console.Write( $"{_game?.SharedEntityManager.Entities.Count} Networked Entities" );
+			Console.Write( $"{_game.NetworkedEntities.Count} Networked Entities" );
 			
 #if DEBUG
 			// Debug title
