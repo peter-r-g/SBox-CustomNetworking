@@ -4,6 +4,19 @@ namespace CustomNetworking.Shared.Entities;
 
 public partial class NetworkModelEntity : NetworkEntity
 {
+	public NetworkedQuaternion Rotation
+	{
+		get => _rotation;
+		set
+		{
+			_rotation = value;
+#if SERVER
+			TriggerNetworkingChange( nameof(Rotation) );
+#endif
+		}
+	}
+	private NetworkedQuaternion _rotation;
+	
 	public NetworkedString ModelName
 	{
 		get => _modelName;
