@@ -15,6 +15,7 @@ public class NetworkWriter : BinaryWriter
 		Write( guid.ToByteArray() );
 	}
 
+	// TODO: When writing an entity, if it is referenced under and entity just send the entity ID rather than the whole entity.
 	public void WriteNetworkable( INetworkable networkable )
 	{
 		var networkableType = networkable.GetType();

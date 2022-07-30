@@ -87,6 +87,7 @@ public class NetworkReader : BinaryReader
 		return outputNetworkable;
 	}
 
+	// TODO: When reading an entity. Try to only read the entity ID. If there's more info after that then read a whole entity.
 	public IEntity ReadEntity()
 	{
 		var typeName = ReadString();
