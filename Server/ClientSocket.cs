@@ -8,7 +8,7 @@ using vtortola.WebSockets;
 
 namespace CustomNetworking.Server;
 
-public sealed class ClientSocket
+internal sealed class ClientSocket
 {
 	public readonly CancellationTokenSource ClientTokenSource = new();
 	
