@@ -38,11 +38,13 @@ public partial class GameInformationEntity
 		Program.Logger.Enqueue( $"Got {response.ReturnValue} from client RPC" );
 	}
 
+	[Rpc.Server]
 	public void ServerRpc( NetworkedInt i )
 	{
 		Program.Logger.Enqueue( "Server RPC executed!" );
 	}
 
+	[Rpc.Server]
 	public NetworkedInt GetServerValue()
 	{
 		return 2;

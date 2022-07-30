@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 using System.Threading.Tasks;
 using CustomNetworking.Server;
 using CustomNetworking.Server.Shared.Messages;
@@ -109,15 +110,18 @@ public class Game
 			throw new InvalidOperationException(
 				$"Failed to handle RPC call (\"{rpcCall.ClassName}\" doesn't exist in the current assembly)." );
 
-		var instance = SharedEntityManager.GetEntityById( rpcCall.EntityId );
-		if ( instance is null && rpcCall.EntityId != -1 )
-			throw new InvalidOperationException(
-				"Failed to handle RPC call (Attempted to call RPC on a non-existant entity)." );
-
 		var method = type.GetMethod( rpcCall.MethodName );
 		if ( method is null )
 			throw new InvalidOperationException(
 				$"Failed to handle RPC call (\"{rpcCall.MethodName}\" does not exist on \"{type}\")." );
+
+		if ( method.GetCustomAttribute( typeof(Rpc.ServerAttribute) ) is null )
+			throw new InvalidOperationException( "Failed to handle RPC call (Attempted to invoke a non-RPC method)." );
+		
+		var instance = SharedEntityManager.GetEntityById( rpcCall.EntityId );
+		if ( instance is null && rpcCall.EntityId != -1 )
+			throw new InvalidOperationException(
+				"Failed to handle RPC call (Attempted to call RPC on a non-existant entity)." );
 
 		var returnValue = method.Invoke( instance, rpcCall.Parameters );
 		if ( rpcCall.CallGuid == Guid.Empty )

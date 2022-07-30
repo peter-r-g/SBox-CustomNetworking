@@ -124,14 +124,17 @@ public class NetworkManager
 		if ( type is null )
 			throw new InvalidOperationException( $"Failed to handle RPC call (\"{rpcCall.ClassName}\" doesn't exist in the current assembly)." );
 
-		var instance = MyGame.Current.EntityManager?.GetEntityById( rpcCall.EntityId );
-		if ( instance is null && rpcCall.EntityId != -1 )
-			throw new InvalidOperationException( "Failed to handle RPC call (Attempted to call RPC on a non-existant entity)." );
-		
 		// TODO: Support instance methods https://github.com/Facepunch/sbox-issues/issues/2079
 		var method = TypeLibrary.FindStaticMethods( rpcCall.MethodName ).FirstOrDefault();
 		if ( method is null )
 			throw new InvalidOperationException( $"Failed to handle RPC call (\"{rpcCall.MethodName}\" does not exist on \"{type}\")." );
+		
+		if ( !method.Attributes.Any( attribute => attribute is Rpc.ClientAttribute ) )
+			throw new InvalidOperationException( "Failed to handle RPC call (Attempted to invoke a non-RPC method)." );
+		
+		var instance = MyGame.Current.EntityManager?.GetEntityById( rpcCall.EntityId );
+		if ( instance is null && rpcCall.EntityId != -1 )
+			throw new InvalidOperationException( "Failed to handle RPC call (Attempted to call RPC on a non-existant entity)." );
 
 		var parameters = new List<object>();
 		parameters.AddRange( rpcCall.Parameters );

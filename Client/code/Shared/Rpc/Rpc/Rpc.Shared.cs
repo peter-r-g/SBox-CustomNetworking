@@ -33,4 +33,24 @@ public static partial class Rpc
 		
 		return response;
 	}
+
+	public class ClientAttribute : Attribute
+	{
+		public double LimitPerSecond;
+
+		public ClientAttribute( double limitPerSecond = double.MaxValue )
+		{
+			LimitPerSecond = limitPerSecond;
+		}
+	}
+
+	public class ServerAttribute : Attribute
+	{
+		public double LimitPerSecond;
+
+		public ServerAttribute( double limitPerSecond = double.MaxValue )
+		{
+			
+		}
+	}
 }

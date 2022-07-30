@@ -20,11 +20,13 @@ public partial class GameInformationEntity
 			_getServerValueTask = GetServerValue();
 	}
 
+	[Rpc.Client]
 	public static void ClientRpc( GameInformationEntity instance, NetworkedInt i )
 	{
 		Log.Info( "Client RPC executed!" );
 	}
-
+	
+	[Rpc.Client]
 	public static NetworkedInt GetClientValue( GameInformationEntity instance )
 	{
 		return 1;
