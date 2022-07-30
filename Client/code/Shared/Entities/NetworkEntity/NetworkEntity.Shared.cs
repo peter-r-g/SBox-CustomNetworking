@@ -17,10 +17,10 @@ public partial class NetworkEntity : IEntity
 		get => _position;
 		set
 		{
+			_position.Changed -= OnPositionChanged;
 			_position = value;
-#if SERVER
-			TriggerNetworkingChange( nameof(Position) );
-#endif
+			value.Changed += OnPositionChanged;
+			OnPositionChanged( value );
 		}
 	}
 	private NetworkedVector3 _position;
@@ -52,6 +52,13 @@ public partial class NetworkEntity : IEntity
 #endif
 #if CLIENT
 		UpdateClient();
+#endif
+	}
+	
+	protected virtual void OnPositionChanged( INetworkable networkable )
+	{
+#if SERVER
+		TriggerNetworkingChange( nameof(Position) );
 #endif
 	}
 

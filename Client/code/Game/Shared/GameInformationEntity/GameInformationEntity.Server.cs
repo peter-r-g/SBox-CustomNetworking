@@ -1,5 +1,6 @@
 #if SERVER
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using CustomNetworking.Server;
 using CustomNetworking.Server.Shared.Rpc;
@@ -31,7 +32,7 @@ public partial class GameInformationEntity
 		if ( NetworkManager.Clients.IsEmpty )
 			return;
 
-		var response = await this.CallRpcAsync( NetworkManager.Clients[76561198063494192], nameof(GetClientValue) );
+		var response = await this.CallRpcAsync( NetworkManager.Clients.First().Value, nameof(GetClientValue) );
 		if ( response.State == RpcCallState.Failed )
 			return;
 		
