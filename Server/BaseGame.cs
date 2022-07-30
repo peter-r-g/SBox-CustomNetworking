@@ -13,6 +13,7 @@ public class BaseGame
 
 	public List<IEntity> LocalEntities => ServerEntityManager.Entities;
 	public List<IEntity> NetworkedEntities => SharedEntityManager.Entities;
+	protected virtual int TickRate => 60;
 	
 	protected readonly EntityManager ServerEntityManager = new();
 	protected readonly EntityManager SharedEntityManager = new();
@@ -29,7 +30,7 @@ public class BaseGame
 
 	public void Start()
 	{
-		Program.TickRate = 60;
+		Program.TickRate = TickRate;
 		NetworkServer.Instance.HandleMessage<RpcCallMessage>( Rpc.HandleRpcCallMessage );
 		NetworkServer.Instance.HandleMessage<RpcCallResponseMessage>( Rpc.HandleRpcCallResponseMessage );
 		
