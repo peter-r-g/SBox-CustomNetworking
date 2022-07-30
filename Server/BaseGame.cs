@@ -72,11 +72,6 @@ public class BaseGame
 		NetworkServer.Instance.QueueMessage( To.AllExcept( client ), message );
 	}
 	
-	private void OnNetworkedEntityChanged( INetworkable entity )
-	{
-		_changedEntities.Add( (entity as IEntity)! );
-	}
-
 	public IEntity? GetLocalEntityById( int entityId )
 	{
 		return ServerEntityManager.GetEntityById( entityId );
@@ -85,5 +80,10 @@ public class BaseGame
 	public IEntity? GetNetworkedEntityById( int entityId )
 	{
 		return SharedEntityManager.GetEntityById( entityId );
+	}
+	
+	private void OnNetworkedEntityChanged( INetworkable entity )
+	{
+		_changedEntities.Add( (entity as IEntity)! );
 	}
 }
