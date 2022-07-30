@@ -6,6 +6,7 @@ using System.Globalization;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using CustomNetworking.Game;
 using CustomNetworking.Shared;
 
 namespace CustomNetworking.Server;
@@ -23,8 +24,8 @@ public static class Program
 	                                             DateTime.Now.ToString( CultureInfo.CurrentCulture )
 		                                             .Replace( ':', '-' ) + ".log";
 
-	private static Game.Game _game;
-	private static NetworkServer Server = null!;
+	private static NetworkServer _server = null!;
+	private static BaseGame _game = null!;
 
 	private static Thread? _networkingThread;
 	private static Task? _drawConsoleTask;
@@ -33,15 +34,15 @@ public static class Program
 	public static void Main( string[] args )
 	{
 		AppDomain.CurrentDomain.ProcessExit += OnProcessExit;
-		Server = new NetworkServer();
-		_game = new Game.Game();
+		_server = new NetworkServer();
+		_game = new BaseGame();
 		_game.Start();
 		
-		_networkingThread = new Thread( Server.NetworkingMain );
+		_networkingThread = new Thread( _server.NetworkingMain );
 		_networkingThread.Start();
 
-		Server.ClientConnected += OnClientConnected;
-		Server.ClientDisconnected += OnClientDisconnected;
+		_server.ClientConnected += OnClientConnected;
+		_server.ClientDisconnected += OnClientDisconnected;
 
 		_drawConsoleTask = Task.Run( DrawConsoleAsync );
 		_logTask = Task.Run( LogAsync );
@@ -57,9 +58,9 @@ public static class Program
 			Time.Delta = sw.Elapsed.TotalMilliseconds;
 			sw.Restart();
 
-			Server.DispatchIncoming();
+			_server.DispatchIncoming();
 			_game?.Update();
-			Server.SendOutgoing();
+			_server.SendOutgoing();
 		}
 	}
 
@@ -101,11 +102,11 @@ public static class Program
 		
 			// Client count
 			Console.SetCursorPosition( 1, 1 );
-			Console.Write( $"{Server.Clients.Count} clients connected" );
+			Console.Write( $"{_server.Clients.Count} clients connected" );
 			
 			// Bot count
 			Console.SetCursorPosition( 1, 2 );
-			Console.Write( $"{Server.Bots.Count} bots connected" );
+			Console.Write( $"{_server.Bots.Count} bots connected" );
 			
 			// Map
 			Console.SetCursorPosition( 1, 25 );
@@ -126,15 +127,15 @@ public static class Program
 			
 			// Messages sent
 			Console.SetCursorPosition( 1, 13 );
-			Console.Write( $"Network Messages Sent: {Server.MessagesSent}" );
+			Console.Write( $"Network Messages Sent: {_server.MessagesSent}" );
 			
 			// Messages sent to clients
 			Console.SetCursorPosition( 1, 14 );
-			Console.Write( $"{Server.MessagesSentToClients} messages sent to clients" );
+			Console.Write( $"{_server.MessagesSentToClients} messages sent to clients" );
 			
 			// Messages received
 			Console.SetCursorPosition( 1, 15 );
-			Console.Write( $"{Server.MessagesReceived} messages received" );
+			Console.Write( $"{_server.MessagesReceived} messages received" );
 #endif
 
 			// TPS
