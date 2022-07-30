@@ -1,4 +1,3 @@
-using CustomNetworking.Game;
 using Sandbox.UI.Construct;
 using Sandbox;
 using Sandbox.UI;
@@ -95,7 +94,7 @@ public class ClientChatBox : Panel
 		if ( message.Contains( '\n' ) || message.Contains( '\r' ) )
 			return;
 
-		Current?.Task.RunInThreadAsync( () => NetworkManager.Instance?.SendToServer( new SayMessage( message ) ) );
+		//Current?.Task.RunInThreadAsync( () => NetworkManager.Instance?.SendToServer( new SayMessage( message ) ) );
 		AddChatEntry( Local.Client.Name, message, $"avatar:{Local.PlayerId}" );
 	}
 }
