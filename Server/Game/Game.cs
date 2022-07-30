@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using CustomNetworking.Server;
 using CustomNetworking.Server.Shared.Messages;
+using CustomNetworking.Server.Shared.Rpc;
 using CustomNetworking.Shared;
 using CustomNetworking.Shared.Entities;
 using CustomNetworking.Shared.Messages;
@@ -24,6 +25,7 @@ public class Game
 	{
 		Program.SetTickRate( 60 );
 		NetworkManager.HandleMessage<RpcCallMessage>( HandleRpcCallMessage );
+		NetworkManager.HandleMessage<RpcCallResponseMessage>( HandleRpcCallResponseMessage );
 		NetworkManager.HandleMessage<SayMessage>( HandleSayMessage );
 		
 		BotClient.HandleBotMessage<PartialMessage>( DumpBotMessage );
@@ -96,7 +98,7 @@ public class Game
 			await Task.Delay( 1 );
 		}
 	}
-		
+
 	private void HandleRpcCallMessage( INetworkClient client, NetworkMessage message )
 	{
 		if ( message is not RpcCallMessage rpcCall )
@@ -104,17 +106,43 @@ public class Game
 
 		var type = TypeHelper.GetTypeByName( rpcCall.ClassName );
 		if ( type is null )
-			throw new InvalidOperationException( $"Failed to handle RPC call (\"{rpcCall.ClassName}\" doesn't exist in the current assembly)." );
+			throw new InvalidOperationException(
+				$"Failed to handle RPC call (\"{rpcCall.ClassName}\" doesn't exist in the current assembly)." );
 
 		var instance = SharedEntityManager.GetEntityById( rpcCall.EntityId );
 		if ( instance is null && rpcCall.EntityId != -1 )
-			throw new InvalidOperationException( "Failed to handle RPC call (Attempted to call RPC on a non-existant entity)." );
-		
+			throw new InvalidOperationException(
+				"Failed to handle RPC call (Attempted to call RPC on a non-existant entity)." );
+
 		var method = type.GetMethod( rpcCall.MethodName );
 		if ( method is null )
-			throw new InvalidOperationException( $"Failed to handle RPC call (\"{rpcCall.MethodName}\" does not exist on \"{type}\")." );
+			throw new InvalidOperationException(
+				$"Failed to handle RPC call (\"{rpcCall.MethodName}\" does not exist on \"{type}\")." );
 
-		method.Invoke( instance, rpcCall.Parameters );
+		var returnValue = method.Invoke( instance, rpcCall.Parameters );
+		if ( rpcCall.CallGuid == Guid.Empty )
+			return;
+
+		if ( returnValue is not INetworkable && returnValue is not null )
+		{
+			var failedMessage = new RpcCallResponseMessage( rpcCall.CallGuid, RpcCallState.Failed );
+			NetworkManager.QueueMessage( To.Single( client ), failedMessage );
+			throw new InvalidOperationException(
+				$"Failed to handle RPC call (\"{rpcCall.MethodName}\" returned a non-networkable value)." );
+		}
+
+		var response = new RpcCallResponseMessage( rpcCall.CallGuid, RpcCallState.Completed,
+			returnValue as INetworkable ?? null );
+		NetworkManager.QueueMessage( To.Single( client ), response );
+	}
+
+	private void HandleRpcCallResponseMessage( INetworkClient client, NetworkMessage message )
+	{
+		if ( message is not RpcCallResponseMessage rpcResponse )
+			return;
+
+		if ( !Rpc.RpcResponses.TryAdd( rpcResponse.CallGuid, rpcResponse ) )
+			throw new InvalidOperationException( $"Failed to handle RPC call response (Failed to add \"{rpcResponse.CallGuid}\" to response dictionary)." );
 	}
 
 	private static void HandleSayMessage( INetworkClient client, NetworkMessage message )

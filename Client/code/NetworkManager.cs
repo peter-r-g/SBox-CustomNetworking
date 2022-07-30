@@ -5,8 +5,10 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using CustomNetworking.Server.Shared.Messages;
+using CustomNetworking.Server.Shared.Rpc;
 using CustomNetworking.Shared;
 using CustomNetworking.Shared.Messages;
+using CustomNetworking.Shared.Networkables;
 using CustomNetworking.Shared.Utility;
 using Sandbox;
 
@@ -46,6 +48,7 @@ public class NetworkManager
 		
 		Instance = this;
 		HandleMessage<RpcCallMessage>( HandleRpcCallMessage );
+		HandleMessage<RpcCallResponseMessage>( HandleRpcCallResponseMessage );
 		HandleMessage<PartialMessage>( HandlePartialMessage );
 		HandleMessage<ShutdownMessage>( HandleShutdownMessage );
 		HandleMessage<ClientListMessage>( HandleClientListMessage );
@@ -112,7 +115,7 @@ public class NetworkManager
 	{
 	}
 	
-	private static void HandleRpcCallMessage( NetworkMessage message )
+	private void HandleRpcCallMessage( NetworkMessage message )
 	{
 		if ( message is not RpcCallMessage rpcCall )
 			return;
@@ -130,16 +133,35 @@ public class NetworkManager
 		if ( method is null )
 			throw new InvalidOperationException( $"Failed to handle RPC call (\"{rpcCall.MethodName}\" does not exist on \"{type}\")." );
 
-		if ( instance is null )
+		var parameters = new List<object>();
+		parameters.AddRange( rpcCall.Parameters );
+		if ( instance is not null )
+			parameters.Insert( 0, instance );
+		
+		if ( rpcCall.CallGuid == Guid.Empty )
 		{
-			method.Invoke( null, rpcCall.Parameters );
+			method.Invoke( null, parameters.ToArray() );
 			return;
 		}
+
+		var returnValue = method.InvokeWithReturn<object?>( null, parameters.ToArray() );
+		if ( returnValue is not INetworkable && returnValue is not null )
+		{
+			var failedMessage = new RpcCallResponseMessage( rpcCall.CallGuid, RpcCallState.Failed );
+			_ = SendToServer( failedMessage );
+			throw new InvalidOperationException( $"Failed to handle RPC call (\"{rpcCall.MethodName}\" returned a non-networkable value)." );
+		}
 		
-		var newParameters = new object[rpcCall.Parameters.Length + 1];
-		newParameters[0] = instance;
-		Array.Copy( rpcCall.Parameters, 0, newParameters, 1, rpcCall.Parameters.Length );
-		method.Invoke( null, newParameters );
+		var response = new RpcCallResponseMessage( rpcCall.CallGuid, RpcCallState.Completed, returnValue as INetworkable ?? null );
+		_ = SendToServer( response );
+	}
+	
+	private void HandleRpcCallResponseMessage( NetworkMessage message )
+	{
+		if ( message is not RpcCallResponseMessage rpcResponse )
+			return;
+
+		Rpc.RpcResponses.Add( rpcResponse.CallGuid, rpcResponse );
 	}
 
 	private void HandlePartialMessage( NetworkMessage message )
