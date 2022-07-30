@@ -13,7 +13,7 @@ public class RpcCallMessage : NetworkMessage
 	public int EntityId { get; private set; }
 	public INetworkable[] Parameters { get; private set; }
 
-	public RpcCallMessage( Type entityType, IEntity? entity, string methodName, params INetworkable[] parameters )
+	public RpcCallMessage( bool respondable, Type entityType, IEntity? entity, string methodName, params INetworkable[] parameters )
 	{
 		ClassName = entityType.Name;
 		if ( entity is null )
