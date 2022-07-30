@@ -59,7 +59,7 @@ public static class Program
 
 			_server.DispatchIncoming();
 			_game?.Update();
-			_server.SendOutgoing();
+			_server.DispatchOutgoing();
 		}
 	}
 
