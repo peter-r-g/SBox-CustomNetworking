@@ -17,7 +17,7 @@ public class BotClient : INetworkClient
 
 	public void SendMessage( byte[] bytes )
 	{
-		throw new NotImplementedException();
+		throw new InvalidOperationException();
 	}
 
 	public void SendMessage( NetworkMessage message )
