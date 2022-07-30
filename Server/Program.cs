@@ -134,6 +134,10 @@ public static class Program
 			// Messages sent to clients
 			Console.SetCursorPosition( 1, 14 );
 			Console.Write( $"{NetworkManager.MessagesSentToClients} messages sent to clients" );
+			
+			// Messages received
+			Console.SetCursorPosition( 1, 15 );
+			Console.Write( $"{NetworkManager.MessagesReceived} messages received" );
 #endif
 
 			// TPS

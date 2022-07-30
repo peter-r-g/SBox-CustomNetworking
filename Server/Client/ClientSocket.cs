@@ -74,6 +74,9 @@ public sealed class ClientSocket
 	private async Task HandleReadAsync()
 	{
 		var message = await _socket.ReadMessageAsync( ClientTokenSource.Token ).ConfigureAwait( false );
+#if DEBUG
+		NetworkManager.MessagesReceived++;
+#endif
 		if ( message is null )
 		{
 			await NetworkManager.AbandonClient( this );

@@ -17,6 +17,7 @@ namespace CustomNetworking.Server;
 public static class NetworkManager
 {
 #if DEBUG
+	public static int MessagesReceived;
 	public static int MessagesSent;
 	public static int MessagesSentToClients;
 #endif
