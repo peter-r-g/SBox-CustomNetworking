@@ -10,7 +10,7 @@ public class BotClient : INetworkClient
 	
 	public long ClientId { get; }
 	
-	public BotClient( long clientId )
+	internal BotClient( long clientId )
 	{
 		ClientId = clientId;
 	}
