@@ -1,9 +1,6 @@
-﻿using CustomNetworking.Shared.Entities;
-
-namespace CustomNetworking.Shared;
+﻿namespace CustomNetworking.Shared;
 
 public partial class NetworkClient : INetworkClient
 {
 	public long ClientId { get; }
-	public NetworkEntity? Pawn { get; set; }
 }

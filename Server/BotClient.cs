@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using CustomNetworking.Shared;
-using CustomNetworking.Shared.Entities;
 
 namespace CustomNetworking.Server;
 
@@ -10,7 +9,6 @@ public class BotClient : INetworkClient
 	private static readonly Dictionary<Type, Action<BotClient, NetworkMessage>> MessageHandlers = new();
 	
 	public long ClientId { get; }
-	public NetworkEntity? Pawn { get; set; }
 	
 	public BotClient( long clientId )
 	{
