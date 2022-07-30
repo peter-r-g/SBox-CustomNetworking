@@ -1,10 +1,9 @@
 using System;
-using CustomNetworking.Shared;
 using CustomNetworking.Shared.Entities;
 using CustomNetworking.Shared.Networkables;
 using CustomNetworking.Shared.Utility;
 
-namespace CustomNetworking.Server.Shared.Messages;
+namespace CustomNetworking.Shared.Messages;
 
 public class RpcCallMessage : NetworkMessage
 {

@@ -6,7 +6,6 @@ using System.Globalization;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
-using CustomNetworking.Game;
 using CustomNetworking.Shared;
 
 namespace CustomNetworking.Server;

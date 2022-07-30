@@ -1,5 +1,7 @@
 using System.Threading.Tasks;
+#if SERVER
 using CustomNetworking.Server;
+#endif
 using CustomNetworking.Shared.Entities;
 using CustomNetworking.Shared.Messages;
 using CustomNetworking.Shared.Networkables;

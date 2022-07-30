@@ -1,7 +1,8 @@
 using System;
+#if SERVER
 using System.Collections.Generic;
+#endif
 using System.Threading.Tasks;
-using CustomNetworking.Server.Shared.Messages;
 using CustomNetworking.Shared.Entities;
 using CustomNetworking.Shared.Messages;
 using CustomNetworking.Shared.Networkables;

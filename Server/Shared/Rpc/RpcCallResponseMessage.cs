@@ -1,5 +1,4 @@
 using System;
-using CustomNetworking.Server.Shared.Rpc;
 using CustomNetworking.Shared.Networkables;
 using CustomNetworking.Shared.Utility;
 

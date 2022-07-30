@@ -4,8 +4,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using CustomNetworking.Server.Shared.Messages;
-using CustomNetworking.Server.Shared.Rpc;
 using CustomNetworking.Shared;
 using CustomNetworking.Shared.Messages;
 using CustomNetworking.Shared.Networkables;

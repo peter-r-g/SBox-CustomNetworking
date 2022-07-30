@@ -1,13 +1,11 @@
 using System;
 using System.Collections.Generic;
-using CustomNetworking.Server;
-using CustomNetworking.Server.Shared.Messages;
 using CustomNetworking.Shared;
 using CustomNetworking.Shared.Entities;
 using CustomNetworking.Shared.Messages;
 using CustomNetworking.Shared.Networkables;
 
-namespace CustomNetworking.Game;
+namespace CustomNetworking.Server;
 
 public class BaseGame
 {

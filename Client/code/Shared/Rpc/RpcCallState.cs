@@ -1,4 +1,4 @@
-namespace CustomNetworking.Server.Shared.Rpc;
+namespace CustomNetworking.Shared;
 
 public enum RpcCallState : byte
 {
