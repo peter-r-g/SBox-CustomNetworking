@@ -22,10 +22,9 @@ public static class Program
 	private static readonly string LogFileName = Environment.CurrentDirectory + '\\' +
 	                                             DateTime.Now.ToString( CultureInfo.CurrentCulture )
 		                                             .Replace( ':', '-' ) + ".log";
-	
-	private static Game.Game? _game;
 
 	public static NetworkServer Server;
+	private static Game.Game _game;
 
 	private static Thread? _networkingThread;
 	private static Task? _drawConsoleTask;
@@ -66,7 +65,7 @@ public static class Program
 
 	private static void OnProcessExit( object? sender, EventArgs e )
 	{
-		_game?.Shutdown();
+		_game.Shutdown();
 		ProgramCancellation.Cancel();
 
 		var tasks = new List<Task>();
@@ -87,12 +86,12 @@ public static class Program
 
 	private static void OnClientConnected( INetworkClient client )
 	{
-		_game?.OnClientConnected( client );
+		_game.OnClientConnected( client );
 	}
 	
 	private static void OnClientDisconnected( INetworkClient client )
 	{
-		_game?.OnClientDisconnected( client );
+		_game.OnClientDisconnected( client );
 	}
 
 	private static async Task DrawConsoleAsync()
