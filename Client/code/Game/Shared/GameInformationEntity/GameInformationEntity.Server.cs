@@ -1,5 +1,4 @@
 #if SERVER
-using System;
 using System.Linq;
 using System.Threading.Tasks;
 using CustomNetworking.Server;
@@ -29,10 +28,10 @@ public partial class GameInformationEntity
 
 	public async Task GetClientValue()
 	{
-		if ( NetworkManager.Clients.IsEmpty )
+		if ( Program.Server.Clients.IsEmpty )
 			return;
 
-		var response = await this.CallRpcAsync( NetworkManager.Clients.First().Value, nameof(GetClientValue) );
+		var response = await this.CallRpcAsync( Program.Server.Clients.First().Value, nameof(GetClientValue) );
 		if ( response.State == RpcCallState.Failed )
 			return;
 		

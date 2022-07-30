@@ -45,7 +45,7 @@ public class SayMessage : NetworkMessage
 	public override void Deserialize( NetworkReader reader )
 	{
 #if SERVER
-		Sender = NetworkManager.GetClientById( reader.ReadInt64() );
+		Sender = Program.Server.GetClientById( reader.ReadInt64() );
 #endif
 #if CLIENT
 		Sender = NetworkManager.Instance?.GetClientById( reader.ReadInt64() );
