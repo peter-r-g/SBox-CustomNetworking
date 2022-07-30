@@ -34,12 +34,12 @@ public partial class GameInformationEntity
 
 	public void ServerRpc( NetworkedInt i )
 	{
-		Rpc.Call( this, nameof(ServerRpc), i );
+		this.CallRpc( nameof(ServerRpc), i );
 	}
 
 	public async Task GetServerValue()
 	{
-		var response = await Rpc.CallAsync( this, nameof(GetServerValue) );
+		var response = await this.CallRpcAsync( nameof(GetServerValue) );
 		if ( response.State == RpcCallState.Failed )
 			return;
 		

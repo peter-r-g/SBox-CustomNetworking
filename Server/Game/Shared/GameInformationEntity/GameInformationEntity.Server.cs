@@ -23,15 +23,15 @@ public partial class GameInformationEntity
 	
 	public void ClientRpc( NetworkedInt i )
 	{
-		Rpc.Call( this, nameof(ClientRpc), i );
+		this.CallRpc( nameof(ClientRpc), i );
 	}
 
 	public async Task GetClientValue()
 	{
 		if ( NetworkManager.Clients.IsEmpty )
 			return;
-		
-		var response = await Rpc.CallAsync( NetworkManager.Clients[76561198063494192], this, nameof(GetClientValue) );
+
+		var response = await this.CallRpcAsync( NetworkManager.Clients[76561198063494192], nameof(GetClientValue) );
 		if ( response.State == RpcCallState.Failed )
 			return;
 		
