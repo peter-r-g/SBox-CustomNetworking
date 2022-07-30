@@ -11,7 +11,7 @@ public struct To : IEnumerable<INetworkClient>
 	private IEnumerable<INetworkClient>? _multipleClients;
 	private IEnumerable<INetworkClient>? _ignoredClients;
 	
-	public static To All => Multiple( Program.Server.Clients.Values );
+	public static To All => Multiple( NetworkServer.Instance.Clients.Values );
 
 	public static To Single( INetworkClient client )
 	{

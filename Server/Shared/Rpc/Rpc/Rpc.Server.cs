@@ -22,7 +22,7 @@ public partial class Rpc
 		params INetworkable[] parameters )
 	{
 		var message = CreateRpc( true, entity, methodName, parameters );
-		Program.Server.QueueMessage( To.Single( client ), message );
+		NetworkServer.Instance.QueueMessage( To.Single( client ), message );
 		return await WaitForResponseAsync( message.CallGuid );
 	}
 
@@ -35,18 +35,19 @@ public partial class Rpc
 		params INetworkable[] parameters )
 	{
 		var message = CreateRpc( true, type, methodName, parameters );
-		Program.Server.QueueMessage( To.Single( client ), message );
+		NetworkServer.Instance.QueueMessage( To.Single( client ), message );
 		return await WaitForResponseAsync( message.CallGuid );
 	}
 	
 	public static void Call( To to, IEntity entity, string methodName, params INetworkable[] parameters )
 	{
-		Program.Server.QueueMessage( to, CreateRpc( false, entity, methodName, parameters ) );
+		NetworkServer.Instance.QueueMessage( to, CreateRpc( false, entity, methodName, parameters ) );
 	}
 	
 	public static void Call( To to, Type type, string methodName, params INetworkable[] parameters )
 	{
-		Program.Server.QueueMessage( to, CreateRpc( false, type, methodName, parameters ) );
+		NetworkServer.Instance.QueueMessage( to, CreateRpc( false, type, methodName, parameters ) );
+	}
 	}
 }
 #endif

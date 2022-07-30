@@ -23,8 +23,8 @@ public static class Program
 	                                             DateTime.Now.ToString( CultureInfo.CurrentCulture )
 		                                             .Replace( ':', '-' ) + ".log";
 
-	public static NetworkServer Server;
 	private static Game.Game _game;
+	private static NetworkServer Server = null!;
 
 	private static Thread? _networkingThread;
 	private static Task? _drawConsoleTask;
