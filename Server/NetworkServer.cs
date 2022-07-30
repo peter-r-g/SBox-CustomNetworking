@@ -44,8 +44,28 @@ public sealed class NetworkServer
 		
 		Instance = this;
 	}
+	public void QueueMessage( To to, NetworkMessage message )
+	{
+		_outgoingQueue.Enqueue( (to, message) );
+	}
+	public void QueueIncoming( INetworkClient client, NetworkMessage message )
+	{
+		_incomingQueue.Enqueue( (client, message) );
+	}
 
 	public async void NetworkingMain()
+	public void HandleMessage<T>( Action<INetworkClient, NetworkMessage> cb ) where T : NetworkMessage
+	{
+		var messageType = typeof(T);
+		if ( _messageHandlers.ContainsKey( messageType ) )
+			throw new Exception( $"Message type {messageType} is already being handled." );
+
+		_messageHandlers.Add( messageType, cb );
+	}
+	public INetworkClient? GetClientById( long clientId )
+	{
+		return Clients.ContainsKey( clientId ) ? Clients[clientId] : null;
+	}
 	{
 		var options = new WebSocketListenerOptions
 		{
@@ -216,40 +236,5 @@ public sealed class NetworkServer
 			foreach ( var partialMessage in partialMessages )
 				client.SendMessage( partialMessage );
 		}
-	}
-
-	public void QueueMessage( To to, NetworkMessage message )
-	{
-		_outgoingQueue.Enqueue( (to, message) );
-	}
-
-	public void DispatchIncoming()
-	{
-		while ( _incomingQueue.TryDequeue( out var pair ) )
-		{
-			if ( !_messageHandlers.TryGetValue( pair.Item2.GetType(), out var cb ) )
-				throw new Exception( $"Unhandled message {pair.Item2.GetType()}." );
-		
-			cb.Invoke( pair.Item1, pair.Item2 );	
-		}
-	}
-
-	public void QueueIncoming( INetworkClient client, NetworkMessage message )
-	{
-		_incomingQueue.Enqueue( (client, message) );
-	}
-
-	public void HandleMessage<T>( Action<INetworkClient, NetworkMessage> cb ) where T : NetworkMessage
-	{
-		var messageType = typeof(T);
-		if ( _messageHandlers.ContainsKey( messageType ) )
-			throw new Exception( $"Message type {messageType} is already being handled." );
-
-		_messageHandlers.Add( messageType, cb );
-	}
-
-	public INetworkClient? GetClientById( long playerId )
-	{
-		return playerId == -1 ? null : Clients[playerId];
 	}
 }
