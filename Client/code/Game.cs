@@ -1,5 +1,4 @@
 ﻿using CustomNetworking.Client.UI;
-using CustomNetworking.Game;
 using CustomNetworking.Shared;
 using Sandbox;
 
@@ -23,7 +22,6 @@ public class MyGame : Sandbox.Game
 		NetworkManager.Disconnected += OnDisconnected;
 		NetworkManager.ClientConnected += OnClientConnected;
 		NetworkManager.ClientDisconnected += OnClientDisconnected;
-		NetworkManager.HandleMessage<SayMessage>( HandleSayMessage );
 		EntityManager = new EntityManager();
 		GameHud = new GameHud();
 	}
@@ -63,16 +61,6 @@ public class MyGame : Sandbox.Game
 	private static void OnClientDisconnected( INetworkClient client )
 	{
 		ClientChatBox.AddInformation( $"{client.ClientId} has left", $"avatar{client.ClientId}" );
-	}
-
-	private static void HandleSayMessage( NetworkMessage message )
-	{
-		if ( message is not SayMessage sayMessage )
-			return;
-
-		var clientName = sayMessage.Sender is null ? "Server" : sayMessage.Sender.ClientId.ToString();
-		var avatar = sayMessage.Sender is null ? null : $"avatar:{sayMessage.Sender.ClientId}";
-		ClientChatBox.AddChatEntry( clientName, sayMessage.Message, avatar );
 	}
 
 	[ConCmd.Client( "connect_to_server" )]
