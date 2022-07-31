@@ -9,6 +9,9 @@ using CustomNetworking.Shared.Networkables;
 
 namespace CustomNetworking.Shared;
 
+/// <summary>
+/// A collection of methods to execute Remote Procedure Calls (RPCs).
+/// </summary>
 public static partial class Rpc
 {
 	private static RpcCallMessage CreateRpc( bool respondable, IEntity entity, string methodName, INetworkable[] parameters )
@@ -35,8 +38,15 @@ public static partial class Rpc
 		return response;
 	}
 
+	/// <summary>
+	/// Marks a method to be a client-side RPC.
+	/// </summary>
+	[AttributeUsage( AttributeTargets.Method )]
 	public class ClientAttribute : Attribute
 	{
+		/// <summary>
+		/// The amount of times the server can execute the RPC per second.
+		/// </summary>
 		public double LimitPerSecond;
 
 		public ClientAttribute( double limitPerSecond = double.MaxValue )
@@ -45,8 +55,15 @@ public static partial class Rpc
 		}
 	}
 
+	/// <summary>
+	/// Marks a method to be a server-side RPC.
+	/// </summary>
+	[AttributeUsage( AttributeTargets.Method )]
 	public class ServerAttribute : Attribute
 	{
+		/// <summary>
+		/// The amount of times a client can execute the RPC per second.
+		/// </summary>
 		public double LimitPerSecond;
 
 		public ServerAttribute( double limitPerSecond = double.MaxValue )

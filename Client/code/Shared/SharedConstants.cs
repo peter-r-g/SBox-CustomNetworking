@@ -13,10 +13,6 @@ public static class SharedConstants
 	/// The port on the Uri to connect to.
 	/// </summary>
 	public const int Port = 7087;
-	/// <summary>
-	/// The amount of bytes to fit into each partial message going from server to client.
-	/// </summary>
-	public const int PartialMessagePayloadSize = 60000;
 	
 #if SERVER
 	/// <summary>

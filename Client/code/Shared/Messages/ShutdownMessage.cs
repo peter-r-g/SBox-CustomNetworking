@@ -2,7 +2,10 @@ using CustomNetworking.Shared.Utility;
 
 namespace CustomNetworking.Shared.Messages;
 
-public class ShutdownMessage : NetworkMessage
+/// <summary>
+/// A <see cref="NetworkMessage"/> that notifies clients that the server is shutting down.
+/// </summary>
+public sealed class ShutdownMessage : NetworkMessage
 {
 	public override void Deserialize( NetworkReader reader )
 	{

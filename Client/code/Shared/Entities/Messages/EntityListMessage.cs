@@ -10,8 +10,14 @@ using CustomNetworking.Shared.Entities;
 
 namespace CustomNetworking.Shared.Messages;
 
-public class EntityListMessage : NetworkMessage
+/// <summary>
+/// A server to client <see cref="NetworkMessage"/> containing a list of <see cref="IEntity"/>s to notify the client about.
+/// </summary>
+public sealed class EntityListMessage : NetworkMessage
 {
+	/// <summary>
+	/// The data of all <see cref="IEntity"/>s passed.
+	/// </summary>
 	public List<byte[]> EntityData { get; private set; }
 
 #if SERVER

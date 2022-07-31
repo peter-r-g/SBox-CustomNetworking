@@ -7,11 +7,17 @@ using CustomNetworking.Shared.Utility;
 
 namespace CustomNetworking.Shared.Entities;
 
+/// <summary>
+/// The base class for all of your entity needs.
+/// </summary>
 public partial class NetworkEntity : IEntity
 {
 	public event INetworkable.ChangedEventHandler? Changed;
 	public NetworkedInt EntityId { get; }
 
+	/// <summary>
+	/// The world position of the <see cref="NetworkEntity"/>.
+	/// </summary>
 	public NetworkedVector3 Position
 	{
 		get => _position;
@@ -55,6 +61,10 @@ public partial class NetworkEntity : IEntity
 #endif
 	}
 	
+	/// <summary>
+	/// Called when <see cref="Position"/> has changed.
+	/// </summary>
+	/// <param name="networkable">The new instance of <see cref="Position"/>.</param>
 	protected virtual void OnPositionChanged( INetworkable networkable )
 	{
 #if SERVER

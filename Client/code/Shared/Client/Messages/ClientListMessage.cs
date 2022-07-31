@@ -4,7 +4,7 @@ using CustomNetworking.Shared.Utility;
 namespace CustomNetworking.Shared.Messages;
 
 /// <summary>
-/// A server to client <see cref="NetworkMessage"/> containing a list of clients to notify the client about.
+/// A server to client <see cref="NetworkMessage"/> containing a list of <see cref="INetworkClient"/>s to notify the client about.
 /// </summary>
 public sealed class ClientListMessage : NetworkMessage
 {

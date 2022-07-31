@@ -5,12 +5,30 @@ using CustomNetworking.Shared.Utility;
 
 namespace CustomNetworking.Shared.Messages;
 
-public class RpcCallMessage : NetworkMessage
+/// <summary>
+/// A <see cref="NetworkMessage"/> containing information to call a method from a different realm.
+/// </summary>
+public sealed class RpcCallMessage : NetworkMessage
 {
+	/// <summary>
+	/// The unique identifier for the <see cref="RpcCallMessage"/>.
+	/// </summary>
 	public Guid CallGuid { get; private set; }
+	/// <summary>
+	/// The class name this <see cref="RpcCallMessage"/> came from.
+	/// </summary>
 	public string ClassName { get; private set; }
+	/// <summary>
+	/// The name of the method to call in <see cref="ClassName"/>.
+	/// </summary>
 	public string MethodName { get; private set; }
+	/// <summary>
+	/// The entity instance identifier to call the <see cref="MethodName"/> on.
+	/// </summary>
 	public int EntityId { get; private set; }
+	/// <summary>
+	/// The parameters to send to the <see cref="MethodName"/>.
+	/// </summary>
 	public INetworkable[] Parameters { get; private set; }
 
 	public RpcCallMessage( bool respondable, Type entityType, IEntity? entity, string methodName, params INetworkable[] parameters )
