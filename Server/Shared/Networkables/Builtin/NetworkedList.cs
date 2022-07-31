@@ -41,6 +41,16 @@ public class NetworkedList<T> : INetworkable where T : INetworkable
 	}
 
 	/// <summary>
+	/// Determines whether an element is in the <see cref="List{T}"/>.
+	/// </summary>
+	/// <param name="item">The object to locate in the <see cref="List{T}"/>. The value can be null for reference types.</param>
+	/// <returns>true if item is found in the <see cref="List{T}"/>; otherwise, false.</returns>
+	public bool Contains( T item )
+	{
+		return Value.Contains( item );
+	}
+
+	/// <summary>
 	/// Removes the first occurrence of a specific object from the <see cref="List{T}"/>.
 	/// </summary>
 	/// <param name="item">The object to remove from the <see cref="List{T}"/>. The value can be null for reference types.</param>
