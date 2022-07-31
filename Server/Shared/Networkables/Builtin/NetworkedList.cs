@@ -16,7 +16,13 @@ public class NetworkedList<T> : INetworkable where T : INetworkable
 			Changed?.Invoke( this );
 		}
 	}
-	private List<T> _value = new();
+
+	private List<T> _value;
+
+	private NetworkedList( List<T> list )
+	{
+		_value = list;
+	}
 
 	public void Add( T item )
 	{
@@ -59,5 +65,15 @@ public class NetworkedList<T> : INetworkable where T : INetworkable
 	public void SerializeChanges( NetworkWriter writer )
 	{
 		throw new System.NotImplementedException();
+	}
+	
+	public static implicit operator List<T>( NetworkedList<T> networkedList )
+	{
+		return networkedList.Value;
+	}
+
+	public static implicit operator NetworkedList<T>( List<T> list )
+	{
+		return new NetworkedList<T>( list );
 	}
 }
