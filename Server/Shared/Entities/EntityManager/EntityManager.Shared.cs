@@ -51,11 +51,22 @@ public partial class EntityManager
 		return entity;
 	}
 
+	/// <summary>
+	/// Deletes an entity.
+	/// </summary>
+	/// <remarks>You should not use the <see cref="entity"/> after calling this.</remarks>
+	/// <param name="entity">The entity to delete.</param>
 	public void DeleteEntity( IEntity entity )
 	{
 		entity.Changed -= EntityOnChanged;
 		entity.Delete();
 	}
+
+	/// <summary>
+	/// Deletes an entity with the given entity identifier.
+	/// </summary>
+	/// <param name="entityId">The entity identifier to lookup and delete.</param>
+	/// <exception cref="InvalidOperationException">Thrown when no entity with the given <see cref="entityId"/> is found.</exception>
 	public void DeleteEntity( int entityId )
 	{
 		var entity = GetEntityById( entityId );
@@ -64,6 +75,10 @@ public partial class EntityManager
 
 		DeleteEntity( entity );
 	}
+
+	/// <summary>
+	/// Deletes all entities in this <see cref="EntityManager"/>.
+	/// </summary>
 	public void DeleteAllEntities()
 	{
 		foreach ( var entity in _entities )
