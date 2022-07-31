@@ -5,6 +5,9 @@ using System.Numerics;
 
 namespace CustomNetworking.Shared.Networkables.Builtin;
 
+/// <summary>
+/// Represents a networkable <see cref="System.Numerics.Vector3"/>.
+/// </summary>
 public struct NetworkedVector3 : INetworkable
 {
 	public event INetworkable.ChangedEventHandler? Changed = null;
@@ -30,8 +33,17 @@ public struct NetworkedVector3 : INetworkable
 	private System.Numerics.Vector3 _value;
 #endif
 
+	/// <summary>
+	/// The <see cref="System.Numerics.Vector3.X"/> component of the <see cref="System.Numerics.Vector3"/>.
+	/// </summary>
 	public float X => _value.X;
+	/// <summary>
+	/// The <see cref="System.Numerics.Vector3.Y"/> component of the <see cref="System.Numerics.Vector3"/>.
+	/// </summary>
 	public float Y => _value.Y;
+	/// <summary>
+	/// The <see cref="System.Numerics.Vector3.Z"/> component of the <see cref="System.Numerics.Vector3"/>.
+	/// </summary>
 	public float Z => _value.Z;
 
 	private NetworkedVector3( Vector3 vector3 )

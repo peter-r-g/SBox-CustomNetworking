@@ -14,17 +14,41 @@ using vtortola.WebSockets.Rfc6455;
 
 namespace CustomNetworking.Server;
 
+/// <summary>
+/// Handles a web socket server, its clients, and dispatches messages from them.
+/// </summary>
 public sealed class NetworkServer
 {
+	/// <summary>
+	/// The only instance of the networking server in existence.
+	/// </summary>
 	public static NetworkServer Instance = null!;
 	
 #if DEBUG
+	/// <summary>
+	/// Debug stat for how many messages have been received from clients.
+	/// <remarks>This does not account for any messages from a <see cref="BotClient"/>.</remarks>
+	/// </summary>
 	public int MessagesReceived;
+	/// <summary>
+	/// Debug stat for how messages have been sent to clients.
+	/// <remarks>This does account for any <see cref="BotClient"/>s connected.</remarks>
+	/// </summary>
 	public int MessagesSent;
+	/// <summary>
+	/// Debug stat for how many individual messages have been sent to any clients.
+	/// <remarks>This does account for any <see cref="BotClient"/>s connected.</remarks>
+	/// </summary>
 	public int MessagesSentToClients;
 #endif
 	
+	/// <summary>
+	/// Contains all connected clients. This includes any <see cref="BotClient"/>s.
+	/// </summary>
 	public ConcurrentDictionary<long, INetworkClient> Clients { get; } = new();
+	/// <summary>
+	/// Contains all connected bots.
+	/// </summary>
 	public ConcurrentDictionary<long, BotClient> Bots { get; } = new();
 
 	internal delegate void ClientConnectedEventHandler( INetworkClient client );
@@ -44,15 +68,34 @@ public sealed class NetworkServer
 		
 		Instance = this;
 	}
+	
+	/// <summary>
+	/// Queues a message to be sent to clients.
+	/// </summary>
+	/// <param name="to">The client(s) to send the message to.</param>
+	/// <param name="message">The message to send to each client.</param>
 	public void QueueMessage( To to, NetworkMessage message )
 	{
 		_outgoingQueue.Enqueue( (to, message) );
 	}
+
+	/// <summary>
+	/// Queues a message to be processed by the server.
+	/// </summary>
+	/// <remarks>This should only be used in cases where a <see cref="BotClient"/> is doing something.</remarks>
+	/// <param name="client">The client that sent the message.</param>
+	/// <param name="message">The message the client has sent.</param>
 	public void QueueIncoming( INetworkClient client, NetworkMessage message )
 	{
 		_incomingQueue.Enqueue( (client, message) );
 	}
 
+	/// <summary>
+	/// Adds a handler for the server to dispatch the message to.
+	/// </summary>
+	/// <param name="cb">The method to call when a message of type <see cref="T"/> has come in.</param>
+	/// <typeparam name="T">The message type to handle.</typeparam>
+	/// <exception cref="Exception">Thrown when a handler has already been set for <see cref="T"/>.</exception>
 	public void HandleMessage<T>( Action<INetworkClient, NetworkMessage> cb ) where T : NetworkMessage
 	{
 		var messageType = typeof(T);
@@ -61,6 +104,12 @@ public sealed class NetworkServer
 
 		_messageHandlers.Add( messageType, cb );
 	}
+
+	/// <summary>
+	/// Gets a client that is connected to the server.
+	/// </summary>
+	/// <param name="clientId">The ID of the client to get.</param>
+	/// <returns>The client that was found. Null if no client was found.</returns>
 	public INetworkClient? GetClientById( long clientId )
 	{
 		return Clients.ContainsKey( clientId ) ? Clients[clientId] : null;

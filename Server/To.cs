@@ -5,29 +5,55 @@ using CustomNetworking.Shared;
 
 namespace CustomNetworking.Server;
 
+/// <summary>
+/// Represents a set of target clients to send information to.
+/// </summary>
 public struct To : IEnumerable<INetworkClient>
 {
 	private INetworkClient? _singleClient;
 	private IEnumerable<INetworkClient>? _multipleClients;
 	private IEnumerable<INetworkClient>? _ignoredClients;
 	
+	/// <summary>
+	/// Targets all currently connected clients.
+	/// </summary>
 	public static To All => Multiple( NetworkServer.Instance.Clients.Values );
 
+	/// <summary>
+	/// Targets a single client.
+	/// </summary>
+	/// <param name="client">The client to target.</param>
+	/// <returns>The target.</returns>
 	public static To Single( INetworkClient client )
 	{
 		return new To {_singleClient = client};
 	}
 
+	/// <summary>
+	/// Targets multiple clients.
+	/// </summary>
+	/// <param name="clients"></param>
+	/// <returns>The target.</returns>
 	public static To Multiple( IEnumerable<INetworkClient> clients )
 	{
 		return new To {_multipleClients = clients};
 	}
 
+	/// <summary>
+	/// Targets <see cref="All"/> clients except for the provided clients.
+	/// </summary>
+	/// <param name="clientsToIgnore">The clients to ignore.</param>
+	/// <returns>The target.</returns>
 	public static To AllExcept( IEnumerable<INetworkClient> clientsToIgnore )
 	{
 		return All with {_ignoredClients = clientsToIgnore};
 	}
 
+	/// <summary>
+	/// Targets <see cref="All"/> clients except for the provided clients.
+	/// </summary>
+	/// <param name="clientsToIgnore">The clients to ignore.</param>
+	/// <returns>The target.</returns>
 	public static To AllExcept( params INetworkClient[] clientsToIgnore )
 	{
 		return AllExcept( clientsToIgnore as IEnumerable<INetworkClient> );
