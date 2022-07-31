@@ -89,7 +89,8 @@ public partial class NetworkEntity : IEntity
 		for ( var i = 0; i < changedCount; i++ )
 		{
 			var propertyName = reader.ReadString();
-			_propertyNameCache[propertyName].SetValue( this, reader.ReadNetworkable() );
+			var currentValue = _propertyNameCache[propertyName].GetValue( this );
+			(currentValue as INetworkable)!.DeserializeChanges( reader );
 		}
 #endif
 	}
@@ -111,7 +112,7 @@ public partial class NetworkEntity : IEntity
 		foreach ( var propertyName in _changedProperties )
 		{
 			writer.Write( propertyName );
-			writer.WriteNetworkable( (INetworkable)_propertyNameCache[propertyName].GetValue( this )! );
+			writer.WriteNetworkableChanges( (INetworkable)_propertyNameCache[propertyName].GetValue( this )! );
 		}
 		_changedProperties.Clear();
 #endif
