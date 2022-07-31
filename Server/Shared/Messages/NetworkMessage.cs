@@ -32,7 +32,7 @@ public abstract class NetworkMessage : INetworkable
 	// TODO: Manually chunk everything
 	public static PartialMessage[] Split( IEnumerable<byte> bytes )
 	{
-		var chunks = bytes.Chunk( SharedConstants.PartialMessagePayloadSize );
+		var chunks = bytes.Chunk( PartialMessage.MaxPayloadSize );
 		var chunkCount = chunks.Count();
 		var partialMessages = new PartialMessage[chunkCount];
 		

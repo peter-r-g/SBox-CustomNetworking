@@ -8,6 +8,7 @@ namespace CustomNetworking.Shared.Messages;
 
 public class PartialMessage : NetworkMessage
 {
+	public const int MaxPayloadSize = SharedConstants.MaxBufferSize - 16 - sizeof(int) - sizeof(int) - 100;
 	public Guid MessageGuid { get; private set; }
 	public int NumPieces { get; private set; }
 	public int Piece { get; private set; }
