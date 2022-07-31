@@ -51,6 +51,11 @@ public partial class EntityManager
 		return entity;
 	}
 
+	public void DeleteEntity( IEntity entity )
+	{
+		entity.Changed -= EntityOnChanged;
+		entity.Delete();
+	}
 	/// <summary>
 	/// Gets an <see cref="IEntity"/> in this <see cref="EntityManager"/>.
 	/// </summary>
