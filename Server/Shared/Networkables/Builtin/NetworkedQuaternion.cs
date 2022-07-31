@@ -1,3 +1,4 @@
+using System;
 using System.Numerics;
 using CustomNetworking.Shared.Utility;
 
@@ -35,7 +36,7 @@ public struct NetworkedQuaternion : INetworkable
 
 	public void DeserializeChanges( NetworkReader reader )
 	{
-		throw new System.NotImplementedException();
+		throw new NotImplementedException();
 	}
 
 	public void Serialize( NetworkWriter writer )
@@ -48,7 +49,7 @@ public struct NetworkedQuaternion : INetworkable
 
 	public void SerializeChanges( NetworkWriter writer )
 	{
-		throw new System.NotImplementedException();
+		throw new NotImplementedException();
 	}
 
 	public override string ToString()
