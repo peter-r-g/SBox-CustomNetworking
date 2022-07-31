@@ -2,7 +2,7 @@
 
 namespace CustomNetworking.Shared.Messages;
 
-public class CreateEntityMessage : NetworkMessage
+public sealed class CreateEntityMessage : NetworkMessage
 {
 	public string EntityClass { get; private set; }
 	public int EntityId { get; private set; }

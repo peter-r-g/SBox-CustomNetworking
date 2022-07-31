@@ -10,7 +10,7 @@ using CustomNetworking.Shared.Entities;
 
 namespace CustomNetworking.Shared.Messages;
 
-public class EntityListMessage : NetworkMessage
+public sealed class EntityListMessage : NetworkMessage
 {
 	public List<byte[]> EntityData { get; private set; }
 

@@ -9,7 +9,7 @@ using CustomNetworking.Shared.Entities;
 
 namespace CustomNetworking.Shared.Messages;
 
-public class EntityUpdateMessage : NetworkMessage
+public sealed class EntityUpdateMessage : NetworkMessage
 {
 	public int EntityId { get; private set; }
 	public byte[] EntityData { get; private set; }
