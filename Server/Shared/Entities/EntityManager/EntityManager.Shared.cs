@@ -23,22 +23,6 @@ public partial class EntityManager
 	private readonly List<IEntity> _entities = new();
 	private int _nextEntityId;
 
-	private T CreateInternal<T>( int entityId, Type? entityType = null ) where T : IEntity
-	{
-#if SERVER
-		var entity = (T?)Activator.CreateInstance( entityType ?? typeof(T), entityId );
-#endif
-#if CLIENT
-		var entity = TypeLibrary.Create<T>( entityType ?? typeof(T), new object[] {entityId} );
-#endif
-		if ( entity is null )
-			throw new Exception( $"Failed to create instance of {entityType ?? typeof(T)}" );
-		
-		_entities.Add( entity );
-		entity.Changed += EntityOnChanged;
-		return entity;
-	}
-
 	/// <summary>
 	/// Creates and adds a new <see cref="IEntity"/> to this <see cref="EntityManager"/>.
 	/// </summary>
@@ -81,6 +65,22 @@ public partial class EntityManager
 		}
 
 		return null;
+	}
+	
+	private T CreateInternal<T>( int entityId, Type? entityType = null ) where T : IEntity
+	{
+#if SERVER
+		var entity = (T?)Activator.CreateInstance( entityType ?? typeof(T), entityId );
+#endif
+#if CLIENT
+		var entity = TypeLibrary.Create<T>( entityType ?? typeof(T), new object[] {entityId} );
+#endif
+		if ( entity is null )
+			throw new Exception( $"Failed to create instance of {entityType ?? typeof(T)}" );
+		
+		_entities.Add( entity );
+		entity.Changed += EntityOnChanged;
+		return entity;
 	}
 	
 	private void EntityOnChanged( INetworkable entity )
