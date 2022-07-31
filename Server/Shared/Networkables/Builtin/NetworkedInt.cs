@@ -32,7 +32,7 @@ public struct NetworkedInt : INetworkable
 
 	public void DeserializeChanges( NetworkReader reader )
 	{
-		throw new System.NotImplementedException();
+		Deserialize( reader );
 	}
 
 	public void Serialize( NetworkWriter writer )
@@ -42,7 +42,7 @@ public struct NetworkedInt : INetworkable
 
 	public void SerializeChanges( NetworkWriter writer )
 	{
-		throw new System.NotImplementedException();
+		Serialize( writer );
 	}
 
 	public override string ToString()

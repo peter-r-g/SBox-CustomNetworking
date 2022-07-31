@@ -51,7 +51,7 @@ public struct NetworkedQuaternion : INetworkable
 
 	public void DeserializeChanges( NetworkReader reader )
 	{
-		throw new NotImplementedException();
+		Deserialize( reader );
 	}
 
 	public void Serialize( NetworkWriter writer )
@@ -64,7 +64,7 @@ public struct NetworkedQuaternion : INetworkable
 
 	public void SerializeChanges( NetworkWriter writer )
 	{
-		throw new NotImplementedException();
+		Serialize( writer );
 	}
 
 	public override string ToString()
