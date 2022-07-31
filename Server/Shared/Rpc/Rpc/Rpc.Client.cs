@@ -11,7 +11,7 @@ namespace CustomNetworking.Shared;
 
 public partial class Rpc
 {
-	public static readonly Dictionary<Guid, RpcCallResponseMessage> RpcResponses = new();
+	private static readonly Dictionary<Guid, RpcCallResponseMessage> RpcResponses = new();
 	
 	public static void Call( IEntity entity, string methodName, params INetworkable[] parameters )
 	{
