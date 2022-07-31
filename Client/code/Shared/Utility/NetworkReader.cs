@@ -8,17 +8,29 @@ using CustomNetworking.Shared.Networkables;
 
 namespace CustomNetworking.Shared.Utility;
 
+/// <summary>
+/// Reads any data relating to networking and primitive types.
+/// </summary>
 public class NetworkReader : BinaryReader
 {
 	public NetworkReader( Stream input ) : base( input )
 	{
 	}
 
+	/// <summary>
+	/// Reads a 16 byte Globally Unique Identifier (<see cref="Guid"/>).
+	/// </summary>
+	/// <returns>The parsed <see cref="Guid"/>.</returns>
 	public Guid ReadGuid()
 	{
 		return new Guid( ReadBytes( 16 ) );
 	}
 
+	/// <summary>
+	/// Reads an instance of <see cref="INetworkable"/>.
+	/// </summary>
+	/// <returns>The parsed <see cref="INetworkable"/>.</returns>
+	/// <exception cref="InvalidOperationException">Thrown when reading the <see cref="INetworkable"/> has failed.</exception>
 	public INetworkable ReadNetworkable()
 	{
 		var typeName = ReadString();
@@ -75,6 +87,12 @@ public class NetworkReader : BinaryReader
 		return networkable;
 	}
 
+	/// <summary>
+	/// Reads an instance of <see cref="INetworkable"/> and casts it to <see cref="T"/>.
+	/// </summary>
+	/// <typeparam name="T">The <see cref="INetworkable"/> type to cast into.</typeparam>
+	/// <returns>The parsed <see cref="INetworkable"/>.</returns>
+	/// <exception cref="InvalidOperationException">Thrown when reading the <see cref="INetworkable"/> has failed.</exception>
 	public T ReadNetworkable<T>() where T : INetworkable
 	{
 		if ( typeof(T).IsAssignableTo( typeof(IEntity) ) )
@@ -88,6 +106,11 @@ public class NetworkReader : BinaryReader
 	}
 
 	// TODO: When reading an entity. Try to only read the entity ID. If there's more info after that then read a whole entity.
+	/// <summary>
+	/// Reads an instance of <see cref="IEntity"/>.
+	/// </summary>
+	/// <returns>The parsed <see cref="IEntity"/>.</returns>
+	/// <exception cref="InvalidOperationException">Thrown when reading the <see cref="IEntity"/> has failed.</exception>
 	public IEntity ReadEntity()
 	{
 		var typeName = ReadString();
@@ -110,7 +133,13 @@ public class NetworkReader : BinaryReader
 		entity.Deserialize( this );
 		return entity;
 	}
-
+	
+	/// <summary>
+	/// Reads an instance of <see cref="IEntity"/> and casts it to <see cref="T"/>.
+	/// </summary>
+	/// <typeparam name="T">The <see cref="IEntity"/> type to cast into.</typeparam>
+	/// <returns>The parsed <see cref="IEntity"/>.</returns>
+	/// <exception cref="InvalidOperationException">Thrown when reading the <see cref="IEntity"/> has failed.</exception>
 	public T ReadEntity<T>()
 	{
 		var entity = ReadEntity();
@@ -120,6 +149,10 @@ public class NetworkReader : BinaryReader
 		return outputEntity;
 	}
 
+	/// <summary>
+	/// Reads all changes relating to an <see cref="INetworkable"/> instance.
+	/// </summary>
+	/// <param name="networkable">The <see cref="INetworkable"/> to deserialize the changes into.</param>
 	public void ReadNetworkableChanges( INetworkable networkable )
 	{
 		networkable.DeserializeChanges( this );

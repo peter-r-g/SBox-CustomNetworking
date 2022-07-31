@@ -3,8 +3,14 @@ using CustomNetworking.Shared.Utility;
 
 namespace CustomNetworking.Shared.Messages;
 
-public class ClientListMessage : NetworkMessage
+/// <summary>
+/// A server to client <see cref="NetworkMessage"/> containing a list of clients to notify the client about.
+/// </summary>
+public sealed class ClientListMessage : NetworkMessage
 {
+	/// <summary>
+	/// Contains all client IDs to notify the client about.
+	/// </summary>
 	public ICollection<long> ClientIds { get; private set; }
 
 #if SERVER

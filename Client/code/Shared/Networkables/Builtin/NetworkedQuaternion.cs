@@ -1,8 +1,12 @@
+using System;
 using System.Numerics;
 using CustomNetworking.Shared.Utility;
 
 namespace CustomNetworking.Shared.Networkables.Builtin;
 
+/// <summary>
+/// Represents a networkable <see cref="Quaternion"/>.
+/// </summary>
 public struct NetworkedQuaternion : INetworkable
 {
 	public event INetworkable.ChangedEventHandler? Changed = null;
@@ -18,9 +22,21 @@ public struct NetworkedQuaternion : INetworkable
 	}
 	private Quaternion _value;
 
+	/// <summary>
+	/// The <see cref="Quaternion.X"/> component of the <see cref="Quaternion"/>.
+	/// </summary>
 	public float X => _value.X;
+	/// <summary>
+	/// The <see cref="Quaternion.Y"/> component of the <see cref="Quaternion"/>.
+	/// </summary>
 	public float Y => _value.Y;
+	/// <summary>
+	/// The <see cref="Quaternion.Z"/> component of the <see cref="Quaternion"/>.
+	/// </summary>
 	public float Z => _value.Z;
+	/// <summary>
+	/// The <see cref="Quaternion.W"/> component of the <see cref="Quaternion"/>.
+	/// </summary>
 	public float W => _value.W;
 
 	private NetworkedQuaternion( Quaternion quaternion )
@@ -35,7 +51,7 @@ public struct NetworkedQuaternion : INetworkable
 
 	public void DeserializeChanges( NetworkReader reader )
 	{
-		throw new System.NotImplementedException();
+		throw new NotImplementedException();
 	}
 
 	public void Serialize( NetworkWriter writer )
@@ -48,7 +64,7 @@ public struct NetworkedQuaternion : INetworkable
 
 	public void SerializeChanges( NetworkWriter writer )
 	{
-		throw new System.NotImplementedException();
+		throw new NotImplementedException();
 	}
 
 	public override string ToString()

@@ -7,9 +7,9 @@ namespace CustomNetworking.Shared;
 
 public partial class NetworkClient
 {
-	public ClientSocket ClientSocket { get; }
+	internal ClientSocket ClientSocket { get; }
 	
-	public NetworkClient( long clientId, ClientSocket clientSocket )
+	internal NetworkClient( long clientId, ClientSocket clientSocket )
 	{
 		ClientId = clientId;
 		ClientSocket = clientSocket;
@@ -33,17 +33,18 @@ public partial class NetworkClient
 	
 	public void SendMessage( NetworkMessage message )
 	{
-#if DEBUG
-		NetworkServer.Instance.MessagesSentToClients++;
-#endif
 		var stream = new MemoryStream();
 		var writer = new NetworkWriter( stream );
 		writer.WriteNetworkable( message );
 		writer.Close();
 		
-		ClientSocket.Send( stream.ToArray() );
+		SendMessage( stream.ToArray() );
 	}
 	
+	/// <summary>
+	/// Called when data has been received from the client.
+	/// </summary>
+	/// <param name="stream">The data the client has sent.</param>
 	protected virtual void OnDataReceived( MemoryStream stream )
 	{
 		var reader = new NetworkReader( stream );
@@ -53,6 +54,10 @@ public partial class NetworkClient
 		NetworkServer.Instance.QueueIncoming( this, message );
 	}
 
+	/// <summary>
+	/// Called when a message has been received from the client.
+	/// </summary>
+	/// <param name="message">The message the client has sent.</param>
 	protected virtual void OnMessageReceived( string message )
 	{
 	}

@@ -2,6 +2,9 @@ using CustomNetworking.Shared.Utility;
 
 namespace CustomNetworking.Shared.Networkables.Builtin;
 
+/// <summary>
+/// Represents a networkable <see cref="NetworkedString"/>.
+/// </summary>
 public struct NetworkedString : INetworkable
 {
 	public event INetworkable.ChangedEventHandler? Changed = null;

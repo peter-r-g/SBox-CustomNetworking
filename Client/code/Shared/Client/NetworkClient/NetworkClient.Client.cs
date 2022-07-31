@@ -3,7 +3,7 @@ namespace CustomNetworking.Shared;
 
 public partial class NetworkClient
 {
-	public NetworkClient( long clientId )
+	internal NetworkClient( long clientId )
 	{
 		ClientId = clientId;
 	}
