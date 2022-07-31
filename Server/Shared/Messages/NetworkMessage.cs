@@ -1,7 +1,9 @@
 ﻿using System;
+#if SERVER
 using System.Collections.Generic;
 using System.Linq;
 using CustomNetworking.Shared.Messages;
+#endif
 using CustomNetworking.Shared.Networkables;
 using CustomNetworking.Shared.Utility;
 

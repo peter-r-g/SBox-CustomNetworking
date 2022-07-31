@@ -1,7 +1,9 @@
 #if CLIENT
 using System.Buffers;
 #endif
+#if SERVER
 using System.IO;
+#endif
 using CustomNetworking.Shared.Utility;
 #if SERVER
 using CustomNetworking.Shared.Entities;
