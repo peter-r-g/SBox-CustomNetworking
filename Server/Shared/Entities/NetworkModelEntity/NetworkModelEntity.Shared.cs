@@ -3,8 +3,14 @@ using CustomNetworking.Shared.Networkables.Builtin;
 
 namespace CustomNetworking.Shared.Entities;
 
+/// <summary>
+/// A <see cref="NetworkEntity"/> that can have a model.
+/// </summary>
 public partial class NetworkModelEntity : NetworkEntity
 {
+	/// <summary>
+	/// The world rotation of the <see cref="NetworkModelEntity"/>.
+	/// </summary>
 	public NetworkedQuaternion Rotation
 	{
 		get => _rotation;
@@ -18,6 +24,9 @@ public partial class NetworkModelEntity : NetworkEntity
 	}
 	private NetworkedQuaternion _rotation;
 	
+	/// <summary>
+	/// The model the <see cref="NetworkModelEntity"/> should use.
+	/// </summary>
 	public NetworkedString ModelName
 	{
 		get => _modelName;
@@ -35,6 +44,10 @@ public partial class NetworkModelEntity : NetworkEntity
 	{
 	}
 	
+	/// <summary>
+	/// Called when <see cref="Rotation"/> has changed.
+	/// </summary>
+	/// <param name="networkable">The new instance of <see cref="Rotation"/>.</param>
 	protected virtual void OnRotationChanged( INetworkable networkable )
 	{
 #if SERVER
@@ -42,6 +55,10 @@ public partial class NetworkModelEntity : NetworkEntity
 #endif
 	}
 	
+	/// <summary>
+	/// Called when <see cref="ModelName"/> has changed.
+	/// </summary>
+	/// <param name="networkable">The new instance of <see cref="ModelName"/>.</param>
 	protected virtual void OnModelNameChanged( INetworkable networkable )
 	{
 #if CLIENT

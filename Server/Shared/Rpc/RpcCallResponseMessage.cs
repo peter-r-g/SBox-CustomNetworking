@@ -4,10 +4,22 @@ using CustomNetworking.Shared.Utility;
 
 namespace CustomNetworking.Shared.Messages;
 
+/// <summary>
+/// A <see cref="NetworkMessage"/> containing a response to a <see cref="RpcCallMessage"/>.
+/// </summary>
 public sealed class RpcCallResponseMessage : NetworkMessage
 {
+	/// <summary>
+	/// The unique identifier of the <see cref="RpcCallMessage"/> this message is responding to.
+	/// </summary>
 	public Guid CallGuid { get; private set; }
+	/// <summary>
+	/// The state of the executed <see cref="RpcCallMessage"/>.
+	/// </summary>
 	public RpcCallState State { get; private set; }
+	/// <summary>
+	/// The return value from the <see cref="RpcCallMessage"/>.
+	/// </summary>
 	public INetworkable? ReturnValue { get; private set; }
 
 	public RpcCallResponseMessage( Guid callGuid, RpcCallState state, INetworkable? returnValue = null )

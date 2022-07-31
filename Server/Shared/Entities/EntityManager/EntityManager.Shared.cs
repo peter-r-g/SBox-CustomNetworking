@@ -5,9 +5,19 @@ using CustomNetworking.Shared.Networkables;
 
 namespace CustomNetworking.Shared;
 
+/// <summary>
+/// Container for a collection of entities.
+/// </summary>
 public partial class EntityManager
 {
+	/// <summary>
+	/// A read only list of all <see cref="IEntity"/>s that are in this <see cref="EntityManager"/>.
+	/// </summary>
 	public IReadOnlyList<IEntity> Entities => _entities;
+	
+	/// <summary>
+	/// Called when an <see cref="IEntity"/> inside this <see cref="EntityManager"/> has changed.
+	/// </summary>
 	public INetworkable.ChangedEventHandler? EntityChanged;
 	
 	private readonly List<IEntity> _entities = new();
@@ -29,6 +39,11 @@ public partial class EntityManager
 		return entity;
 	}
 
+	/// <summary>
+	/// Creates and adds a new <see cref="IEntity"/> to this <see cref="EntityManager"/>.
+	/// </summary>
+	/// <typeparam name="T">The type of <see cref="IEntity"/> to create.</typeparam>
+	/// <returns>The created <see cref="IEntity"/> as <see cref="T"/>.</returns>
 	public T Create<T>() where T : class, IEntity
 	{
 		var entity = CreateInternal<T>( _nextEntityId );
@@ -36,6 +51,12 @@ public partial class EntityManager
 		return entity;
 	}
 
+	/// <summary>
+	/// Creates and adds a new <see cref="IEntity"/> to this <see cref="EntityManager"/>.
+	/// /// </summary>
+	/// <param name="entityType">The type of <see cref="IEntity"/> to create.</param>
+	/// <returns>The created <see cref="IEntity"/>.</returns>
+	/// <exception cref="Exception">Thrown when <see cref="entityType"/> is not a class or does not implement <see cref="IEntity"/>.</exception>
 	public IEntity Create( Type entityType )
 	{
 		if ( !entityType.IsClass || !entityType.IsAssignableTo( typeof(IEntity) ) )
@@ -46,6 +67,11 @@ public partial class EntityManager
 		return entity;
 	}
 
+	/// <summary>
+	/// Gets an <see cref="IEntity"/> in this <see cref="EntityManager"/>.
+	/// </summary>
+	/// <param name="entityId">The ID of the <see cref="IEntity"/> to get.</param>
+	/// <returns>The <see cref="IEntity"/> that was found. Null if no <see cref="IEntity"/> was found.</returns>
 	public IEntity? GetEntityById( int entityId )
 	{
 		foreach ( var entity in _entities )

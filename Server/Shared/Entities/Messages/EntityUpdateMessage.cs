@@ -9,9 +9,18 @@ using CustomNetworking.Shared.Entities;
 
 namespace CustomNetworking.Shared.Messages;
 
+/// <summary>
+/// A server to client <see cref="NetworkMessage"/> containing information about an <see cref="IEntity"/> that has updated.
+/// </summary>
 public sealed class EntityUpdateMessage : NetworkMessage
 {
+	/// <summary>
+	/// The unique identifier of the <see cref="IEntity"/> that has been updated.
+	/// </summary>
 	public int EntityId { get; private set; }
+	/// <summary>
+	/// The changed data of the <see cref="IEntity"/>.
+	/// </summary>
 	public byte[] EntityData { get; private set; }
 	
 #if SERVER

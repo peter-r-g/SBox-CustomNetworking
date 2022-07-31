@@ -7,6 +7,9 @@ using CustomNetworking.Shared.Utility;
 
 namespace CustomNetworking.Shared;
 
+/// <summary>
+/// Base class for sending any information between a client and a server.
+/// </summary>
 public abstract class NetworkMessage : INetworkable
 {
 	public event INetworkable.ChangedEventHandler? Changed;
@@ -30,6 +33,11 @@ public abstract class NetworkMessage : INetworkable
 
 #if SERVER
 	// TODO: Manually chunk everything
+	/// <summary>
+	/// Splits up a <see cref="NetworkMessage"/> into <see cref="PartialMessage"/>s that can be sent without exceeding <see cref="SharedConstants"/>.<see cref="SharedConstants.MaxBufferSize"/>.
+	/// </summary>
+	/// <param name="bytes">The bytes to split.</param>
+	/// <returns>An array of the created partial messages.</returns>
 	public static PartialMessage[] Split( IEnumerable<byte> bytes )
 	{
 		var chunks = bytes.Chunk( PartialMessage.MaxPayloadSize );

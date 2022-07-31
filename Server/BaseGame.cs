@@ -98,7 +98,7 @@ public class BaseGame
 	}
 	
 	/// <summary>
-	/// Called when a client has been authorized and has joined the server.
+	/// Called when a <see cref="INetworkClient"/> has been authorized and has joined the server.
 	/// </summary>
 	/// <param name="client">The handle of the client that has connected.</param>
 	public virtual void OnClientConnected( INetworkClient client )
@@ -110,7 +110,7 @@ public class BaseGame
 	}
 
 	/// <summary>
-	/// Called when a client has disconnected from the server. This could be intentional or due to a timeout.
+	/// Called when a <see cref="INetworkClient"/> has disconnected from the server. This could be intentional or due to a timeout.
 	/// </summary>
 	/// <param name="client">The handle of the client that has disconnected.</param>
 	public virtual void OnClientDisconnected( INetworkClient client )
@@ -120,20 +120,20 @@ public class BaseGame
 	}
 	
 	/// <summary>
-	/// Gets an entity that is local to the server.
+	/// Gets an <see cref="IEntity"/> that is local to the server.
 	/// </summary>
-	/// <param name="entityId">The ID of the entity to get.</param>
-	/// <returns>The entity that was found. Null if no entity was found.</returns>
+	/// <param name="entityId">The ID of the <see cref="IEntity"/> to get.</param>
+	/// <returns>The <see cref="IEntity"/> that was found. Null if no <see cref="IEntity"/> was found.</returns>
 	public IEntity? GetLocalEntityById( int entityId )
 	{
 		return ServerEntityManager.GetEntityById( entityId );
 	}
 
 	/// <summary>
-	/// Gets an entity that is available to both client and server.
+	/// Gets an <see cref="IEntity"/> that is available to both client and server.
 	/// </summary>
-	/// <param name="entityId">The ID of the entity to get.</param>
-	/// <returns>The entity that was found. Null if no entity was found.</returns>
+	/// <param name="entityId">The ID of the <see cref="IEntity"/> to get.</param>
+	/// <returns>The <see cref="IEntity"/> that was found. Null if no <see cref="IEntity"/> was found.</returns>
 	public IEntity? GetNetworkedEntityById( int entityId )
 	{
 		return SharedEntityManager.GetEntityById( entityId );
