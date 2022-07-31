@@ -33,15 +33,12 @@ public partial class NetworkClient
 	
 	public void SendMessage( NetworkMessage message )
 	{
-#if DEBUG
-		NetworkServer.Instance.MessagesSentToClients++;
-#endif
 		var stream = new MemoryStream();
 		var writer = new NetworkWriter( stream );
 		writer.WriteNetworkable( message );
 		writer.Close();
 		
-		ClientSocket.Send( stream.ToArray() );
+		SendMessage( stream.ToArray() );
 	}
 	
 	protected virtual void OnDataReceived( MemoryStream stream )
