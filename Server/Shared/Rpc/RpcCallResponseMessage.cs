@@ -4,7 +4,7 @@ using CustomNetworking.Shared.Utility;
 
 namespace CustomNetworking.Shared.Messages;
 
-public class RpcCallResponseMessage : NetworkMessage
+public sealed class RpcCallResponseMessage : NetworkMessage
 {
 	public Guid CallGuid { get; private set; }
 	public RpcCallState State { get; private set; }

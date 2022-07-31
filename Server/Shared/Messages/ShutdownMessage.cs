@@ -2,7 +2,7 @@ using CustomNetworking.Shared.Utility;
 
 namespace CustomNetworking.Shared.Messages;
 
-public class ShutdownMessage : NetworkMessage
+public sealed class ShutdownMessage : NetworkMessage
 {
 	public override void Deserialize( NetworkReader reader )
 	{
