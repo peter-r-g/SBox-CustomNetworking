@@ -19,13 +19,13 @@ public abstract class NetworkMessage : INetworkable
 	public abstract void Deserialize( NetworkReader reader );
 	public void DeserializeChanges( NetworkReader reader )
 	{
-		throw new NotImplementedException();
+		Deserialize( reader );
 	}
 
 	public abstract void Serialize( NetworkWriter writer );
 	public void SerializeChanges( NetworkWriter writer )
 	{
-		throw new NotImplementedException();
+		Serialize( writer );
 	}
 
 	public static NetworkMessage DeserializeMessage( NetworkReader reader )
