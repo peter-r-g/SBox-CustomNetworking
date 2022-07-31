@@ -134,6 +134,7 @@ public sealed class NetworkServer
 		await server.StartAsync();
 		var clientAcceptTask = Task.Run( () => AcceptWebSocketClientsAsync( server, Program.ProgramCancellation.Token ) );
 
+		// TODO: Cooking the CPU is not a very cool way of doing this
 		while ( !Program.ProgramCancellation.IsCancellationRequested )
 		{
 		}
