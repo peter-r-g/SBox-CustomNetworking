@@ -64,6 +64,12 @@ public partial class EntityManager
 
 		DeleteEntity( entity );
 	}
+	public void DeleteAllEntities()
+	{
+		foreach ( var entity in _entities )
+			DeleteEntity( entity );
+	}
+
 	/// <summary>
 	/// Gets an <see cref="IEntity"/> in this <see cref="EntityManager"/>.
 	/// </summary>
