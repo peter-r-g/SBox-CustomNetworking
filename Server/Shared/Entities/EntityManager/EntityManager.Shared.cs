@@ -56,6 +56,14 @@ public partial class EntityManager
 		entity.Changed -= EntityOnChanged;
 		entity.Delete();
 	}
+	public void DeleteEntity( int entityId )
+	{
+		var entity = GetEntityById( entityId );
+		if ( entity is null )
+			throw new InvalidOperationException( $"Failed to delete entity (No entity with the ID \"{entityId}\" exists)." );
+
+		DeleteEntity( entity );
+	}
 	/// <summary>
 	/// Gets an <see cref="IEntity"/> in this <see cref="EntityManager"/>.
 	/// </summary>
