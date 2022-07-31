@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using CustomNetworking.Shared.Utility;
 
@@ -20,12 +21,13 @@ public class NetworkedList<T> : INetworkable where T : INetworkable
 			Changed?.Invoke( this );
 		}
 	}
-
 	private List<T> _value;
 
-	private NetworkedList( List<T> list )
 	public int Capacity => Value.Capacity;
 	public int Count => Value.Count;
+
+	private readonly List<(ListChangeType, T?)> _changes = new();
+
 	public NetworkedList( List<T> list )
 	{
 		_value = list;
@@ -43,6 +45,7 @@ public class NetworkedList<T> : INetworkable where T : INetworkable
 	public void Add( T item )
 	{
 		Value.Add( item );
+		_changes.Add( (ListChangeType.Add, item) );
 		Changed?.Invoke( this );
 	}
 
@@ -63,6 +66,7 @@ public class NetworkedList<T> : INetworkable where T : INetworkable
 	public void Remove( T item )
 	{
 		Value.Remove( item );
+		_changes.Add( (ListChangeType.Remove, item) );
 		Changed?.Invoke( this );
 	}
 
@@ -72,6 +76,8 @@ public class NetworkedList<T> : INetworkable where T : INetworkable
 	public void Clear()
 	{
 		Value.Clear();
+		_changes.Clear();
+		_changes.Add( (ListChangeType.Clear, default) );
 		Changed?.Invoke( this );
 	}
 
@@ -85,7 +91,29 @@ public class NetworkedList<T> : INetworkable where T : INetworkable
 
 	public void DeserializeChanges( NetworkReader reader )
 	{
-		throw new System.NotImplementedException();
+		var changeCount = reader.ReadInt32();
+		for ( var i = 0; i < changeCount; i++ )
+		{
+			var action = (ListChangeType)reader.ReadByte();
+			T? value = default;
+			if ( reader.ReadBoolean() )
+				value = reader.ReadNetworkable<T>();
+			
+			switch ( action )
+			{
+				case ListChangeType.Add:
+					Add( value! );
+					break;
+				case ListChangeType.Remove:
+					Remove( value! );
+					break;
+				case ListChangeType.Clear:
+					Clear();
+					break;
+				default:
+					throw new ArgumentOutOfRangeException( nameof(action) );
+			}
+		}
 	}
 
 	public void Serialize( NetworkWriter writer )
@@ -97,7 +125,17 @@ public class NetworkedList<T> : INetworkable where T : INetworkable
 
 	public void SerializeChanges( NetworkWriter writer )
 	{
-		throw new System.NotImplementedException();
+		writer.Write( _changes.Count );
+		foreach ( var change in _changes )
+		{
+			writer.Write( (byte)change.Item1 );
+			var isNull = change.Item2 is null;
+			writer.Write( isNull );
+			
+			if ( !isNull )
+				writer.WriteNetworkable( change.Item2! );
+		}
+		_changes.Clear();
 	}
 	
 	public static implicit operator List<T>( NetworkedList<T> networkedList )
@@ -108,5 +146,12 @@ public class NetworkedList<T> : INetworkable where T : INetworkable
 	public static implicit operator NetworkedList<T>( List<T> list )
 	{
 		return new NetworkedList<T>( list );
+	}
+
+	private enum ListChangeType : byte
+	{
+		Add,
+		Remove,
+		Clear
 	}
 }
