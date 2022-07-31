@@ -176,7 +176,7 @@ public sealed class NetworkServer
 		return Task.FromResult( true );
 	}
 
-	private async Task AcceptWebSocketClientsAsync( WebSocketListener server, CancellationToken token )
+	private static async Task AcceptWebSocketClientsAsync( WebSocketListener server, CancellationToken token )
 	{
 		while ( !token.IsCancellationRequested )
 		{

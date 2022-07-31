@@ -107,7 +107,7 @@ public partial class Rpc
 			throw new InvalidOperationException(
 				$"Failed to handle RPC call (\"{rpcCall.MethodName}\" does not exist on \"{type}\")." );
 
-		if ( method.GetCustomAttribute( typeof(Rpc.ServerAttribute) ) is null )
+		if ( method.GetCustomAttribute( typeof(ServerAttribute) ) is null )
 			throw new InvalidOperationException( "Failed to handle RPC call (Attempted to invoke a non-RPC method)." );
 		
 		var instance = BaseGame.Current.GetNetworkedEntityById( rpcCall.EntityId );
@@ -137,7 +137,7 @@ public partial class Rpc
 		if ( message is not RpcCallResponseMessage rpcResponse )
 			return;
 
-		if ( !Rpc.RpcResponses.TryAdd( rpcResponse.CallGuid, rpcResponse ) )
+		if ( !RpcResponses.TryAdd( rpcResponse.CallGuid, rpcResponse ) )
 			throw new InvalidOperationException( $"Failed to handle RPC call response (Failed to add \"{rpcResponse.CallGuid}\" to response dictionary)." );
 	}
 }
