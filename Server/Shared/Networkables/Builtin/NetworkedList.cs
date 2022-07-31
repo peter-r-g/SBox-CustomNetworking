@@ -26,8 +26,14 @@ public class NetworkedList<T> : INetworkable where T : INetworkable
 	private NetworkedList( List<T> list )
 	public int Capacity => Value.Capacity;
 	public int Count => Value.Count;
+	public NetworkedList( List<T> list )
 	{
 		_value = list;
+	}
+
+	public NetworkedList()
+	{
+		_value = new List<T>();
 	}
 
 	/// <summary>
