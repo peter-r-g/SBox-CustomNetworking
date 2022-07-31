@@ -48,9 +48,7 @@ public class MyGame : Sandbox.Game
 		if ( EntityManager is null )
 			return;
 		
-		foreach ( var entity in EntityManager.Entities )
-			entity.Delete();
-		EntityManager?.Entities.Clear();
+		EntityManager?.DeleteAllEntities();
 	}
 	
 	private static void OnClientConnected( INetworkClient client )
