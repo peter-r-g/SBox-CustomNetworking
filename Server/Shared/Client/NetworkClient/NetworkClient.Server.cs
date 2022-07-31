@@ -7,9 +7,9 @@ namespace CustomNetworking.Shared;
 
 public partial class NetworkClient
 {
-	public ClientSocket ClientSocket { get; }
+	internal ClientSocket ClientSocket { get; }
 	
-	public NetworkClient( long clientId, ClientSocket clientSocket )
+	internal NetworkClient( long clientId, ClientSocket clientSocket )
 	{
 		ClientId = clientId;
 		ClientSocket = clientSocket;
