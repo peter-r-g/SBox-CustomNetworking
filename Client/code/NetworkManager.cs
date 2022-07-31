@@ -45,8 +45,8 @@ public class NetworkManager
 			throw new Exception( $"An instance of {nameof(NetworkManager)} already exists." );
 		
 		Instance = this;
-		HandleMessage<RpcCallMessage>( HandleRpcCallMessage );
-		HandleMessage<RpcCallResponseMessage>( HandleRpcCallResponseMessage );
+		HandleMessage<RpcCallMessage>( Rpc.HandleRpcCallMessage );
+		HandleMessage<RpcCallResponseMessage>( Rpc.HandleRpcCallResponseMessage );
 		HandleMessage<PartialMessage>( HandlePartialMessage );
 		HandleMessage<ShutdownMessage>( HandleShutdownMessage );
 		HandleMessage<ClientListMessage>( HandleClientListMessage );
@@ -111,58 +111,6 @@ public class NetworkManager
 
 	private void WebSocketOnMessageReceived( string message )
 	{
-	}
-	
-	private void HandleRpcCallMessage( NetworkMessage message )
-	{
-		if ( message is not RpcCallMessage rpcCall )
-			return;
-
-		var type = TypeLibrary.GetTypeByName( rpcCall.ClassName );
-		if ( type is null )
-			throw new InvalidOperationException( $"Failed to handle RPC call (\"{rpcCall.ClassName}\" doesn't exist in the current assembly)." );
-
-		// TODO: Support instance methods https://github.com/Facepunch/sbox-issues/issues/2079
-		var method = TypeLibrary.FindStaticMethods( rpcCall.MethodName ).FirstOrDefault();
-		if ( method is null )
-			throw new InvalidOperationException( $"Failed to handle RPC call (\"{rpcCall.MethodName}\" does not exist on \"{type}\")." );
-		
-		if ( !method.Attributes.Any( attribute => attribute is Rpc.ClientAttribute ) )
-			throw new InvalidOperationException( "Failed to handle RPC call (Attempted to invoke a non-RPC method)." );
-		
-		var instance = MyGame.Current.EntityManager?.GetEntityById( rpcCall.EntityId );
-		if ( instance is null && rpcCall.EntityId != -1 )
-			throw new InvalidOperationException( "Failed to handle RPC call (Attempted to call RPC on a non-existant entity)." );
-
-		var parameters = new List<object>();
-		parameters.AddRange( rpcCall.Parameters );
-		if ( instance is not null )
-			parameters.Insert( 0, instance );
-		
-		if ( rpcCall.CallGuid == Guid.Empty )
-		{
-			method.Invoke( null, parameters.ToArray() );
-			return;
-		}
-
-		var returnValue = method.InvokeWithReturn<object?>( null, parameters.ToArray() );
-		if ( returnValue is not INetworkable && returnValue is not null )
-		{
-			var failedMessage = new RpcCallResponseMessage( rpcCall.CallGuid, RpcCallState.Failed );
-			_ = SendToServer( failedMessage );
-			throw new InvalidOperationException( $"Failed to handle RPC call (\"{rpcCall.MethodName}\" returned a non-networkable value)." );
-		}
-		
-		var response = new RpcCallResponseMessage( rpcCall.CallGuid, RpcCallState.Completed, returnValue as INetworkable ?? null );
-		_ = SendToServer( response );
-	}
-	
-	private void HandleRpcCallResponseMessage( NetworkMessage message )
-	{
-		if ( message is not RpcCallResponseMessage rpcResponse )
-			return;
-
-		Rpc.RpcResponses.Add( rpcResponse.CallGuid, rpcResponse );
 	}
 
 	private void HandlePartialMessage( NetworkMessage message )
