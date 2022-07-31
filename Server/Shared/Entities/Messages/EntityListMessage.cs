@@ -2,7 +2,6 @@
 using System.Buffers;
 #endif
 using System.Collections.Generic;
-using System.IO;
 using CustomNetworking.Shared.Utility;
 #if SERVER
 using CustomNetworking.Shared.Entities;
