@@ -8,7 +8,7 @@ public partial class EntityManager
 	public void DeserializeAndAddEntity( NetworkReader reader )
 	{
 		var entity = reader.ReadEntity();
-		Entities.Add( entity );
+		_entities.Add( entity );
 	}
 }
 #endif

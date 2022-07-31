@@ -7,10 +7,11 @@ namespace CustomNetworking.Shared;
 
 public partial class EntityManager
 {
-	public readonly List<IEntity> Entities = new();
-	private int _nextEntityId;
-
+	public IReadOnlyList<IEntity> Entities => _entities;
 	public INetworkable.ChangedEventHandler? EntityChanged;
+	
+	private readonly List<IEntity> _entities = new();
+	private int _nextEntityId;
 
 	private T CreateInternal<T>( int entityId, Type? entityType = null ) where T : IEntity
 	{
@@ -23,7 +24,7 @@ public partial class EntityManager
 		if ( entity is null )
 			throw new Exception( $"Failed to create instance of {entityType ?? typeof(T)}" );
 		
-		Entities.Add( entity );
+		_entities.Add( entity );
 		entity.Changed += EntityOnChanged;
 		return entity;
 	}
@@ -47,7 +48,7 @@ public partial class EntityManager
 
 	public IEntity? GetEntityById( int entityId )
 	{
-		foreach ( var entity in Entities )
+		foreach ( var entity in _entities )
 		{
 			if ( entity.EntityId == entityId )
 				return entity;	
