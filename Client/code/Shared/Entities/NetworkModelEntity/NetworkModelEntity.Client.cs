@@ -18,7 +18,7 @@ public partial class NetworkModelEntity
 	protected override void UpdateClient()
 	{
 		ModelEntity.Position = Position;
-		ModelEntity.Rotation = Rotation.Value;
+		ModelEntity.Rotation = Rotation;
 	}
 }
 #endif

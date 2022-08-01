@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -12,7 +13,7 @@ namespace CustomNetworking.Shared.Entities;
 /// </summary>
 public partial class NetworkEntity : IEntity
 {
-	public event INetworkable.ChangedEventHandler? Changed;
+	public event INetworkable<IEntity>.ChangedEventHandler? Changed;
 	public NetworkedInt EntityId { get; }
 
 	/// <summary>
@@ -23,22 +24,40 @@ public partial class NetworkEntity : IEntity
 		get => _position;
 		set
 		{
+			var oldPosition = _position;
 			_position.Changed -= OnPositionChanged;
 			_position = value;
 			value.Changed += OnPositionChanged;
-			OnPositionChanged( value );
+			OnPositionChanged( oldPosition, value );
 		}
 	}
 	private NetworkedVector3 _position;
+
+	/// <summary>
+	/// The velocity of the <see cref="NetworkEntity"/>.
+	/// </summary>
+	public NetworkedVector3 Velocity
+	{
+		get => _velocity;
+		set
+		{
+			var oldVelocity = _velocity;
+			_velocity.Changed -= OnVelocityChanged;
+			_velocity = value;
+			value.Changed += OnVelocityChanged;
+			OnVelocityChanged( oldVelocity, value );
+		}
+	}
+	private NetworkedVector3 _velocity;
 
 	private readonly Dictionary<string, PropertyInfo> _propertyNameCache = new();
 
 	public NetworkEntity( int entityId )
 	{
 		EntityId = entityId;
-
+		
 		foreach ( var property in GetType().GetProperties()
-			         .Where( property => property.PropertyType.IsAssignableTo( typeof(INetworkable) ) ) )
+			         .Where( property => property.PropertyType.IsAssignableTo( typeof(INetworkable<>) ) ) )
 		{
 			if ( property.Name == nameof(EntityId) )
 				continue;
@@ -59,16 +78,31 @@ public partial class NetworkEntity : IEntity
 #if CLIENT
 		UpdateClient();
 #endif
+
+		Position += Velocity;
 	}
 	
 	/// <summary>
 	/// Called when <see cref="Position"/> has changed.
 	/// </summary>
-	/// <param name="networkable">The new instance of <see cref="Position"/>.</param>
-	protected virtual void OnPositionChanged( INetworkable networkable )
+	/// <param name="oldPosition">The old instance of <see cref="Position"/>.</param>
+	/// <param name="newPosition">The new instance of <see cref="Position"/>.</param>
+	protected virtual void OnPositionChanged( NetworkedVector3 oldPosition, NetworkedVector3 newPosition )
 	{
 #if SERVER
 		TriggerNetworkingChange( nameof(Position) );
+#endif
+	}
+
+	/// <summary>
+	/// Called when <see cref="Velocity"/> has changed.
+	/// </summary>
+	/// <param name="oldVelocity">The old instance of <see cref="Velocity"/>.</param>
+	/// <param name="newVelocity">The new instance of <see cref="Velocity"/>.</param>
+	protected virtual void OnVelocityChanged( NetworkedVector3 oldVelocity, NetworkedVector3 newVelocity )
+	{
+#if SERVER
+		TriggerNetworkingChange( nameof(Velocity) );
 #endif
 	}
 

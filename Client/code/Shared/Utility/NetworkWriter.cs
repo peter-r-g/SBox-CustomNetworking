@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Numerics;
 using CustomNetworking.Shared.Networkables;
 
 namespace CustomNetworking.Shared.Utility;
@@ -22,12 +23,35 @@ public class NetworkWriter : BinaryWriter
 		Write( guid.ToByteArray() );
 	}
 
+	/// <summary>
+	/// Writes a 4 float <see cref="Quaternion"/>.
+	/// </summary>
+	/// <param name="quaternion">The instance of <see cref="Quaternion"/> to write.</param>
+	public void Write( Quaternion quaternion )
+	{
+		Write( quaternion.X );
+		Write( quaternion.Y );
+		Write( quaternion.Z );
+		Write( quaternion.W );
+	}
+
+	/// <summary>
+	/// Writes a 3 float <see cref="System.Numerics.Vector3"/>.
+	/// </summary>
+	/// <param name="vector3">The instance of <see cref="System.Numerics.Vector3"/> to write.</param>
+	public void Write( System.Numerics.Vector3 vector3 )
+	{
+		Write( vector3.X );
+		Write( vector3.Y );
+		Write( vector3.Y );
+	}
+
 	// TODO: When writing an entity, if it is referenced under an entity just send the entity ID rather than the whole entity.
 	/// <summary>
 	/// Writes an instance of <see cref="INetworkable"/>.
 	/// </summary>
 	/// <param name="networkable">The instance of <see cref="INetworkable"/> to write.</param>
-	public void WriteNetworkable( INetworkable networkable )
+	public void WriteNetworkable<T>( INetworkable<T> networkable )
 	{
 		var networkableType = networkable.GetType();
 		Write( networkableType.Name );
@@ -46,7 +70,7 @@ public class NetworkWriter : BinaryWriter
 	/// Writes the changes of an <see cref="INetworkable"/>.
 	/// </summary>
 	/// <param name="networkable">The instance of <see cref="INetworkable"/> to write changes.</param>
-	public void WriteNetworkableChanges( INetworkable networkable )
+	public void WriteNetworkableChanges<T>( INetworkable<T> networkable )
 	{
 		networkable.SerializeChanges( this );
 	}

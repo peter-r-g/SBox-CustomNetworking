@@ -1,4 +1,3 @@
-using CustomNetworking.Shared.Networkables;
 using CustomNetworking.Shared.Networkables.Builtin;
 
 namespace CustomNetworking.Shared.Entities;
@@ -16,10 +15,11 @@ public partial class NetworkModelEntity : NetworkEntity
 		get => _rotation;
 		set
 		{
+			var oldRotation = _rotation;
 			_rotation.Changed -= OnRotationChanged;
 			_rotation = value;
 			value.Changed += OnRotationChanged;
-			OnRotationChanged( value );
+			OnRotationChanged( oldRotation, value );
 		}
 	}
 	private NetworkedQuaternion _rotation;
@@ -32,10 +32,11 @@ public partial class NetworkModelEntity : NetworkEntity
 		get => _modelName;
 		set
 		{
+			var oldModelName = _modelName;
 			_modelName.Changed -= OnModelNameChanged;
 			_modelName = value;
 			value.Changed += OnModelNameChanged;
-			OnModelNameChanged( value );
+			OnModelNameChanged( oldModelName, value );
 		}
 	}
 	private NetworkedString _modelName;
@@ -47,8 +48,9 @@ public partial class NetworkModelEntity : NetworkEntity
 	/// <summary>
 	/// Called when <see cref="Rotation"/> has changed.
 	/// </summary>
-	/// <param name="networkable">The new instance of <see cref="Rotation"/>.</param>
-	protected virtual void OnRotationChanged( INetworkable networkable )
+	/// <param name="oldRotation">The old instance of <see cref="Rotation"/>.</param>
+	/// <param name="newRotation">The new instance of <see cref="Rotation"/>.</param>
+	protected virtual void OnRotationChanged( NetworkedQuaternion oldRotation, NetworkedQuaternion newRotation )
 	{
 #if SERVER
 		TriggerNetworkingChange( nameof(Rotation) );
@@ -58,11 +60,12 @@ public partial class NetworkModelEntity : NetworkEntity
 	/// <summary>
 	/// Called when <see cref="ModelName"/> has changed.
 	/// </summary>
-	/// <param name="networkable">The new instance of <see cref="ModelName"/>.</param>
-	protected virtual void OnModelNameChanged( INetworkable networkable )
+	/// <param name="oldModelName">The old instance of <see cref="ModelName"/>.</param>
+	/// <param name="newModelName">The new instance of <see cref="ModelName"/>.</param>
+	protected virtual void OnModelNameChanged( NetworkedString oldModelName, NetworkedString newModelName )
 	{
 #if CLIENT && !MONITOR
-		ModelEntity.SetModel( ((NetworkedString)networkable).Value );
+		ModelEntity.SetModel( newModelName );
 #endif
 #if SERVER
 		TriggerNetworkingChange( nameof(ModelName) );

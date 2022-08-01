@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Numerics;
 #if SERVER
 using CustomNetworking.Server;
 #endif
@@ -24,6 +25,24 @@ public class NetworkReader : BinaryReader
 	public Guid ReadGuid()
 	{
 		return new Guid( ReadBytes( 16 ) );
+	}
+
+	/// <summary>
+	/// Reads a 4 float <see cref="Quaternion"/>.
+	/// </summary>
+	/// <returns>The parsed <see cref="Quaternion"/>.</returns>
+	public Quaternion ReadQuaternion()
+	{
+		return new Quaternion( ReadSingle(), ReadSingle(), ReadSingle(), ReadSingle() );
+	}
+
+	/// <summary>
+	/// Reads a 3 float <see cref="System.Numerics.Vector3"/>.
+	/// </summary>
+	/// <returns>The parsed <see cref="System.Numerics.Vector3"/>.</returns>
+	public System.Numerics.Vector3 ReadVector3()
+	{
+		return new Vector3( ReadSingle(), ReadSingle(), ReadSingle() );
 	}
 
 	/// <summary>
@@ -93,7 +112,7 @@ public class NetworkReader : BinaryReader
 	/// <typeparam name="T">The <see cref="INetworkable"/> type to cast into.</typeparam>
 	/// <returns>The parsed <see cref="INetworkable"/>.</returns>
 	/// <exception cref="InvalidOperationException">Thrown when reading the <see cref="INetworkable"/> has failed.</exception>
-	public T ReadNetworkable<T>() where T : INetworkable
+	public T ReadNetworkable<T>() where T : INetworkable<T>
 	{
 		if ( typeof(T).IsAssignableTo( typeof(IEntity) ) )
 			return ReadEntity<T>();
@@ -103,6 +122,15 @@ public class NetworkReader : BinaryReader
 			throw new InvalidOperationException( $"Failed to read networkable ({networkable.GetType()} is not assignable to {typeof(T)})" );
 
 		return outputNetworkable;
+	}
+	
+	/// <summary>
+	/// Reads all changes relating to an <see cref="INetworkable"/> instance.
+	/// </summary>
+	/// <param name="networkable">The <see cref="INetworkable"/> to deserialize the changes into.</param>
+	public void ReadNetworkableChanges<T>( INetworkable<T> networkable )
+	{
+		networkable.DeserializeChanges( this );
 	}
 
 	// TODO: When reading an entity. Try to only read the entity ID. If there's more info after that then read a whole entity.
@@ -147,14 +175,5 @@ public class NetworkReader : BinaryReader
 			throw new InvalidOperationException( $"Failed to read entity ({entity.GetType()} is not assignable to {typeof(T)})" );
 
 		return outputEntity;
-	}
-
-	/// <summary>
-	/// Reads all changes relating to an <see cref="INetworkable"/> instance.
-	/// </summary>
-	/// <param name="networkable">The <see cref="INetworkable"/> to deserialize the changes into.</param>
-	public void ReadNetworkableChanges( INetworkable networkable )
-	{
-		networkable.DeserializeChanges( this );
 	}
 }

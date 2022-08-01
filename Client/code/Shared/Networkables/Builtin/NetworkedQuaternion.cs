@@ -7,17 +7,23 @@ namespace CustomNetworking.Shared.Networkables.Builtin;
 /// <summary>
 /// Represents a networkable <see cref="Quaternion"/>.
 /// </summary>
-public struct NetworkedQuaternion : INetworkable
+public struct NetworkedQuaternion : INetworkable<NetworkedQuaternion>, INetworkable
 {
-	public event INetworkable.ChangedEventHandler? Changed = null;
+	public event INetworkable<NetworkedQuaternion>.ChangedEventHandler? Changed = null;
+	event INetworkable<object>.ChangedEventHandler? INetworkable<object>.Changed
+	{
+		add => throw new InvalidOperationException();
+		remove => throw new InvalidOperationException();
+	}
 	
 	public Quaternion Value
 	{
 		get => _value;
 		set
 		{
+			var oldValue = _value;
 			_value = value;
-			Changed?.Invoke( this );
+			Changed?.Invoke( _value, this );
 		}
 	}
 	private Quaternion _value;
@@ -71,6 +77,13 @@ public struct NetworkedQuaternion : INetworkable
 	{
 		return Value.ToString();
 	}
+	
+#if CLIENT
+	public static implicit operator Rotation( NetworkedQuaternion networkedQuaternion )
+	{
+		return networkedQuaternion.Value;
+	}
+#endif
 
 	public static implicit operator Quaternion( NetworkedQuaternion networkedQuaternion )
 	{

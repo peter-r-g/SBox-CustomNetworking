@@ -12,9 +12,9 @@ namespace CustomNetworking.Shared;
 /// <summary>
 /// Base class for sending any information between a client and a server.
 /// </summary>
-public abstract class NetworkMessage : INetworkable
+public abstract class NetworkMessage : INetworkable<NetworkMessage>
 {
-	public event INetworkable.ChangedEventHandler? Changed;
+	public event INetworkable<NetworkMessage>.ChangedEventHandler? Changed;
 	
 	public abstract void Deserialize( NetworkReader reader );
 	public void DeserializeChanges( NetworkReader reader )

@@ -1,21 +1,29 @@
+using System;
 using CustomNetworking.Shared.Utility;
 
 namespace CustomNetworking.Shared.Networkables.Builtin;
 
+// TODO: In .NET 7 make this generic where T : INumber https://devblogs.microsoft.com/dotnet/dotnet-7-generic-math/
 /// <summary>
 /// Represents a networkable <see cref="int"/>.
 /// </summary>
-public struct NetworkedInt : INetworkable
+public struct NetworkedInt : INetworkable<NetworkedInt>, INetworkable, IEquatable<NetworkedInt>
 {
-	public event INetworkable.ChangedEventHandler? Changed = null;
+	public event INetworkable<NetworkedInt>.ChangedEventHandler? Changed = null;
+	event INetworkable<object>.ChangedEventHandler? INetworkable<object>.Changed
+	{
+		add => throw new InvalidOperationException();
+		remove => throw new InvalidOperationException();
+	}
 	
 	public int Value
 	{
 		get => _value;
 		set
 		{
+			var oldValue = _value;
 			_value = value;
-			Changed?.Invoke( this );
+			Changed?.Invoke( oldValue, this );
 		}
 	}
 	private int _value;
@@ -44,12 +52,44 @@ public struct NetworkedInt : INetworkable
 	{
 		Serialize( writer );
 	}
+	
+	public bool Equals(NetworkedInt other)
+	{
+		return _value == other._value;
+	}
+
+	public override bool Equals(object? obj)
+	{
+		return obj is NetworkedInt other && Equals(other);
+	}
+
+	public override int GetHashCode()
+	{
+		return _value;
+	}
 
 	public override string ToString()
 	{
 		return Value.ToString();
 	}
 
+	public static NetworkedInt operator +( NetworkedInt operand ) => operand;
+	public static NetworkedInt operator +( NetworkedInt left, NetworkedInt right ) => left.Value + right.Value;
+	public static NetworkedInt operator ++( NetworkedInt operand ) => operand.Value + 1;
+	public static NetworkedInt operator -( NetworkedInt operand ) => -operand.Value;
+	public static NetworkedInt operator -( NetworkedInt left, NetworkedInt right ) => left.Value - right.Value;
+	public static NetworkedInt operator --( NetworkedInt operand ) => operand.Value - 1;
+	public static NetworkedInt operator *( NetworkedInt left, NetworkedInt right ) => left.Value * right.Value;
+	public static NetworkedInt operator /( NetworkedInt left, NetworkedInt right ) => left.Value / right.Value;
+	public static NetworkedInt operator %( NetworkedInt left, NetworkedInt right ) => left.Value % right.Value;
+
+	public static bool operator ==( NetworkedInt left, NetworkedInt right ) => left.Value == right.Value;
+	public static bool operator !=( NetworkedInt left, NetworkedInt right ) => !(left == right);
+	public static bool operator <( NetworkedInt left, NetworkedInt right ) => left.Value < right.Value;
+	public static bool operator >( NetworkedInt left, NetworkedInt right ) => left.Value > right.Value;
+	public static bool operator <=( NetworkedInt left, NetworkedInt right ) => left.Value <= right.Value;
+	public static bool operator >=( NetworkedInt left, NetworkedInt right ) => left.Value >= right.Value;
+	
 	public static implicit operator int( NetworkedInt networkedInt )
 	{
 		return networkedInt.Value;
