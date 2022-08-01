@@ -76,6 +76,21 @@ public struct NetworkedVector3 : INetworkable<NetworkedVector3>, INetworkable, I
 	{
 		Serialize( writer );
 	}
+	
+	public bool Equals(NetworkedVector3 other)
+	{
+		return _value.Equals(other._value);
+	}
+
+	public override bool Equals(object? obj)
+	{
+		return obj is NetworkedVector3 other && Equals(other);
+	}
+
+	public override int GetHashCode()
+	{
+		return _value.GetHashCode();
+	}
 
 	public override string ToString()
 	{

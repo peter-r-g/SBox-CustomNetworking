@@ -51,6 +51,21 @@ public struct NetworkedString : INetworkable<NetworkedString>, INetworkable, IEq
 	{
 		Serialize( writer );
 	}
+	
+	public bool Equals(NetworkedString other)
+	{
+		return _value == other._value;
+	}
+
+	public override bool Equals(object? obj)
+	{
+		return obj is NetworkedString other && Equals(other);
+	}
+
+	public override int GetHashCode()
+	{
+		return _value.GetHashCode();
+	}
 
 	public override string ToString()
 	{
