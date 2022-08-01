@@ -57,6 +57,11 @@ public struct NetworkedString : INetworkable<NetworkedString>, INetworkable, IEq
 		return Value;
 	}
 
+	public static NetworkedString operator +( NetworkedString left, NetworkedString right ) => left.Value + right.Value;
+
+	public static bool operator ==( NetworkedString left, NetworkedString right ) => left.Value == right.Value;
+	public static bool operator !=( NetworkedString left, NetworkedString right ) => !(left == right);
+
 	public static implicit operator string( NetworkedString networkedString )
 	{
 		return networkedString.Value;

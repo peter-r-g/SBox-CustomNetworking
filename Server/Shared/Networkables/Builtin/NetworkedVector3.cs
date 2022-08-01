@@ -82,6 +82,18 @@ public struct NetworkedVector3 : INetworkable<NetworkedVector3>, INetworkable, I
 		return Value.ToString();
 	}
 
+	public static NetworkedVector3 operator +( NetworkedVector3 left, NetworkedVector3 right ) => left.Value + right.Value;
+	public static NetworkedVector3 operator -( NetworkedVector3 operand ) => -operand.Value;
+	public static NetworkedVector3 operator -( NetworkedVector3 left, NetworkedVector3 right ) => left.Value - right.Value;
+	public static NetworkedVector3 operator *( NetworkedVector3 left, float mult ) => left.Value * mult;
+	public static NetworkedVector3 operator *( float mult, NetworkedVector3 right ) => mult * right.Value;
+	public static NetworkedVector3 operator *( NetworkedVector3 left, NetworkedVector3 right ) => left.Value * right.Value;
+	public static NetworkedVector3 operator /( NetworkedVector3 left, float mult ) => left.Value / mult;
+	public static NetworkedVector3 operator /( NetworkedVector3 left, NetworkedVector3 right ) => left.Value / right.Value;
+
+	public static bool operator ==( NetworkedVector3 left, NetworkedVector3 right ) => left.Value == right.Value;
+	public static bool operator !=( NetworkedVector3 left, NetworkedVector3 right ) => !(left.Value == right.Value);
+
 	public static implicit operator Vector3( NetworkedVector3 networkedVector3 )
 	{
 		return networkedVector3.Value;

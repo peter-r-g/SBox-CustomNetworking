@@ -58,6 +58,23 @@ public struct NetworkedInt : INetworkable<NetworkedInt>, INetworkable, IEquatabl
 		return Value.ToString();
 	}
 
+	public static NetworkedInt operator +( NetworkedInt operand ) => operand;
+	public static NetworkedInt operator +( NetworkedInt left, NetworkedInt right ) => left.Value + right.Value;
+	public static NetworkedInt operator ++( NetworkedInt operand ) => operand.Value + 1;
+	public static NetworkedInt operator -( NetworkedInt operand ) => -operand.Value;
+	public static NetworkedInt operator -( NetworkedInt left, NetworkedInt right ) => left.Value - right.Value;
+	public static NetworkedInt operator --( NetworkedInt operand ) => operand.Value - 1;
+	public static NetworkedInt operator *( NetworkedInt left, NetworkedInt right ) => left.Value * right.Value;
+	public static NetworkedInt operator /( NetworkedInt left, NetworkedInt right ) => left.Value / right.Value;
+	public static NetworkedInt operator %( NetworkedInt left, NetworkedInt right ) => left.Value % right.Value;
+
+	public static bool operator ==( NetworkedInt left, NetworkedInt right ) => left.Value == right.Value;
+	public static bool operator !=( NetworkedInt left, NetworkedInt right ) => !(left == right);
+	public static bool operator <( NetworkedInt left, NetworkedInt right ) => left.Value < right.Value;
+	public static bool operator >( NetworkedInt left, NetworkedInt right ) => left.Value > right.Value;
+	public static bool operator <=( NetworkedInt left, NetworkedInt right ) => left.Value <= right.Value;
+	public static bool operator >=( NetworkedInt left, NetworkedInt right ) => left.Value >= right.Value;
+	
 	public static implicit operator int( NetworkedInt networkedInt )
 	{
 		return networkedInt.Value;
