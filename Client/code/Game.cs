@@ -34,6 +34,8 @@ public class MyGame : Sandbox.Game
 		
 		foreach ( var entity in EntityManager.Entities )
 			entity.Update();
+		
+		InputHelper.SendInputToServer();
 	}
 	
 	private void OnConnected()
