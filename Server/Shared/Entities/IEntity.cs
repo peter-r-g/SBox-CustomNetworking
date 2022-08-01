@@ -6,7 +6,7 @@ namespace CustomNetworking.Shared.Entities;
 /// <summary>
 /// Contract to define something that is an entity in the game world.
 /// </summary>
-public interface IEntity : INetworkable
+public interface IEntity : INetworkable<IEntity>
 {
 	/// <summary>
 	/// The unique identifier of the entity.

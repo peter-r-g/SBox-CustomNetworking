@@ -27,7 +27,7 @@ public class NetworkWriter : BinaryWriter
 	/// Writes an instance of <see cref="INetworkable"/>.
 	/// </summary>
 	/// <param name="networkable">The instance of <see cref="INetworkable"/> to write.</param>
-	public void WriteNetworkable( INetworkable networkable )
+	public void WriteNetworkable<T>( INetworkable<T> networkable )
 	{
 		var networkableType = networkable.GetType();
 		Write( networkableType.Name );
@@ -46,7 +46,7 @@ public class NetworkWriter : BinaryWriter
 	/// Writes the changes of an <see cref="INetworkable"/>.
 	/// </summary>
 	/// <param name="networkable">The instance of <see cref="INetworkable"/> to write changes.</param>
-	public void WriteNetworkableChanges( INetworkable networkable )
+	public void WriteNetworkableChanges<T>( INetworkable<T> networkable )
 	{
 		networkable.SerializeChanges( this );
 	}

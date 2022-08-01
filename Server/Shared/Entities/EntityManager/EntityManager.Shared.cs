@@ -16,9 +16,13 @@ public partial class EntityManager
 	public IReadOnlyList<IEntity> Entities => _entities;
 	
 	/// <summary>
+	/// The event handler for <see cref="EntityManager"/>.<see cref="EntityManager.EntityChanged"/>.
+	/// </summary>
+	public delegate void ChangedEventHandler( IEntity entity );
+	/// <summary>
 	/// Called when an <see cref="IEntity"/> inside this <see cref="EntityManager"/> has changed.
 	/// </summary>
-	public INetworkable.ChangedEventHandler? EntityChanged;
+	public ChangedEventHandler? EntityChanged;
 	
 	private readonly List<IEntity> _entities = new();
 	private int _nextEntityId;
@@ -117,8 +121,8 @@ public partial class EntityManager
 		return entity;
 	}
 	
-	private void EntityOnChanged( INetworkable entity )
+	private void EntityOnChanged( IEntity oldEntity, IEntity newEntity )
 	{
-		EntityChanged?.Invoke( entity );
+		EntityChanged?.Invoke( newEntity );
 	}
 }

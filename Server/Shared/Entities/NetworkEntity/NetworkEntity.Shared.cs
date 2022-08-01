@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -12,7 +13,7 @@ namespace CustomNetworking.Shared.Entities;
 /// </summary>
 public partial class NetworkEntity : IEntity
 {
-	public event INetworkable.ChangedEventHandler? Changed;
+	public event INetworkable<IEntity>.ChangedEventHandler? Changed;
 	public NetworkedInt EntityId { get; }
 
 	/// <summary>
@@ -23,10 +24,11 @@ public partial class NetworkEntity : IEntity
 		get => _position;
 		set
 		{
+			var oldPosition = _position;
 			_position.Changed -= OnPositionChanged;
 			_position = value;
 			value.Changed += OnPositionChanged;
-			OnPositionChanged( value );
+			OnPositionChanged( oldPosition, value );
 		}
 	}
 	private NetworkedVector3 _position;
@@ -36,9 +38,9 @@ public partial class NetworkEntity : IEntity
 	public NetworkEntity( int entityId )
 	{
 		EntityId = entityId;
-
+		
 		foreach ( var property in GetType().GetProperties()
-			         .Where( property => property.PropertyType.IsAssignableTo( typeof(INetworkable) ) ) )
+			         .Where( property => property.PropertyType.IsAssignableTo( typeof(INetworkable<>) ) ) )
 		{
 			if ( property.Name == nameof(EntityId) )
 				continue;
@@ -64,8 +66,9 @@ public partial class NetworkEntity : IEntity
 	/// <summary>
 	/// Called when <see cref="Position"/> has changed.
 	/// </summary>
-	/// <param name="networkable">The new instance of <see cref="Position"/>.</param>
-	protected virtual void OnPositionChanged( INetworkable networkable )
+	/// <param name="oldPosition">The old instance of <see cref="Position"/>.</param>
+	/// <param name="newPosition">The new instance of <see cref="Position"/>.</param>
+	protected virtual void OnPositionChanged( NetworkedVector3 oldPosition, NetworkedVector3 newPosition )
 	{
 #if SERVER
 		TriggerNetworkingChange( nameof(Position) );

@@ -1,16 +1,19 @@
+using System;
 using CustomNetworking.Shared.Utility;
-#if SERVER
-using System.Numerics;
-#endif
 
 namespace CustomNetworking.Shared.Networkables.Builtin;
 
 /// <summary>
 /// Represents a networkable <see cref="System.Numerics.Vector3"/>.
 /// </summary>
-public struct NetworkedVector3 : INetworkable
+public struct NetworkedVector3 : INetworkable<NetworkedVector3>, INetworkable, IEquatable<NetworkedVector3>
 {
-	public event INetworkable.ChangedEventHandler? Changed = null;
+	public event INetworkable<NetworkedVector3>.ChangedEventHandler? Changed = null;
+	event INetworkable<object>.ChangedEventHandler? INetworkable<object>.Changed
+	{
+		add => throw new InvalidOperationException();
+		remove => throw new InvalidOperationException();
+	}
 	
 #if SERVER
 	public Vector3 Value
@@ -22,8 +25,9 @@ public struct NetworkedVector3 : INetworkable
 		get => _value;
 		set
 		{
+			var oldValue = _value;
 			_value = value;
-			Changed?.Invoke( this );
+			Changed?.Invoke( _value, this );
 		}
 	}
 #if SERVER

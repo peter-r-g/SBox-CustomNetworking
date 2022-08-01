@@ -1,3 +1,4 @@
+using System;
 using CustomNetworking.Shared.Utility;
 
 namespace CustomNetworking.Shared.Networkables.Builtin;
@@ -5,17 +6,23 @@ namespace CustomNetworking.Shared.Networkables.Builtin;
 /// <summary>
 /// Represents a networkable <see cref="int"/>.
 /// </summary>
-public struct NetworkedInt : INetworkable
+public struct NetworkedInt : INetworkable<NetworkedInt>, INetworkable, IEquatable<NetworkedInt>
 {
-	public event INetworkable.ChangedEventHandler? Changed = null;
+	public event INetworkable<NetworkedInt>.ChangedEventHandler? Changed = null;
+	event INetworkable<object>.ChangedEventHandler? INetworkable<object>.Changed
+	{
+		add => throw new InvalidOperationException();
+		remove => throw new InvalidOperationException();
+	}
 	
 	public int Value
 	{
 		get => _value;
 		set
 		{
+			var oldValue = _value;
 			_value = value;
-			Changed?.Invoke( this );
+			Changed?.Invoke( oldValue, this );
 		}
 	}
 	private int _value;
