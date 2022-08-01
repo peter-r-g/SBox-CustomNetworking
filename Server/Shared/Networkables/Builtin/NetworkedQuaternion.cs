@@ -77,6 +77,13 @@ public struct NetworkedQuaternion : INetworkable<NetworkedQuaternion>, INetworka
 	{
 		return Value.ToString();
 	}
+	
+#if CLIENT
+	public static implicit operator Rotation( NetworkedQuaternion networkedQuaternion )
+	{
+		return networkedQuaternion.Value;
+	}
+#endif
 
 	public static implicit operator Quaternion( NetworkedQuaternion networkedQuaternion )
 	{
