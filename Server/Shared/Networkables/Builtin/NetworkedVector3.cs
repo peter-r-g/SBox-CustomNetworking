@@ -15,12 +15,7 @@ public struct NetworkedVector3 : INetworkable<NetworkedVector3>, INetworkable, I
 		remove => throw new InvalidOperationException();
 	}
 	
-#if SERVER
-	public Vector3 Value
-#endif
-#if CLIENT
 	public System.Numerics.Vector3 Value
-#endif
 	{
 		get => _value;
 		set
@@ -30,12 +25,7 @@ public struct NetworkedVector3 : INetworkable<NetworkedVector3>, INetworkable, I
 			Changed?.Invoke( _value, this );
 		}
 	}
-#if SERVER
-	private Vector3 _value;
-#endif
-#if CLIENT
 	private System.Numerics.Vector3 _value;
-#endif
 
 	/// <summary>
 	/// The <see cref="System.Numerics.Vector3.X"/> component of the <see cref="System.Numerics.Vector3"/>.
@@ -50,14 +40,14 @@ public struct NetworkedVector3 : INetworkable<NetworkedVector3>, INetworkable, I
 	/// </summary>
 	public float Z => _value.Z;
 
-	private NetworkedVector3( Vector3 vector3 )
+	private NetworkedVector3( System.Numerics.Vector3 vector3 )
 	{
 		_value = vector3;
 	}
 
 	public void Deserialize( NetworkReader reader )
 	{
-		_value = new Vector3( reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle() );
+		_value = new System.Numerics.Vector3( reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle() );
 	}
 
 	public void DeserializeChanges( NetworkReader reader )
@@ -109,12 +99,19 @@ public struct NetworkedVector3 : INetworkable<NetworkedVector3>, INetworkable, I
 	public static bool operator ==( NetworkedVector3 left, NetworkedVector3 right ) => left.Value == right.Value;
 	public static bool operator !=( NetworkedVector3 left, NetworkedVector3 right ) => !(left.Value == right.Value);
 
+#if CLIENT
 	public static implicit operator Vector3( NetworkedVector3 networkedVector3 )
 	{
 		return networkedVector3.Value;
 	}
+#endif
+
+	public static implicit operator System.Numerics.Vector3( NetworkedVector3 networkedVector3 )
+	{
+		return networkedVector3.Value;
+	}
 	
-	public static implicit operator NetworkedVector3( Vector3 vector3 )
+	public static implicit operator NetworkedVector3( System.Numerics.Vector3 vector3 )
 	{
 		return new NetworkedVector3( vector3 );
 	}
