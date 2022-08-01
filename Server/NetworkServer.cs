@@ -17,31 +17,29 @@ namespace CustomNetworking.Server;
 /// <summary>
 /// Handles a web socket server, its clients, and dispatches messages from them.
 /// </summary>
-public sealed class NetworkServer
+public class NetworkServer
 {
 	/// <summary>
-	/// The only instance of the networking server in existence.
+	/// The game server instance.
 	/// </summary>
-	public static NetworkServer Instance = null!;
+	public static NetworkServer Instance { get; internal set; } = null!;
 	
-#if DEBUG
 	/// <summary>
 	/// Debug stat for how many messages have been received from clients.
 	/// <remarks>This does not account for any messages from a <see cref="BotClient"/>.</remarks>
 	/// </summary>
-	public int MessagesReceived;
+	public int MessagesReceived { get; internal set; }
 	/// <summary>
 	/// Debug stat for how messages have been sent to clients.
 	/// <remarks>This does account for any <see cref="BotClient"/>s connected.</remarks>
 	/// </summary>
-	public int MessagesSent;
+	public int MessagesSent { get; internal set; }
 	/// <summary>
 	/// Debug stat for how many individual messages have been sent to any clients.
 	/// <remarks>This does account for any <see cref="BotClient"/>s connected.</remarks>
 	/// </summary>
-	public int MessagesSentToClients;
-#endif
-	
+	public int MessagesSentToClients { get; internal set; }
+
 	/// <summary>
 	/// Contains all connected clients. This includes any <see cref="BotClient"/>s.
 	/// </summary>
@@ -61,12 +59,11 @@ public sealed class NetworkServer
 	private readonly ConcurrentQueue<(To, NetworkMessage)> _outgoingQueue = new();
 	private readonly ConcurrentQueue<(INetworkClient, NetworkMessage)> _incomingQueue = new();
 
-	public NetworkServer()
+	private readonly int _port;
+
+	internal NetworkServer( int port )
 	{
-		if ( Instance is not null )
-			throw new Exception( $"An instance of {nameof(NetworkServer)} already exists" );
-		
-		Instance = this;
+		_port = port;
 	}
 	
 	/// <summary>
@@ -130,7 +127,7 @@ public sealed class NetworkServer
 			tcp.SendBufferSize = SharedConstants.MaxBufferSize;
 		} );
 		
-		var server = new WebSocketListener( new IPEndPoint( IPAddress.Any, SharedConstants.Port ), options );
+		var server = new WebSocketListener( new IPEndPoint( IPAddress.Any, _port ), options );
 		await server.StartAsync();
 		var clientAcceptTask = Task.Run( () => AcceptWebSocketClientsAsync( server, Program.ProgramCancellation.Token ) );
 
@@ -260,9 +257,7 @@ public sealed class NetworkServer
 
 	private void SendMessage( To to, NetworkMessage message )
 	{
-#if DEBUG
 		MessagesSent++;
-#endif
 		
 		foreach ( var client in to )
 		{

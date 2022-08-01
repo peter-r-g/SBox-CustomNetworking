@@ -1,4 +1,4 @@
-#if CLIENT
+#if CLIENT && !MONITOR
 using Sandbox;
 
 namespace CustomNetworking.Shared.Entities;

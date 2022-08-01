@@ -22,9 +22,7 @@ public class BotClient : INetworkClient
 
 	public void SendMessage( NetworkMessage message )
 	{
-#if DEBUG
 		NetworkServer.Instance.MessagesSentToClients++;
-#endif
 		if ( !MessageHandlers.TryGetValue( message.GetType(), out var cb ) )
 			throw new Exception( $"Unhandled message {message.GetType()}." );
 		

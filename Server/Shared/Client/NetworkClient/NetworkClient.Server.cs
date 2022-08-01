@@ -25,9 +25,7 @@ public partial class NetworkClient
 	
 	public void SendMessage( byte[] bytes )
 	{
-#if DEBUG
 		NetworkServer.Instance.MessagesSentToClients++;
-#endif
 		ClientSocket.Send( bytes );
 	}
 	

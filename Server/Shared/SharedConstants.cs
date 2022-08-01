@@ -10,9 +10,13 @@ public static class SharedConstants
 	/// </summary>
 	public const int MaxBufferSize = 65536;
 	/// <summary>
-	/// The port on the Uri to connect to.
+	/// The port the game server will run on.
 	/// </summary>
 	public const int Port = 7087;
+	/// <summary>
+	/// The port the monitor server will run on.
+	/// </summary>
+	public const int MonitorPort = Port + 1;
 	
 #if SERVER
 	/// <summary>

@@ -61,7 +61,7 @@ public partial class NetworkModelEntity : NetworkEntity
 	/// <param name="networkable">The new instance of <see cref="ModelName"/>.</param>
 	protected virtual void OnModelNameChanged( INetworkable networkable )
 	{
-#if CLIENT
+#if CLIENT && !MONITOR
 		ModelEntity.SetModel( ((NetworkedString)networkable).Value );
 #endif
 #if SERVER
