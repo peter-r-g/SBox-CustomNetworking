@@ -27,6 +27,15 @@ public class NetworkReader : BinaryReader
 	}
 
 	/// <summary>
+	/// Reads a 3 float <see cref="System.Numerics.Vector3"/>.
+	/// </summary>
+	/// <returns>The parsed <see cref="System.Numerics.Vector3"/>.</returns>
+	public System.Numerics.Vector3 ReadVector3()
+	{
+		return new Vector3( ReadSingle(), ReadSingle(), ReadSingle() );
+	}
+
+	/// <summary>
 	/// Reads an instance of <see cref="INetworkable"/>.
 	/// </summary>
 	/// <returns>The parsed <see cref="INetworkable"/>.</returns>

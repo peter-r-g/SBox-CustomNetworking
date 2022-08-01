@@ -47,7 +47,7 @@ public struct NetworkedVector3 : INetworkable<NetworkedVector3>, INetworkable, I
 
 	public void Deserialize( NetworkReader reader )
 	{
-		_value = new System.Numerics.Vector3( reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle() );
+		_value = reader.ReadVector3();
 	}
 
 	public void DeserializeChanges( NetworkReader reader )
@@ -57,9 +57,7 @@ public struct NetworkedVector3 : INetworkable<NetworkedVector3>, INetworkable, I
 
 	public void Serialize( NetworkWriter writer )
 	{
-		writer.Write( _value.X );
-		writer.Write( _value.Y );
-		writer.Write( _value.Z );
+		writer.Write( _value );
 	}
 
 	public void SerializeChanges( NetworkWriter writer )

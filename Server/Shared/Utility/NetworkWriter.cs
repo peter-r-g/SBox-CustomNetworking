@@ -22,6 +22,17 @@ public class NetworkWriter : BinaryWriter
 		Write( guid.ToByteArray() );
 	}
 
+	/// <summary>
+	/// Writes a 3 float <see cref="System.Numerics.Vector3"/>.
+	/// </summary>
+	/// <param name="vector3">The instance of <see cref="System.Numerics.Vector3"/> to write.</param>
+	public void Write( System.Numerics.Vector3 vector3 )
+	{
+		Write( vector3.X );
+		Write( vector3.Y );
+		Write( vector3.Y );
+	}
+
 	// TODO: When writing an entity, if it is referenced under an entity just send the entity ID rather than the whole entity.
 	/// <summary>
 	/// Writes an instance of <see cref="INetworkable"/>.
