@@ -2,9 +2,9 @@
   "Title": "CNClient",
   "Type": "game",
   "Org": "gunman",
-  "Ident": "cnclient",
+  "Ident": "CNClient",
   "Schema": 1,
-  "HasAssets": true,
+  "HasAssets": false,
   "AssetsPath": "",
   "ResourcePaths": [],
   "HasCode": true,
@@ -28,6 +28,9 @@
       "DefineConstants": "SANDBOX;ADDON;DEBUG;CLIENT",
       "NoWarn": "1701;1702;1591;",
       "Nullables": true
+    },
+    "ControlModes": {
+      "Keyboard": true
     }
   }
 }
