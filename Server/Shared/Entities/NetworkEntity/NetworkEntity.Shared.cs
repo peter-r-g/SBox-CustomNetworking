@@ -33,6 +33,23 @@ public partial class NetworkEntity : IEntity
 	}
 	private NetworkedVector3 _position;
 
+	/// <summary>
+	/// The velocity of the <see cref="NetworkEntity"/>.
+	/// </summary>
+	public NetworkedVector3 Velocity
+	{
+		get => _velocity;
+		set
+		{
+			var oldVelocity = _velocity;
+			_velocity.Changed -= OnVelocityChanged;
+			_velocity = value;
+			value.Changed += OnVelocityChanged;
+			OnVelocityChanged( oldVelocity, value );
+		}
+	}
+	private NetworkedVector3 _velocity;
+
 	private readonly Dictionary<string, PropertyInfo> _propertyNameCache = new();
 
 	public NetworkEntity( int entityId )
@@ -61,6 +78,8 @@ public partial class NetworkEntity : IEntity
 #if CLIENT
 		UpdateClient();
 #endif
+
+		Position += Velocity;
 	}
 	
 	/// <summary>
@@ -72,6 +91,18 @@ public partial class NetworkEntity : IEntity
 	{
 #if SERVER
 		TriggerNetworkingChange( nameof(Position) );
+#endif
+	}
+
+	/// <summary>
+	/// Called when <see cref="Velocity"/> has changed.
+	/// </summary>
+	/// <param name="oldVelocity">The old instance of <see cref="Velocity"/>.</param>
+	/// <param name="newVelocity">The new instance of <see cref="Velocity"/>.</param>
+	protected virtual void OnVelocityChanged( NetworkedVector3 oldVelocity, NetworkedVector3 newVelocity )
+	{
+#if SERVER
+		TriggerNetworkingChange( nameof(Velocity) );
 #endif
 	}
 
