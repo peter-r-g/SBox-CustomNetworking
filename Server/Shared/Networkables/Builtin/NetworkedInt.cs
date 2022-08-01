@@ -3,6 +3,7 @@ using CustomNetworking.Shared.Utility;
 
 namespace CustomNetworking.Shared.Networkables.Builtin;
 
+// TODO: In .NET 7 make this generic where T : INumber https://devblogs.microsoft.com/dotnet/dotnet-7-generic-math/
 /// <summary>
 /// Represents a networkable <see cref="int"/>.
 /// </summary>
