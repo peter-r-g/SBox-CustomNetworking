@@ -20,12 +20,14 @@ public class NetworkManager
 #endif
 	
 	public readonly Dictionary<long, INetworkClient> Clients = new();
-	
+
+	public bool Connected { get; private set; }
+
 	public delegate void ConnectedEventHandler();
-	public static event ConnectedEventHandler? Connected;
+	public static event ConnectedEventHandler? ConnectedToServer;
 
 	public delegate void DisconnectedEventHandler();
-	public static event DisconnectedEventHandler? Disconnected;
+	public static event DisconnectedEventHandler? DisconnectedFromServer;
 	
 	public delegate void ClientConnectedEventHandler( INetworkClient client );
 	public static event ClientConnectedEventHandler? ClientConnected;
@@ -66,7 +68,8 @@ public class NetworkManager
 		{
 			var headers = new Dictionary<string, string> {{"Steam", Local.PlayerId.ToString()}};
 			await _webSocket.Connect( "ws://127.0.0.1:7087/", headers );
-			Connected?.Invoke();
+			Connected = true;
+			ConnectedToServer?.Invoke();
 		}
 		catch ( Exception e )
 		{
@@ -80,6 +83,7 @@ public class NetworkManager
 		if ( _webSocket is null )
 			return;
 
+		Connected = false;
 		_webSocket.OnDisconnected -= WebSocketOnDisconnected;
 		_webSocket.OnDataReceived -= WebSocketOnDataReceived;
 		_webSocket.OnMessageReceived -= WebSocketOnMessageReceived;
@@ -91,7 +95,7 @@ public class NetworkManager
 		MessagesSent = 0;
 #endif
 		
-		Disconnected?.Invoke();
+		DisconnectedFromServer?.Invoke();
 	}
 	
 	private void WebSocketOnDisconnected( int status, string reason )

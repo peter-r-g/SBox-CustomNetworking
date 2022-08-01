@@ -16,10 +16,10 @@ public class MyGame : Sandbox.Game
 	{
 		if ( !IsClient )
 			return;
-		
+
 		NetworkManager = new NetworkManager();
-		NetworkManager.Connected += OnConnected;
-		NetworkManager.Disconnected += OnDisconnected;
+		NetworkManager.ConnectedToServer += OnConnectedToServer;
+		NetworkManager.DisconnectedFromServer += OnDisconnectedFromServer;
 		NetworkManager.ClientConnected += OnClientConnected;
 		NetworkManager.ClientDisconnected += OnClientDisconnected;
 		EntityManager = new EntityManager();
@@ -29,7 +29,7 @@ public class MyGame : Sandbox.Game
 	[Event.Tick]
 	private void Tick()
 	{
-		if ( EntityManager is null )
+		if ( NetworkManager is null || !NetworkManager.Connected || EntityManager is null )
 			return;
 		
 		foreach ( var entity in EntityManager.Entities )
@@ -38,18 +38,15 @@ public class MyGame : Sandbox.Game
 		InputHelper.SendInputToServer();
 	}
 	
-	private void OnConnected()
+	private void OnConnectedToServer()
 	{
 		Log.Info( "Connected" );
 	}
 	
-	private void OnDisconnected()
+	private void OnDisconnectedFromServer()
 	{
 		Log.Info( "Disconnected" );
 
-		if ( EntityManager is null )
-			return;
-		
 		EntityManager?.DeleteAllEntities();
 	}
 	

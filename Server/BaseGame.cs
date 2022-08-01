@@ -65,6 +65,8 @@ public class BaseGame
 		NetworkServer.Instance.HandleMessage<ClientInputMessage>( Input.HandleClientInputMessage );
 
 		SharedEntityManager.EntityChanged += OnNetworkedEntityChanged;
+		var entity  = SharedEntityManager.Create<NetworkModelEntity>();
+		entity.ModelName = "models/citizen/citizen.vmdl";
 	}
 
 	/// <summary>
@@ -144,8 +146,8 @@ public class BaseGame
 		return SharedEntityManager.GetEntityById( entityId );
 	}
 	
-	private void OnNetworkedEntityChanged( INetworkable entity )
+	private void OnNetworkedEntityChanged( IEntity entity )
 	{
-		_changedEntities.Add( (entity as IEntity)! );
+		_changedEntities.Add( entity );
 	}
 }
