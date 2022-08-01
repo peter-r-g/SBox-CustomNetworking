@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Numerics;
 using CustomNetworking.Shared.Networkables;
 
 namespace CustomNetworking.Shared.Utility;
@@ -20,6 +21,18 @@ public class NetworkWriter : BinaryWriter
 	public void Write( Guid guid )
 	{
 		Write( guid.ToByteArray() );
+	}
+
+	/// <summary>
+	/// Writes a 4 float <see cref="Quaternion"/>.
+	/// </summary>
+	/// <param name="quaternion">The instance of <see cref="Quaternion"/> to write.</param>
+	public void Write( Quaternion quaternion )
+	{
+		Write( quaternion.X );
+		Write( quaternion.Y );
+		Write( quaternion.Z );
+		Write( quaternion.W );
 	}
 
 	/// <summary>

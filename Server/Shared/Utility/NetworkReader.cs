@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Numerics;
 #if SERVER
 using CustomNetworking.Server;
 #endif
@@ -24,6 +25,15 @@ public class NetworkReader : BinaryReader
 	public Guid ReadGuid()
 	{
 		return new Guid( ReadBytes( 16 ) );
+	}
+
+	/// <summary>
+	/// Reads a 4 float <see cref="Quaternion"/>.
+	/// </summary>
+	/// <returns>The parsed <see cref="Quaternion"/>.</returns>
+	public Quaternion ReadQuaternion()
+	{
+		return new Quaternion( ReadSingle(), ReadSingle(), ReadSingle(), ReadSingle() );
 	}
 
 	/// <summary>
