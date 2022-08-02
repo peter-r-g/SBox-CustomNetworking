@@ -1,9 +1,6 @@
 using System;
 using System.IO;
 using System.Numerics;
-#if SERVER
-using CustomNetworking.Server;
-#endif
 using CustomNetworking.Shared.Entities;
 using CustomNetworking.Shared.Networkables;
 
@@ -53,7 +50,6 @@ public class NetworkReader : BinaryReader
 	public INetworkable ReadNetworkable()
 	{
 		var typeName = ReadString();
-#if SERVER
 		var type = TypeHelper.GetTypeByName( typeName );
 		if ( type is null )
 			throw new InvalidOperationException( $"Failed to read networkable (\"{typeName}\" does not exist in the current assembly)." );
@@ -66,30 +62,6 @@ public class NetworkReader : BinaryReader
 			{
 				var genericTypeName = ReadString();
 				var genericType = TypeHelper.GetTypeByName( genericTypeName );
-
-				genericTypes[i] = genericType ?? throw new InvalidOperationException( $"Failed to read networkable (Generic argument \"{genericTypeName}\" does not exist in the current assembly)" );
-			}
-
-			type = type.MakeGenericType( genericTypes );
-		}
-		
-		var networkable = (INetworkable?)Activator.CreateInstance( type );
-		if ( networkable is null )
-			throw new InvalidOperationException( "Failed to read networkable (instance creation failed)" );
-#endif
-#if CLIENT
-		var type = TypeLibrary.GetTypeByName( typeName );
-		if ( type is null )
-			throw new InvalidOperationException( $"Failed to read networkable (\"{typeName}\" does not exist in the {nameof(TypeLibrary)})." );
-		
-		if ( type.IsGenericType )
-		{
-			var genericCount = ReadInt32();
-			var genericTypes = new Type[genericCount];
-			for ( var i = 0; i < genericCount; i++ )
-			{
-				var genericTypeName = ReadString();
-				var genericType = TypeLibrary.GetTypeByName( genericTypeName );
 				if ( genericType is null )
 					throw new InvalidOperationException( $"Failed to read networkable (Generic argument \"{genericTypeName}\" does not exist in the current assembly)" );
 
@@ -99,8 +71,9 @@ public class NetworkReader : BinaryReader
 			type = type.MakeGenericType( genericTypes );
 		}
 		
-		var networkable = TypeLibrary.Create<INetworkable>( type );
-#endif
+		var networkable = TypeHelper.Create<INetworkable>( type );
+		if ( networkable is null )
+			throw new InvalidOperationException( "Failed to read networkable (instance creation failed)" );
 		
 		networkable.Deserialize( this );
 		return networkable;
@@ -144,19 +117,14 @@ public class NetworkReader : BinaryReader
 		var typeName = ReadString();
 		var entityId = ReadInt32();
 		BaseStream.Position -= sizeof(int);
-#if SERVER
+		
 		var type = TypeHelper.GetTypeByName( typeName );
 		if ( type is null )
 			throw new InvalidOperationException( $"Failed to read entity (\"{typeName}\" does not exist in the current assembly)." );
-		
-		var entity = (IEntity?)Activator.CreateInstance( type, entityId );
+
+		var entity = TypeHelper.Create<IEntity?>( type, entityId );
 		if ( entity is null )
 			throw new InvalidOperationException( "Failed to read entity (instance creation failed)" );
-#endif
-#if CLIENT
-		var type = TypeLibrary.GetTypeByName( typeName );
-		var entity = TypeLibrary.Create<IEntity>( type, new object[] {entityId} );
-#endif
 		
 		entity.Deserialize( this );
 		return entity;

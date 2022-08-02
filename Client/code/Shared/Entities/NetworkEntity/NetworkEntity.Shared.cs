@@ -57,7 +57,7 @@ public partial class NetworkEntity : IEntity
 		EntityId = entityId;
 		
 		foreach ( var property in GetType().GetProperties()
-			         .Where( property => property.PropertyType.IsAssignableTo( typeof(INetworkable<>) ) ) )
+			         .Where( property => property.PropertyType.IsAssignableTo( typeof(INetworkable) ) ) )
 		{
 			if ( property.Name == nameof(EntityId) )
 				continue;

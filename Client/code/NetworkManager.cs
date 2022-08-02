@@ -228,7 +228,7 @@ public class NetworkManager
 #endif
 		var stream = new MemoryStream();
 		var writer = new NetworkWriter( stream );
-		writer.WriteNetworkable( message );
+		writer.WriteNetworkable<NetworkMessage>( message );
 		writer.Close();
 		
 		await _webSocket.Send( stream.ToArray() );

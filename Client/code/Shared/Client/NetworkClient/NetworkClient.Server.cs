@@ -33,7 +33,7 @@ public partial class NetworkClient
 	{
 		var stream = new MemoryStream();
 		var writer = new NetworkWriter( stream );
-		writer.WriteNetworkable( message );
+		writer.WriteNetworkable<NetworkMessage>( message );
 		writer.Close();
 		
 		SendMessage( stream.ToArray() );
