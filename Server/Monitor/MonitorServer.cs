@@ -5,6 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using CustomNetworking.Shared.Utility;
 using System;
+using CustomNetworking.Shared;
 
 namespace CustomNetworking.Server;
 
@@ -40,7 +41,7 @@ internal sealed class MonitorServer
 			
 			var stream = new MemoryStream();
 			var writer = new NetworkWriter( stream );
-			writer.WriteNetworkable( new ServerInformationMessage() );
+			writer.WriteNetworkable<NetworkMessage>( new ServerInformationMessage() );
 			writer.Close();
 			var bytes = stream.ToArray();
 
