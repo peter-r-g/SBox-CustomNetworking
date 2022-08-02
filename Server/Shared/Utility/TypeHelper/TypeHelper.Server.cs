@@ -1,13 +1,11 @@
+#if SERVER
 using System;
 using System.Collections.Generic;
 using System.Reflection;
 
-namespace CustomNetworking.Server;
+namespace CustomNetworking.Shared;
 
-/// <summary>
-/// A collection of helper methods to get types from the current assembly.
-/// </summary>
-public static class TypeHelper
+public static partial class TypeHelper
 {
 	private static readonly Assembly Assembly = Assembly.GetExecutingAssembly();
 	private static readonly Dictionary<string, Type> TypeNameCache = new();
@@ -33,4 +31,10 @@ public static class TypeHelper
 
 		return null;
 	}
+
+	public static T? Create<T>( Type typeToCreate, params object[] parameters )
+	{
+		return (T?)Activator.CreateInstance( typeToCreate, parameters );
+	}
 }
+#endif

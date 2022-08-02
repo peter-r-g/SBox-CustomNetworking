@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using CustomNetworking.Shared.Entities;
-using CustomNetworking.Shared.Networkables;
 
 namespace CustomNetworking.Shared;
 
@@ -107,12 +106,7 @@ public partial class EntityManager
 	
 	private T CreateInternal<T>( int entityId, Type? entityType = null ) where T : IEntity
 	{
-#if SERVER
-		var entity = (T?)Activator.CreateInstance( entityType ?? typeof(T), entityId );
-#endif
-#if CLIENT
-		var entity = TypeLibrary.Create<T>( entityType ?? typeof(T), new object[] {entityId} );
-#endif
+		var entity = TypeHelper.Create<T>( entityType ?? typeof(T), entityId );
 		if ( entity is null )
 			throw new Exception( $"Failed to create instance of {entityType ?? typeof(T)}" );
 		
