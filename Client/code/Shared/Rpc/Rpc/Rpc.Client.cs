@@ -73,7 +73,7 @@ public partial class Rpc
 		if ( message is not RpcCallMessage rpcCall )
 			return;
 
-		var type = TypeLibrary.GetTypeByName( rpcCall.ClassName );
+		var type = TypeHelper.GetTypeByName( rpcCall.ClassName );
 		if ( type is null )
 			throw new InvalidOperationException( $"Failed to handle RPC call (\"{rpcCall.ClassName}\" doesn't exist in the current assembly)." );
 
