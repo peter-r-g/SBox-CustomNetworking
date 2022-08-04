@@ -18,6 +18,15 @@ public class BaseGame
 	public static BaseGame Current = null!;
 
 	/// <summary>
+	/// A quick access to <see cref="NetworkServer"/>.<see cref="NetworkServer.Instance"/>.<see cref="NetworkServer.Clients"/>.
+	/// </summary>
+	public IReadOnlyDictionary<long, INetworkClient> Clients => NetworkServer.Instance.Clients;
+	/// <summary>
+	/// A quick access to <see cref="NetworkServer"/>.<see cref="NetworkServer.Instance"/>.<see cref="NetworkServer.Bots"/>.
+	/// </summary>
+	public IReadOnlyDictionary<long, BotClient> Bots => NetworkServer.Instance.Bots;
+
+	/// <summary>
 	/// Read only list containing all entities that only exist in the server. <see cref="ServerEntityManager"/> for adding to this list.
 	/// </summary>
 	public IReadOnlyList<IEntity> LocalEntities => ServerEntityManager.Entities;
