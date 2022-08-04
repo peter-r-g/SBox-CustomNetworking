@@ -40,7 +40,12 @@ public struct NetworkedVector3 : INetworkable<NetworkedVector3>, INetworkable, I
 	/// </summary>
 	public float Z => _value.Z;
 
-	private NetworkedVector3( System.Numerics.Vector3 vector3 )
+	public NetworkedVector3( float x, float y, float z )
+	{
+		_value = new System.Numerics.Vector3( x, y, z );
+	}
+
+	public NetworkedVector3( System.Numerics.Vector3 vector3 )
 	{
 		_value = vector3;
 	}
