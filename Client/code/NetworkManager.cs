@@ -48,6 +48,7 @@ public class NetworkManager
 		HandleMessage<RpcCallMessage>( Rpc.HandleRpcCallMessage );
 		HandleMessage<RpcCallResponseMessage>( Rpc.HandleRpcCallResponseMessage );
 		HandleMessage<PartialMessage>( HandlePartialMessage );
+		HandleMessage<MultiMessage>( HandleMultiMessage );
 		HandleMessage<ShutdownMessage>( HandleShutdownMessage );
 		HandleMessage<ClientListMessage>( HandleClientListMessage );
 		HandleMessage<EntityListMessage>( HandleEntityListMessage );
@@ -149,6 +150,15 @@ public class NetworkManager
 		ArrayPool<byte>.Shared.Return( bytes );
 		
 		DispatchMessage( finalMessage );
+	}
+
+	private void HandleMultiMessage( NetworkMessage message )
+	{
+		if ( message is not MultiMessage multiMessage )
+			return;
+		
+		foreach ( var msg in multiMessage.Messages )
+			DispatchMessage( msg );
 	}
 		
 	private void HandleShutdownMessage( NetworkMessage message )
