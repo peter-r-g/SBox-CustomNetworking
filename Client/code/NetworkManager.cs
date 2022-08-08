@@ -57,7 +57,7 @@ public class NetworkManager
 		HandleMessage<EntityUpdateMessage>( HandleEntityUpdateMessage );
 	}
 
-	public async Task ConnectAsync()
+	public async Task ConnectAsync( string uri, int port, bool secure )
 	{
 		if ( _webSocket is not null )
 			Close();
@@ -69,7 +69,8 @@ public class NetworkManager
 		try
 		{
 			var headers = new Dictionary<string, string> {{"Steam", Local.PlayerId.ToString()}};
-			await _webSocket.Connect( "ws://127.0.0.1:7087/", headers );
+			var webSocketUri = (secure ? "wss://" : "ws://") + uri + ':' + port + '/' ;
+			await _webSocket.Connect( webSocketUri, headers );
 			Connected = true;
 			ConnectedToServer?.Invoke();
 		}
