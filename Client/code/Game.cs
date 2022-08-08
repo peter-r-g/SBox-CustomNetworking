@@ -24,7 +24,7 @@ public class BaseGame : Game
 		GameHud = new GameHud();
 	}
 
-	[Event.Tick]
+	[Event.Tick.Client]
 	private void Tick()
 	{
 		if ( NetworkManager is null || !NetworkManager.Connected )
