@@ -78,8 +78,6 @@ public partial class NetworkEntity : IEntity
 #if CLIENT
 		UpdateClient();
 #endif
-
-		Position += Velocity;
 	}
 	
 	/// <summary>
