@@ -20,6 +20,7 @@ public class NetworkManager
 #endif
 	
 	public readonly Dictionary<long, INetworkClient> Clients = new();
+	public readonly EntityManager SharedEntityManager = new();
 
 	public bool Connected { get; private set; }
 
@@ -90,6 +91,7 @@ public class NetworkManager
 		_webSocket.OnMessageReceived -= WebSocketOnMessageReceived;
 		_webSocket.Dispose();
 		Clients.Clear();
+		SharedEntityManager.DeleteAllEntities();
 		_partialMessages.Clear();
 #if DEBUG
 		MessagesReceived = 0;
@@ -97,6 +99,12 @@ public class NetworkManager
 #endif
 		
 		DisconnectedFromServer?.Invoke();
+	}
+
+	public void Update()
+	{
+		foreach ( var entity in SharedEntityManager.Entities )
+			entity.Update();
 	}
 	
 	private void WebSocketOnDisconnected( int status, string reason )
@@ -186,7 +194,7 @@ public class NetworkManager
 		foreach ( var entityData in entityListMessage.EntityData )
 		{
 			var reader = new NetworkReader( new MemoryStream( entityData ) );
-			MyGame.Current.EntityManager?.DeserializeAndAddEntity( reader );
+			SharedEntityManager?.DeserializeAndAddEntity( reader );
 			reader.Close();
 		}
 	}
@@ -221,7 +229,7 @@ public class NetworkManager
 			return;
 
 		var reader = new NetworkReader( new MemoryStream( entityUpdateMessage.EntityData ) );
-		var entity = MyGame.Current.EntityManager?.GetEntityById( reader.ReadInt32() );
+		var entity = SharedEntityManager?.GetEntityById( reader.ReadInt32() );
 		if ( entity is null )
 			throw new Exception( "Attempted to update an entity that does not exist." );
 		

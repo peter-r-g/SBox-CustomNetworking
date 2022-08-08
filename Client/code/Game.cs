@@ -9,7 +9,6 @@ public class MyGame : Sandbox.Game
 	public new static MyGame Current => (Sandbox.Game.Current as MyGame)!;
 
 	public readonly NetworkManager? NetworkManager;
-	public readonly EntityManager? EntityManager;
 	public readonly GameHud? GameHud;
 
 	public MyGame()
@@ -22,19 +21,16 @@ public class MyGame : Sandbox.Game
 		NetworkManager.DisconnectedFromServer += OnDisconnectedFromServer;
 		NetworkManager.ClientConnected += OnClientConnected;
 		NetworkManager.ClientDisconnected += OnClientDisconnected;
-		EntityManager = new EntityManager();
 		GameHud = new GameHud();
 	}
 
 	[Event.Tick]
 	private void Tick()
 	{
-		if ( NetworkManager is null || !NetworkManager.Connected || EntityManager is null )
+		if ( NetworkManager is null || !NetworkManager.Connected )
 			return;
-		
-		foreach ( var entity in EntityManager.Entities )
-			entity.Update();
-		
+
+		NetworkManager.Update();
 	}
 	
 	private void OnConnectedToServer()
@@ -45,8 +41,6 @@ public class MyGame : Sandbox.Game
 	private void OnDisconnectedFromServer()
 	{
 		Log.Info( "Disconnected" );
-
-		EntityManager?.DeleteAllEntities();
 	}
 	
 	private static void OnClientConnected( INetworkClient client )

@@ -85,7 +85,7 @@ public partial class Rpc
 		if ( !method.Attributes.Any( attribute => attribute is Rpc.ClientAttribute ) )
 			throw new InvalidOperationException( "Failed to handle RPC call (Attempted to invoke a non-RPC method)." );
 		
-		var instance = MyGame.Current.EntityManager?.GetEntityById( rpcCall.EntityId );
+		var instance = NetworkManager.Instance?.SharedEntityManager.GetEntityById( rpcCall.EntityId );
 		if ( instance is null && rpcCall.EntityId != -1 )
 			throw new InvalidOperationException( "Failed to handle RPC call (Attempted to call RPC on a non-existant entity)." );
 
