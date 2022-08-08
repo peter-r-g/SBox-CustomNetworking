@@ -4,14 +4,14 @@ using Sandbox;
 
 namespace CustomNetworking.Client;
 
-public class MyGame : Sandbox.Game
+public class BaseGame : Game
 {
-	public new static MyGame Current => (Sandbox.Game.Current as MyGame)!;
+	public new static BaseGame Current => (Sandbox.Game.Current as BaseGame)!;
 
 	public readonly NetworkManager? NetworkManager;
 	public readonly GameHud? GameHud;
 
-	public MyGame()
+	public BaseGame()
 	{
 		if ( !IsClient )
 			return;
