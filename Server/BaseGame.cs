@@ -71,7 +71,6 @@ public class BaseGame
 		Program.TickRate = TickRate;
 		NetworkServer.Instance.HandleMessage<RpcCallMessage>( Rpc.HandleRpcCallMessage );
 		NetworkServer.Instance.HandleMessage<RpcCallResponseMessage>( Rpc.HandleRpcCallResponseMessage );
-		NetworkServer.Instance.HandleMessage<ClientInputMessage>( Input.HandleClientInputMessage );
 
 		SharedEntityManager.EntityChanged += OnNetworkedEntityChanged;
 		var entity  = SharedEntityManager.Create<NetworkModelEntity>();
@@ -115,8 +114,6 @@ public class BaseGame
 	/// <param name="client">The handle of the client that has connected.</param>
 	public virtual void OnClientConnected( INetworkClient client )
 	{
-		Input.OnClientConnected( client );
-		
 		var toClient = To.Single( client );
 		NetworkServer.Instance.QueueMessage( toClient, new ClientListMessage( NetworkServer.Instance.Clients.Keys ) );
 		NetworkServer.Instance.QueueMessage( toClient, new EntityListMessage( SharedEntityManager.Entities ) );
@@ -129,8 +126,6 @@ public class BaseGame
 	/// <param name="client">The handle of the client that has disconnected.</param>
 	public virtual void OnClientDisconnected( INetworkClient client )
 	{
-		Input.OnClientDisconnected( client );
-		
 		var message = new ClientStateChangedMessage( client.ClientId, ClientState.Disconnected );
 		NetworkServer.Instance.QueueMessage( To.AllExcept( client ), message );
 	}
