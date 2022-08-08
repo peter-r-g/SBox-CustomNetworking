@@ -17,6 +17,8 @@ public class NetworkManager
 #if DEBUG
 	public int MessagesReceived;
 	public int MessagesSent;
+
+	public Dictionary<Type, int> MessageTypesReceived = new();
 #endif
 	
 	public readonly Dictionary<long, INetworkClient> Clients = new();
@@ -115,6 +117,10 @@ public class NetworkManager
 	
 	private void WebSocketOnDataReceived( Span<byte> data )
 	{
+#if DEBUG
+		MessagesReceived++;
+#endif
+		
 		var reader = new NetworkReader( new MemoryStream( data.ToArray() ) );
 		var message = NetworkMessage.DeserializeMessage( reader );
 		reader.Close();
@@ -256,8 +262,12 @@ public class NetworkManager
 	private void DispatchMessage( NetworkMessage message )
 	{
 #if DEBUG
-		MessagesReceived++;
+		var messageType = message.GetType();
+		if ( !MessageTypesReceived.ContainsKey( messageType ) )
+			MessageTypesReceived.Add( messageType, 0 );
+		MessageTypesReceived[messageType]++;
 #endif
+		
 		if ( !_messageHandlers.TryGetValue( message.GetType(), out var cb ) )
 			throw new Exception( $"Unhandled message {message.GetType()}." );
 		
