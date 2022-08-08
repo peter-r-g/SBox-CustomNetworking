@@ -25,7 +25,7 @@ public class BaseGame : Game
 	}
 
 	[Event.Tick.Client]
-	private void Tick()
+	protected virtual void Update()
 	{
 		if ( NetworkManager is null || !NetworkManager.Connected )
 			return;
@@ -33,22 +33,22 @@ public class BaseGame : Game
 		NetworkManager.Update();
 	}
 	
-	private void OnConnectedToServer()
+	protected virtual void OnConnectedToServer()
 	{
 		Log.Info( "Connected" );
 	}
 	
-	private void OnDisconnectedFromServer()
+	protected virtual void OnDisconnectedFromServer()
 	{
 		Log.Info( "Disconnected" );
 	}
 	
-	private static void OnClientConnected( INetworkClient client )
+	protected virtual void OnClientConnected( INetworkClient client )
 	{
 		ClientChatBox.AddInformation( $"{client.ClientId} has joined", $"avatar:{client.ClientId}" );
 	}
 	
-	private static void OnClientDisconnected( INetworkClient client )
+	protected virtual void OnClientDisconnected( INetworkClient client )
 	{
 		ClientChatBox.AddInformation( $"{client.ClientId} has left", $"avatar{client.ClientId}" );
 	}
