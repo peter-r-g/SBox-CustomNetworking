@@ -59,6 +59,7 @@ public class NetworkManager
 		HandleMessage<CreateEntityMessage>( HandleCreateEntityMessage );
 		HandleMessage<DeleteEntityMessage>( HandleDeleteEntityMessage );
 		HandleMessage<ClientStateChangedMessage>( HandleClientStateChangedMessage );
+		HandleMessage<ClientPawnChangedMessage>( HandleClientPawnChangedMessage );
 		HandleMessage<MultiEntityUpdateMessage>( HandleMultiEntityUpdateMessage );
 	}
 
@@ -194,7 +195,7 @@ public class NetworkManager
 
 		foreach ( var (playerId, pawnId) in clientListMessage.ClientIds )
 		{
-			var client = new NetworkClient( playerId ) {Pawn = (BasePlayer?)SharedEntityManager.GetEntityById( pawnId )};
+			var client = new NetworkClient( playerId ) {Pawn = SharedEntityManager.GetEntityById( pawnId )};
 			Clients.Add( playerId, client );
 		}
 	}
@@ -250,6 +251,14 @@ public class NetworkManager
 			default:
 				throw new ArgumentOutOfRangeException( nameof(clientStateChangedMessage.ClientState) );
 		}
+	}
+		
+	private void HandleClientPawnChangedMessage( NetworkMessage message )
+	{
+		if ( message is not ClientPawnChangedMessage clientPawnChangedMessage )
+			return;
+
+		
 	}
 	
 	private void HandleMultiEntityUpdateMessage( NetworkMessage message )
