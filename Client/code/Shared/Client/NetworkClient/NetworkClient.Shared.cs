@@ -1,4 +1,6 @@
-﻿namespace CustomNetworking.Shared;
+﻿using CustomNetworking.Shared.Entities;
+
+namespace CustomNetworking.Shared;
 
 /// <summary>
 /// Base class for any non-bot clients connected to a server.
@@ -6,4 +8,5 @@
 public partial class NetworkClient : INetworkClient
 {
 	public long ClientId { get; }
+	public BasePlayer? Pawn { get; set; }
 }

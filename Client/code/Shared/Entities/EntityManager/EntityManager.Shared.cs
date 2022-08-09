@@ -13,7 +13,25 @@ public partial class EntityManager
 	/// A read only list of all <see cref="IEntity"/>s that are in this <see cref="EntityManager"/>.
 	/// </summary>
 	public IReadOnlyList<IEntity> Entities => _entities;
-	
+
+	/// <summary>
+	/// The event handler for <see cref="EntityManager"/>.<see cref="EntityManager.EntityCreated"/>.
+	/// </summary>
+	public delegate void CreatedEventHandler( IEntity entity );
+	/// <summary>
+	/// Called when an <see cref="IEntity"/> has been created in this <see cref="EntityManager"/>.
+	/// </summary>
+	public CreatedEventHandler? EntityCreated;
+
+	/// <summary>
+	/// The event handler for <see cref="EntityManager"/>.<see cref="EntityManager.EntityDeleted"/>.
+	/// </summary>
+	public delegate void DeletedEventHandler( IEntity entity );
+	/// <summary>
+	/// Called when an <see cref="IEntity"/> has been deleted in the <see cref="EntityManager"/>.
+	/// </summary>
+	public DeletedEventHandler? EntityDeleted;
+
 	/// <summary>
 	/// The event handler for <see cref="EntityManager"/>.<see cref="EntityManager.EntityChanged"/>.
 	/// </summary>
@@ -33,9 +51,7 @@ public partial class EntityManager
 	/// <returns>The created <see cref="IEntity"/> as <see cref="T"/>.</returns>
 	public T Create<T>() where T : class, IEntity
 	{
-		var entity = CreateInternal<T>( _nextEntityId );
-		_nextEntityId++;
-		return entity;
+		return CreateInternal<T>( _nextEntityId++ );
 	}
 
 	/// <summary>
@@ -49,9 +65,7 @@ public partial class EntityManager
 		if ( !entityType.IsClass || !entityType.IsAssignableTo( typeof(IEntity) ) )
 			throw new Exception( $"Failed to create entity (type is not a class that implements {nameof(IEntity)})." );
 
-		var entity = CreateInternal<IEntity>( _nextEntityId, entityType );
-		_nextEntityId++;
-		return entity;
+		return CreateInternal<IEntity>( _nextEntityId++, entityType );
 	}
 
 	/// <summary>
@@ -63,6 +77,7 @@ public partial class EntityManager
 	{
 		entity.Changed -= EntityOnChanged;
 		entity.Delete();
+		EntityDeleted?.Invoke( entity );
 	}
 
 	/// <summary>
@@ -112,6 +127,7 @@ public partial class EntityManager
 		
 		_entities.Add( entity );
 		entity.Changed += EntityOnChanged;
+		EntityCreated?.Invoke( entity );
 		return entity;
 	}
 	

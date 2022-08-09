@@ -11,20 +11,22 @@ public sealed class ClientListMessage : NetworkMessage
 	/// <summary>
 	/// Contains all client IDs to notify the client about.
 	/// </summary>
-	public ICollection<long> ClientIds { get; private set; }
+	public List<(long, int)> ClientIds { get; private set; }
 
 #if SERVER
-	public ClientListMessage( ICollection<long> clientIds )
+	public ClientListMessage( ICollection<INetworkClient> clients )
 	{
-		ClientIds = clientIds;
+		ClientIds = new List<(long, int)> {Capacity = clients.Count};
+		foreach ( var client in clients )
+			ClientIds.Add( (client.ClientId, client.Pawn?.EntityId ?? -1) );
 	}
 #endif
 	
 	public override void Deserialize( NetworkReader reader )
 	{
-		var list = new List<long> {Capacity = reader.ReadInt32()};
+		var list = new List<(long, int)> {Capacity = reader.ReadInt32()};
 		for ( var i = 0; i < list.Capacity; i++ )
-			list.Add( reader.ReadInt64() );
+			list.Add( (reader.ReadInt64(), reader.ReadInt32()) );
 
 		ClientIds = list;
 	}
@@ -32,7 +34,10 @@ public sealed class ClientListMessage : NetworkMessage
 	public override void Serialize( NetworkWriter writer )
 	{
 		writer.Write( ClientIds.Count );
-		foreach ( var playerId in ClientIds )
-			writer.Write( playerId );
+		foreach ( var pair in ClientIds )
+		{
+			writer.Write( pair.Item1 );
+			writer.Write( pair.Item2 );
+		}
 	}
 }
