@@ -1,3 +1,10 @@
+#if CLIENT
+using System;
+using CustomNetworking.Client;
+#endif
+#if SERVER
+using CustomNetworking.Server;
+#endif
 using CustomNetworking.Shared.Networkables;
 using CustomNetworking.Shared.Networkables.Builtin;
 
