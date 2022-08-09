@@ -23,4 +23,21 @@ public interface IEntity : INetworkable<IEntity>
 	/// <remarks>This will be called every server tick or client frame.</remarks>
 	/// </summary>
 	void Update();
+	
+#if SERVER
+	public static EntityManager All => BaseGame.Current.SharedEntityManager;
+	public static EntityManager Local => BaseGame.Current.ServerEntityManager;
+#endif
+#if CLIENT
+	public static EntityManager All
+	{
+		get
+		{
+			if ( NetworkManager.Instance is null )
+				throw new Exception( "Attempted to access all networked entities when the NetworkManager doesn't exist." );
+			
+			return NetworkManager.Instance.SharedEntityManager;
+		}
+	}
+#endif
 }

@@ -27,30 +27,21 @@ public class BaseGame
 	/// A quick access to <see cref="NetworkServer"/>.<see cref="NetworkServer.Instance"/>.<see cref="NetworkServer.Bots"/>.
 	/// </summary>
 	public IReadOnlyDictionary<long, BotClient> Bots => NetworkServer.Instance.Bots;
-
+	
 	/// <summary>
-	/// Read only list containing all entities that only exist in the server. <see cref="ServerEntityManager"/> for adding to this list.
+	/// Manages all server-side only entities.
 	/// </summary>
-	public IReadOnlyList<IEntity> LocalEntities => ServerEntityManager.Entities;
+	internal readonly EntityManager ServerEntityManager = new();
 	/// <summary>
-	/// Read only list containing all entities that exist in both server and all clients. <see cref="SharedEntityManager"/> for adding to this list.
+	/// Manages all networked entities.
 	/// </summary>
-	public IReadOnlyList<IEntity> NetworkedEntities => SharedEntityManager.Entities;
+	internal readonly EntityManager SharedEntityManager = new();
 
 	/// <summary>
 	/// The maximum tick rate of the server. In the event of severe performance hits the tick rate can drop below this desired number.
 	/// </summary>
 	protected virtual int TickRate => 60;
-	
-	/// <summary>
-	/// Manages all server-side only entities.
-	/// </summary>
-	protected readonly EntityManager ServerEntityManager = new();
-	/// <summary>
-	/// Manages all networked entities.
-	/// </summary>
-	protected readonly EntityManager SharedEntityManager = new();
-	
+
 	/// <summary>
 	/// Keeps track of all edited entities in the <see cref="SharedEntityManager"/>.
 	/// </summary>

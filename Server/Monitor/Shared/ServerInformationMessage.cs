@@ -1,4 +1,5 @@
 using CustomNetworking.Shared;
+using CustomNetworking.Shared.Entities;
 using CustomNetworking.Shared.Utility;
 
 namespace CustomNetworking.Server;
@@ -20,8 +21,8 @@ public sealed class ServerInformationMessage : NetworkMessage
 		MessagesReceived = NetworkServer.Instance.MessagesReceived;
 		MessagesSent = NetworkServer.Instance.MessagesSent;
 		MessagesSentToClients = NetworkServer.Instance.MessagesSentToClients;
-		NumServerEntities = BaseGame.Current.LocalEntities.Count;
-		NumNetworkedEntities = BaseGame.Current.NetworkedEntities.Count;
+		NumServerEntities = IEntity.Local.Entities.Count;
+		NumNetworkedEntities = IEntity.All.Entities.Count;
 		DeltaTime = Time.Delta;
 	}
 #endif
