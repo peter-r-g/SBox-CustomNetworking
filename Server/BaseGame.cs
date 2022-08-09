@@ -68,8 +68,6 @@ public class BaseGame
 		SharedEntityManager.EntityCreated += OnNetworkedEntityCreated;
 		SharedEntityManager.EntityDeleted += OnNetworkedEntityDeleted;
 		SharedEntityManager.EntityChanged += OnNetworkedEntityChanged;
-		var entity  = SharedEntityManager.Create<NetworkModelEntity>();
-		entity.ModelName = "models/citizen/citizen.vmdl";
 	}
 
 	/// <summary>
@@ -125,7 +123,6 @@ public class BaseGame
 		NetworkServer.Instance.QueueMessage( toClient, new ClientListMessage( NetworkServer.Instance.Clients.Values ) );
 		NetworkServer.Instance.QueueMessage( toClient, new EntityListMessage( SharedEntityManager.Entities ) );
 		NetworkServer.Instance.QueueMessage( To.AllExcept( client ), new ClientStateChangedMessage( client.ClientId, ClientState.Connected ) );
-		client.Pawn = SharedEntityManager.Create<BasePlayer>();
 	}
 
 	/// <summary>
