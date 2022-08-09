@@ -8,23 +8,6 @@ namespace CustomNetworking.Shared.Entities;
 public partial class NetworkModelEntity : NetworkEntity
 {
 	/// <summary>
-	/// The world rotation of the <see cref="NetworkModelEntity"/>.
-	/// </summary>
-	public NetworkedQuaternion Rotation
-	{
-		get => _rotation;
-		set
-		{
-			var oldRotation = _rotation;
-			_rotation.Changed -= OnRotationChanged;
-			_rotation = value;
-			value.Changed += OnRotationChanged;
-			OnRotationChanged( oldRotation, value );
-		}
-	}
-	private NetworkedQuaternion _rotation;
-	
-	/// <summary>
 	/// The model the <see cref="NetworkModelEntity"/> should use.
 	/// </summary>
 	public NetworkedString ModelName
@@ -44,19 +27,7 @@ public partial class NetworkModelEntity : NetworkEntity
 	public NetworkModelEntity( int entityId ) : base( entityId )
 	{
 	}
-	
-	/// <summary>
-	/// Called when <see cref="Rotation"/> has changed.
-	/// </summary>
-	/// <param name="oldRotation">The old instance of <see cref="Rotation"/>.</param>
-	/// <param name="newRotation">The new instance of <see cref="Rotation"/>.</param>
-	protected virtual void OnRotationChanged( NetworkedQuaternion oldRotation, NetworkedQuaternion newRotation )
-	{
-#if SERVER
-		TriggerNetworkingChange( nameof(Rotation) );
-#endif
-	}
-	
+
 	/// <summary>
 	/// Called when <see cref="ModelName"/> has changed.
 	/// </summary>
@@ -67,8 +38,6 @@ public partial class NetworkModelEntity : NetworkEntity
 #if CLIENT && !MONITOR
 		ModelEntity.SetModel( newModelName );
 #endif
-#if SERVER
 		TriggerNetworkingChange( nameof(ModelName) );
-#endif
 	}
 }

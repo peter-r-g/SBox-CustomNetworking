@@ -1,4 +1,12 @@
-﻿using CustomNetworking.Shared.Entities;
+﻿using System.Collections.Generic;
+#if CLIENT
+using System;
+using CustomNetworking.Client;
+#endif
+#if SERVER
+using CustomNetworking.Server;
+#endif
+using CustomNetworking.Shared.Entities;
 
 namespace CustomNetworking.Shared;
 
@@ -8,14 +16,23 @@ namespace CustomNetworking.Shared;
 public interface INetworkClient
 {
 	/// <summary>
+	/// 
+	/// </summary>
+	delegate void PawnChangedEventHandler( INetworkClient client, IEntity? oldPawn, IEntity? newPawn );
+	/// <summary>
+	/// 
+	/// </summary>
+	event PawnChangedEventHandler? PawnChanged;
+	
+	/// <summary>
 	/// The unique identifier of the client.
 	/// </summary>
 	long ClientId { get; }
-	
+
 	/// <summary>
 	/// The player entity that the client is controlling.
 	/// </summary>
-	BasePlayer? Pawn { get; set; }
+	IEntity? Pawn { get; set; }
 
 #if SERVER
 	/// <summary>
@@ -28,5 +45,20 @@ public interface INetworkClient
 	/// </summary>
 	/// <param name="message">The message to send to the client.</param>
 	void SendMessage( NetworkMessage message );
+	
+	public static IReadOnlyDictionary<long, INetworkClient> All => NetworkServer.Instance.Clients;
+#endif
+
+#if CLIENT
+	public static IReadOnlyDictionary<long, INetworkClient> All
+	{
+		get
+		{
+			if ( NetworkManager.Instance is null )
+				throw new Exception( "Attempted to access all clients when the NetworkManager doesn't exist." );
+			
+			return NetworkManager.Instance.Clients;
+		}
+	}
 #endif
 }
