@@ -72,6 +72,8 @@ public class BaseGame
 		NetworkServer.Instance.HandleMessage<RpcCallMessage>( Rpc.HandleRpcCallMessage );
 		NetworkServer.Instance.HandleMessage<RpcCallResponseMessage>( Rpc.HandleRpcCallResponseMessage );
 
+		SharedEntityManager.EntityCreated += OnNetworkedEntityCreated;
+		SharedEntityManager.EntityDeleted += OnNetworkedEntityDeleted;
 		SharedEntityManager.EntityChanged += OnNetworkedEntityChanged;
 		var entity  = SharedEntityManager.Create<NetworkModelEntity>();
 		entity.ModelName = "models/citizen/citizen.vmdl";
@@ -150,8 +152,18 @@ public class BaseGame
 	{
 		return SharedEntityManager.GetEntityById( entityId );
 	}
+
+	protected virtual void OnNetworkedEntityCreated( IEntity entity )
+	{
+		NetworkServer.Instance.QueueMessage( To.All, new CreateEntityMessage( entity ) );
+	}
+
+	protected virtual void OnNetworkedEntityDeleted( IEntity entity )
+	{
+		NetworkServer.Instance.QueueMessage( To.All, new DeleteEntityMessage( entity ) );
+	}
 	
-	private void OnNetworkedEntityChanged( IEntity entity )
+	protected virtual void OnNetworkedEntityChanged( IEntity entity )
 	{
 		_changedEntities.Add( entity );
 	}
