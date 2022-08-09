@@ -1,6 +1,8 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using CustomNetworking.Shared.Networkables;
 using CustomNetworking.Shared.Networkables.Builtin;
 using CustomNetworking.Shared.Utility;
@@ -50,6 +52,7 @@ public partial class NetworkEntity : IEntity
 	private NetworkedVector3 _velocity;
 
 	private readonly Dictionary<string, PropertyInfo> _propertyNameCache = new();
+	private readonly HashSet<string> _changedProperties = new();
 
 	public NetworkEntity( int entityId )
 	{
@@ -80,17 +83,28 @@ public partial class NetworkEntity : IEntity
 	}
 	
 	/// <summary>
+	/// Marks a property as changed and invokes the <see cref="Changed"/> event.
+	/// </summary>
+	/// <param name="propertyName">The name of the property that changed.</param>
+	protected void TriggerNetworkingChange( [CallerMemberName] string propertyName = "" )
+	{
+		if ( !_propertyNameCache.ContainsKey( propertyName ) )
+			throw new InvalidOperationException( $"\"{propertyName}\" is not a networkable property on {GetType().Name}." );
+		
+		_changedProperties.Add( propertyName );
+		Changed?.Invoke( this, this );
+	}
+	
+	/// <summary>
 	/// Called when <see cref="Position"/> has changed.
 	/// </summary>
 	/// <param name="oldPosition">The old instance of <see cref="Position"/>.</param>
 	/// <param name="newPosition">The new instance of <see cref="Position"/>.</param>
 	protected virtual void OnPositionChanged( NetworkedVector3 oldPosition, NetworkedVector3 newPosition )
 	{
-#if SERVER
 		TriggerNetworkingChange( nameof(Position) );
-#endif
 	}
-
+	
 	/// <summary>
 	/// Called when <see cref="Velocity"/> has changed.
 	/// </summary>
@@ -105,17 +119,14 @@ public partial class NetworkEntity : IEntity
 
 	public void Deserialize( NetworkReader reader )
 	{
-#if CLIENT
 		_ = reader.ReadInt32();
 		
 		foreach ( var property in _propertyNameCache.Values )
 			property.SetValue( this, reader.ReadNetworkable() );
-#endif
 	}
 
 	public void DeserializeChanges( NetworkReader reader )
 	{
-#if CLIENT
 		var changedCount = reader.ReadInt32();
 		for ( var i = 0; i < changedCount; i++ )
 		{
@@ -123,22 +134,18 @@ public partial class NetworkEntity : IEntity
 			var currentValue = _propertyNameCache[propertyName].GetValue( this );
 			(currentValue as INetworkable)!.DeserializeChanges( reader );
 		}
-#endif
 	}
 	
 	public void Serialize( NetworkWriter writer )
 	{
-#if SERVER
 		writer.Write( EntityId );
 		
 		foreach ( var property in _propertyNameCache.Values )
 			writer.WriteNetworkable( (INetworkable)property.GetValue( this )! );
-#endif
 	}
 
 	public void SerializeChanges( NetworkWriter writer )
 	{
-#if SERVER
 		writer.Write( _changedProperties.Count );
 		foreach ( var propertyName in _changedProperties )
 		{
@@ -146,6 +153,5 @@ public partial class NetworkEntity : IEntity
 			writer.WriteNetworkableChanges( (INetworkable)_propertyNameCache[propertyName].GetValue( this )! );
 		}
 		_changedProperties.Clear();
-#endif
 	}
 }
