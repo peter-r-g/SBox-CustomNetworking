@@ -18,10 +18,10 @@ public sealed class CreateEntityMessage : NetworkMessage
 	public int EntityId { get; private set; }
 
 #if SERVER
-	public CreateEntityMessage( string entityClass, int entityId )
+	public CreateEntityMessage( IEntity entity )
 	{
-		EntityClass = entityClass;
-		EntityId = entityId;
+		EntityClass = entity.GetType().Name;
+		EntityId = entity.EntityId;
 	}
 #endif
 	
