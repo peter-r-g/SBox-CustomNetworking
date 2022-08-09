@@ -20,6 +20,7 @@ public partial class NetworkEntity : IEntity
 	/// <summary>
 	/// The world position of the <see cref="NetworkEntity"/>.
 	/// </summary>
+	[ClientAuthority]
 	public NetworkedVector3 Position
 	{
 		get => _position;
@@ -37,6 +38,7 @@ public partial class NetworkEntity : IEntity
 	/// <summary>
 	/// The world rotation of the <see cref="NetworkModelEntity"/>.
 	/// </summary>
+	[ClientAuthority]
 	public NetworkedQuaternion Rotation
 	{
 		get => _rotation;
