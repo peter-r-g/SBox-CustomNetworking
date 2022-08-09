@@ -33,9 +33,7 @@ public partial class EntityManager
 	/// <returns>The created <see cref="IEntity"/> as <see cref="T"/>.</returns>
 	public T Create<T>() where T : class, IEntity
 	{
-		var entity = CreateInternal<T>( _nextEntityId );
-		_nextEntityId++;
-		return entity;
+		return CreateInternal<T>( _nextEntityId++ );
 	}
 
 	/// <summary>
@@ -49,9 +47,7 @@ public partial class EntityManager
 		if ( !entityType.IsClass || !entityType.IsAssignableTo( typeof(IEntity) ) )
 			throw new Exception( $"Failed to create entity (type is not a class that implements {nameof(IEntity)})." );
 
-		var entity = CreateInternal<IEntity>( _nextEntityId, entityType );
-		_nextEntityId++;
-		return entity;
+		return CreateInternal<IEntity>( _nextEntityId++, entityType );
 	}
 
 	/// <summary>
