@@ -270,6 +270,7 @@ public class NetworkServer
 		writer.WriteNetworkable<NetworkMessage>( message );
 		var numBytes = stream.Length;
 		writer.Close();
+		var bytes = stream.ToArray();
 
 		if ( numBytes <= SharedConstants.MaxBufferSize )
 		{
@@ -278,13 +279,13 @@ public class NetworkServer
 				if ( client is BotClient )
 					continue;
 				
-				client.SendMessage( stream.ToArray() );
+				client.SendMessage( bytes );
 			}
 			
 			return;
 		}
 
-		var partialMessages = NetworkMessage.Split( stream.ToArray() );
+		var partialMessages = NetworkMessage.Split( bytes );
 		foreach ( var client in to )
 		{
 			if ( client is BotClient )
