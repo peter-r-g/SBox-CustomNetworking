@@ -13,7 +13,25 @@ public partial class EntityManager
 	/// A read only list of all <see cref="IEntity"/>s that are in this <see cref="EntityManager"/>.
 	/// </summary>
 	public IReadOnlyList<IEntity> Entities => _entities;
-	
+
+	/// <summary>
+	/// The event handler for <see cref="EntityManager"/>.<see cref="EntityManager.EntityCreated"/>.
+	/// </summary>
+	public delegate void CreatedEventHandler( IEntity entity );
+	/// <summary>
+	/// Called when an <see cref="IEntity"/> has been created in this <see cref="EntityManager"/>.
+	/// </summary>
+	public CreatedEventHandler? EntityCreated;
+
+	/// <summary>
+	/// The event handler for <see cref="EntityManager"/>.<see cref="EntityManager.EntityDeleted"/>.
+	/// </summary>
+	public delegate void DeletedEventHandler( IEntity entity );
+	/// <summary>
+	/// Called when an <see cref="IEntity"/> has been deleted in the <see cref="EntityManager"/>.
+	/// </summary>
+	public DeletedEventHandler? EntityDeleted;
+
 	/// <summary>
 	/// The event handler for <see cref="EntityManager"/>.<see cref="EntityManager.EntityChanged"/>.
 	/// </summary>
@@ -59,6 +77,7 @@ public partial class EntityManager
 	{
 		entity.Changed -= EntityOnChanged;
 		entity.Delete();
+		EntityDeleted?.Invoke( entity );
 	}
 
 	/// <summary>
@@ -108,6 +127,7 @@ public partial class EntityManager
 		
 		_entities.Add( entity );
 		entity.Changed += EntityOnChanged;
+		EntityCreated?.Invoke( entity );
 		return entity;
 	}
 	
