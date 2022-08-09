@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using CustomNetworking.Shared;
+using CustomNetworking.Shared.Entities;
 using CustomNetworking.Shared.Messages;
 using CustomNetworking.Shared.Utility;
 using Sandbox;
@@ -18,7 +19,7 @@ public class NetworkManager
 	public int MessagesReceived;
 	public int MessagesSent;
 
-	public Dictionary<Type, int> MessageTypesReceived = new();
+	public readonly Dictionary<Type, int> MessageTypesReceived = new();
 #endif
 	
 	public readonly Dictionary<long, INetworkClient> Clients = new();
@@ -55,6 +56,8 @@ public class NetworkManager
 		HandleMessage<ShutdownMessage>( HandleShutdownMessage );
 		HandleMessage<ClientListMessage>( HandleClientListMessage );
 		HandleMessage<EntityListMessage>( HandleEntityListMessage );
+		HandleMessage<CreateEntityMessage>( HandleCreateEntityMessage );
+		HandleMessage<DeleteEntityMessage>( HandleDeleteEntityMessage );
 		HandleMessage<ClientStateChangedMessage>( HandleClientStateChangedMessage );
 		HandleMessage<EntityUpdateMessage>( HandleEntityUpdateMessage );
 	}
@@ -189,8 +192,11 @@ public class NetworkManager
 		if ( message is not ClientListMessage clientListMessage )
 			return;
 
-		foreach ( var playerId in clientListMessage.ClientIds )
-			Clients.Add( playerId, new NetworkClient( playerId ) );
+		foreach ( var (playerId, pawnId) in clientListMessage.ClientIds )
+		{
+			var client = new NetworkClient( playerId ) {Pawn = (BasePlayer?)SharedEntityManager.GetEntityById( pawnId )};
+			Clients.Add( playerId, client );
+		}
 	}
 	
 	private void HandleEntityListMessage( NetworkMessage message )
@@ -204,6 +210,22 @@ public class NetworkManager
 			SharedEntityManager?.DeserializeAndAddEntity( reader );
 			reader.Close();
 		}
+	}
+
+	private void HandleCreateEntityMessage( NetworkMessage message )
+	{
+		if ( message is not CreateEntityMessage createEntityMessage )
+			return;
+
+		SharedEntityManager.Create( createEntityMessage.EntityClass, createEntityMessage.EntityId );
+	}
+
+	private void HandleDeleteEntityMessage( NetworkMessage message )
+	{
+		if ( message is not DeleteEntityMessage deleteEntityMessage )
+			return;
+		
+		SharedEntityManager.DeleteEntity( deleteEntityMessage.EntityId );
 	}
 		
 	private void HandleClientStateChangedMessage( NetworkMessage message )
