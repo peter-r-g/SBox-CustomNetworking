@@ -38,8 +38,6 @@ public partial class NetworkModelEntity : NetworkEntity
 #if CLIENT && !MONITOR
 		ModelEntity.SetModel( newModelName );
 #endif
-#if SERVER
 		TriggerNetworkingChange( nameof(ModelName) );
-#endif
 	}
 }
