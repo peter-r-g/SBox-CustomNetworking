@@ -28,5 +28,20 @@ public interface INetworkClient
 	/// </summary>
 	/// <param name="message">The message to send to the client.</param>
 	void SendMessage( NetworkMessage message );
+	
+	public static IReadOnlyDictionary<long, INetworkClient> All => NetworkServer.Instance.Clients;
+#endif
+
+#if CLIENT
+	public static IReadOnlyDictionary<long, INetworkClient> All
+	{
+		get
+		{
+			if ( NetworkManager.Instance is null )
+				throw new Exception( "Attempted to access all clients when the NetworkManager doesn't exist." );
+			
+			return NetworkManager.Instance.Clients;
+		}
+	}
 #endif
 }
