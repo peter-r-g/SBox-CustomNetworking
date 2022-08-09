@@ -8,9 +8,26 @@ namespace CustomNetworking.Server;
 public class BotClient : INetworkClient
 {
 	private static readonly Dictionary<Type, Action<BotClient, NetworkMessage>> MessageHandlers = new();
+	public event INetworkClient.PawnChangedEventHandler? PawnChanged;
 	
 	public long ClientId { get; }
-	public BasePlayer? Pawn { get; set; }
+	public IEntity? Pawn
+	{
+		get => _pawn;
+		set
+		{
+			if ( value is not null && _pawn is not null )
+				return;
+			
+			if ( value is not null && _pawn is not null && value.EntityId == _pawn.EntityId )
+				return;
+			
+			var oldPawn = _pawn;
+			_pawn = value;
+			PawnChanged?.Invoke( this, oldPawn, _pawn );
+		}
+	}
+	private IEntity? _pawn;
 
 	internal BotClient( long clientId )
 	{

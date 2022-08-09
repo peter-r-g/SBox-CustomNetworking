@@ -123,6 +123,8 @@ public class BaseGame
 		NetworkServer.Instance.QueueMessage( toClient, new ClientListMessage( NetworkServer.Instance.Clients.Values ) );
 		NetworkServer.Instance.QueueMessage( toClient, new EntityListMessage( SharedEntityManager.Entities ) );
 		NetworkServer.Instance.QueueMessage( To.AllExcept( client ), new ClientStateChangedMessage( client.ClientId, ClientState.Connected ) );
+		
+		client.PawnChanged += ClientOnPawnChanged;
 	}
 
 	/// <summary>
@@ -133,6 +135,8 @@ public class BaseGame
 	{
 		var message = new ClientStateChangedMessage( client.ClientId, ClientState.Disconnected );
 		NetworkServer.Instance.QueueMessage( To.AllExcept( client ), message );
+
+		client.PawnChanged -= ClientOnPawnChanged;
 	}
 	
 	/// <summary>
@@ -168,5 +172,10 @@ public class BaseGame
 	protected virtual void OnNetworkedEntityChanged( IEntity entity )
 	{
 		_changedEntities.Add( entity );
+	}
+	
+	protected virtual void ClientOnPawnChanged( INetworkClient client, IEntity? oldpawn, IEntity? newPawn )
+	{
+		NetworkServer.Instance.QueueMessage( To.All, new ClientPawnChangedMessage( client, oldpawn, newPawn ) );
 	}
 }
