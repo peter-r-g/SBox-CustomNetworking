@@ -1,7 +1,9 @@
 using CustomNetworking.Shared.Networkables;
 using CustomNetworking.Shared.Networkables.Builtin;
 using CustomNetworking.Shared.Utility;
+#if CLIENT
 using Sandbox;
+#endif
 
 namespace CustomNetworking.Shared.Entities;
 
