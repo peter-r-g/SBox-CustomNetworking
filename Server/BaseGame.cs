@@ -117,8 +117,8 @@ public class BaseGame
 	public virtual void OnClientConnected( INetworkClient client )
 	{
 		var toClient = To.Single( client );
-		NetworkServer.Instance.QueueMessage( toClient, new ClientListMessage( NetworkServer.Instance.Clients.Keys ) );
 		client.Pawn = SharedEntityManager.Create<BasePlayer>();
+		NetworkServer.Instance.QueueMessage( toClient, new ClientListMessage( NetworkServer.Instance.Clients.Values ) );
 		NetworkServer.Instance.QueueMessage( toClient, new EntityListMessage( SharedEntityManager.Entities ) );
 		NetworkServer.Instance.QueueMessage( To.AllExcept( client ), new ClientStateChangedMessage( client.ClientId, ClientState.Connected ) );
 	}
