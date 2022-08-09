@@ -33,23 +33,23 @@ public partial class NetworkEntity : IEntity
 		}
 	}
 	private NetworkedVector3 _position;
-
+	
 	/// <summary>
-	/// The velocity of the <see cref="NetworkEntity"/>.
+	/// The world rotation of the <see cref="NetworkModelEntity"/>.
 	/// </summary>
-	public NetworkedVector3 Velocity
+	public NetworkedQuaternion Rotation
 	{
-		get => _velocity;
+		get => _rotation;
 		set
 		{
-			var oldVelocity = _velocity;
-			_velocity.Changed -= OnVelocityChanged;
-			_velocity = value;
-			value.Changed += OnVelocityChanged;
-			OnVelocityChanged( oldVelocity, value );
+			var oldRotation = _rotation;
+			_rotation.Changed -= OnRotationChanged;
+			_rotation = value;
+			value.Changed += OnRotationChanged;
+			OnRotationChanged( oldRotation, value );
 		}
 	}
-	private NetworkedVector3 _velocity;
+	private NetworkedQuaternion _rotation;
 
 	private readonly Dictionary<string, PropertyInfo> _propertyNameCache = new();
 	private readonly HashSet<string> _changedProperties = new();
@@ -106,15 +106,13 @@ public partial class NetworkEntity : IEntity
 	}
 	
 	/// <summary>
-	/// Called when <see cref="Velocity"/> has changed.
+	/// Called when <see cref="Rotation"/> has changed.
 	/// </summary>
-	/// <param name="oldVelocity">The old instance of <see cref="Velocity"/>.</param>
-	/// <param name="newVelocity">The new instance of <see cref="Velocity"/>.</param>
-	protected virtual void OnVelocityChanged( NetworkedVector3 oldVelocity, NetworkedVector3 newVelocity )
+	/// <param name="oldRotation">The old instance of <see cref="Rotation"/>.</param>
+	/// <param name="newRotation">The new instance of <see cref="Rotation"/>.</param>
+	protected virtual void OnRotationChanged( NetworkedQuaternion oldRotation, NetworkedQuaternion newRotation )
 	{
-#if SERVER
-		TriggerNetworkingChange( nameof(Velocity) );
-#endif
+		TriggerNetworkingChange( nameof(Rotation) );
 	}
 
 	public void Deserialize( NetworkReader reader )
