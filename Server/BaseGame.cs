@@ -1,9 +1,11 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using CustomNetworking.Shared;
 using CustomNetworking.Shared.Entities;
 using CustomNetworking.Shared.Messages;
 using CustomNetworking.Shared.Networkables;
+using CustomNetworking.Shared.Utility;
 
 namespace CustomNetworking.Server;
 
@@ -105,9 +107,21 @@ public class BaseGame
 			sharedEntity.Update();
 
 		// TODO: PVS type system?
+		if ( _changedEntities.Count == 0 )
+			return;
+		
+		var stream = new MemoryStream();
+		var writer = new NetworkWriter( stream );
+		writer.Write( _changedEntities.Count );
 		foreach ( var entity in _changedEntities )
-			NetworkServer.Instance.QueueMessage( To.All, new EntityUpdateMessage( entity ) );
+		{
+			writer.Write( entity.EntityId );
+			entity.SerializeChanges( writer );
+		}
 		_changedEntities.Clear();
+		writer.Close();
+		
+		NetworkServer.Instance.QueueMessage( To.All, new MultiEntityUpdateMessage( stream.ToArray() ) );
 	}
 	
 	/// <summary>

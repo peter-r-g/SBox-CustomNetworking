@@ -59,7 +59,7 @@ public class NetworkManager
 		HandleMessage<CreateEntityMessage>( HandleCreateEntityMessage );
 		HandleMessage<DeleteEntityMessage>( HandleDeleteEntityMessage );
 		HandleMessage<ClientStateChangedMessage>( HandleClientStateChangedMessage );
-		HandleMessage<EntityUpdateMessage>( HandleEntityUpdateMessage );
+		HandleMessage<MultiEntityUpdateMessage>( HandleMultiEntityUpdateMessage );
 	}
 
 	public async Task ConnectAsync( string uri, int port, bool secure )
@@ -252,17 +252,22 @@ public class NetworkManager
 		}
 	}
 	
-	private void HandleEntityUpdateMessage( NetworkMessage message )
+	private void HandleMultiEntityUpdateMessage( NetworkMessage message )
 	{
-		if ( message is not EntityUpdateMessage entityUpdateMessage )
+		if ( message is not MultiEntityUpdateMessage entityUpdateMessage )
 			return;
 
 		var reader = new NetworkReader( new MemoryStream( entityUpdateMessage.EntityData ) );
-		var entity = SharedEntityManager?.GetEntityById( reader.ReadInt32() );
-		if ( entity is null )
-			throw new Exception( "Attempted to update an entity that does not exist." );
+		var entityCount = reader.ReadInt32();
+		for ( var i = 0; i < entityCount; i++ )
+		{
+			var entity = SharedEntityManager?.GetEntityById( reader.ReadInt32() );
+			if ( entity is null )
+				throw new Exception( "Attempted to update an entity that does not exist." );
 		
-		reader.ReadNetworkableChanges( entity );
+			reader.ReadNetworkableChanges( entity );
+		}
+		reader.Close();
 	}
 
 	public async Task SendToServer( NetworkMessage message )
