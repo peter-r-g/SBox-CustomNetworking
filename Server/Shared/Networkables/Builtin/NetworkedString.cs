@@ -22,7 +22,7 @@ public struct NetworkedString : INetworkable<NetworkedString>, INetworkable, IEq
 		{
 			var oldValue = _value;
 			_value = value;
-			Changed?.Invoke( _value, this );
+			Changed?.Invoke( oldValue, this );
 		}
 	}
 	private string _value;

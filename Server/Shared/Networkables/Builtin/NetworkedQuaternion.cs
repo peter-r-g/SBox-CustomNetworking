@@ -23,7 +23,7 @@ public struct NetworkedQuaternion : INetworkable<NetworkedQuaternion>, INetworka
 		{
 			var oldValue = _value;
 			_value = value;
-			Changed?.Invoke( _value, this );
+			Changed?.Invoke( oldValue, this );
 		}
 	}
 	private Quaternion _value;

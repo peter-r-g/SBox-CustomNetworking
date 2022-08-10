@@ -22,7 +22,7 @@ public struct NetworkedVector3 : INetworkable<NetworkedVector3>, INetworkable, I
 		{
 			var oldValue = _value;
 			_value = value;
-			Changed?.Invoke( _value, this );
+			Changed?.Invoke( oldValue, this );
 		}
 	}
 	private System.Numerics.Vector3 _value;
