@@ -76,19 +76,31 @@ public partial class Rpc
 
 		var type = TypeHelper.GetTypeByName( rpcCall.ClassName );
 		if ( type is null )
-			throw new InvalidOperationException( $"Failed to handle RPC call (\"{rpcCall.ClassName}\" doesn't exist in the current assembly)." );
+		{
+			Logging.Error( $"Failed to handle RPC call (\"{rpcCall.ClassName}\" doesn't exist).", new InvalidOperationException() );
+			return;
+		}
 
 		// TODO: Support instance methods https://github.com/Facepunch/sbox-issues/issues/2079
 		var method = TypeLibrary.FindStaticMethods( rpcCall.MethodName ).FirstOrDefault();
 		if ( method is null )
-			throw new InvalidOperationException( $"Failed to handle RPC call (\"{rpcCall.MethodName}\" does not exist on \"{type}\")." );
+		{
+			Logging.Error( $"Failed to handle RPC call (\"{rpcCall.MethodName}\" does not exist on \"{type}\").", new InvalidOperationException() );
+			return;
+		}
 		
 		if ( !method.Attributes.Any( attribute => attribute is ClientAttribute ) )
-			throw new InvalidOperationException( "Failed to handle RPC call (Attempted to invoke a non-RPC method)." );
+		{
+			Logging.Error( "Failed to handle RPC call (Attempted to invoke a non-RPC method).", new InvalidOperationException() );
+			return;
+		}
 		
 		var instance = IEntity.All.GetEntityById( rpcCall.EntityId );
 		if ( instance is null && rpcCall.EntityId != -1 )
-			throw new InvalidOperationException( "Failed to handle RPC call (Attempted to call RPC on a non-existant entity)." );
+		{
+			Logging.Error( "Failed to handle RPC call (Attempted to call RPC on a non-existant entity).", new InvalidOperationException() );
+			return;
+		}
 
 		var parameters = new List<object>();
 		parameters.AddRange( rpcCall.Parameters );
@@ -106,7 +118,8 @@ public partial class Rpc
 		{
 			var failedMessage = new RpcCallResponseMessage( rpcCall.CallGuid, RpcCallState.Failed );
 			_ = NetworkManager.Instance?.SendToServer( failedMessage );
-			throw new InvalidOperationException( $"Failed to handle RPC call (\"{rpcCall.MethodName}\" returned a non-networkable value)." );
+			Logging.Error( $"Failed to handle RPC call (\"{rpcCall.MethodName}\" returned a non-networkable value).", new InvalidOperationException() );
+			return;
 		}
 		
 		var response = new RpcCallResponseMessage( rpcCall.CallGuid, RpcCallState.Completed, returnValue as INetworkable ?? null );

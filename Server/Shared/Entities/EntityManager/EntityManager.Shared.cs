@@ -92,7 +92,10 @@ public partial class EntityManager
 	{
 		var entity = GetEntityById( entityId );
 		if ( entity is null )
-			throw new InvalidOperationException( $"Failed to delete entity (No entity with the ID \"{entityId}\" exists)." );
+		{
+			Logging.Error( $"Failed to delete entity (No entity with the ID \"{entityId}\" exists).", new InvalidOperationException() );
+			return;
+		}
 
 		DeleteEntity( entity );
 	}
@@ -126,7 +129,10 @@ public partial class EntityManager
 	{
 		var entity = TypeHelper.Create<T>( entityType ?? typeof(T), entityId );
 		if ( entity is null )
-			throw new Exception( $"Failed to create instance of {entityType ?? typeof(T)}" );
+		{
+			Logging.Error( $"Failed to create instance of {entityType ?? typeof(T)}", new InvalidOperationException() );
+			return default!;
+		}
 		
 		_entities.Add( entity );
 		entity.Changed += EntityOnChanged;
