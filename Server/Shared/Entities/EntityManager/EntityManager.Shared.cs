@@ -63,7 +63,10 @@ public partial class EntityManager
 	public IEntity Create( Type entityType )
 	{
 		if ( !entityType.IsClass || !entityType.IsAssignableTo( typeof(IEntity) ) )
-			throw new Exception( $"Failed to create entity (type is not a class that implements {nameof(IEntity)})." );
+		{
+			Logging.Error( $"Failed to create entity ({nameof(entityType)} is not a class that implementes {nameof(IEntity)}).", new InvalidOperationException() );
+			return null!;
+		}
 
 		return CreateInternal<IEntity>( _nextEntityId++, entityType );
 	}

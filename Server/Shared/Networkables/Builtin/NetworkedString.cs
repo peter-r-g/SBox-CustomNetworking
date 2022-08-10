@@ -11,8 +11,8 @@ public struct NetworkedString : INetworkable<NetworkedString>, INetworkable, IEq
 	public event INetworkable<NetworkedString>.ChangedEventHandler? Changed = null;
 	event INetworkable<object>.ChangedEventHandler? INetworkable<object>.Changed
 	{
-		add => throw new InvalidOperationException();
-		remove => throw new InvalidOperationException();
+		add => Logging.Fatal( new InvalidOperationException() );
+		remove => Logging.Fatal( new InvalidOperationException() );
 	}
 	
 	public string Value

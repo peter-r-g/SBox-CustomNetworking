@@ -52,7 +52,10 @@ public class NetworkReader : BinaryReader
 		var typeName = ReadString();
 		var type = TypeHelper.GetTypeByName( typeName );
 		if ( type is null )
-			throw new InvalidOperationException( $"Failed to read networkable (\"{typeName}\" does not exist in the current assembly)." );
+		{
+			Logging.Error( $"Failed to read networkable (\"{typeName}\" does not exist)", new InvalidOperationException() );
+			return null!;
+		}
 
 		if ( type.IsGenericType )
 		{
@@ -63,7 +66,10 @@ public class NetworkReader : BinaryReader
 				var genericTypeName = ReadString();
 				var genericType = TypeHelper.GetTypeByName( genericTypeName );
 				if ( genericType is null )
-					throw new InvalidOperationException( $"Failed to read networkable (Generic argument \"{genericTypeName}\" does not exist in the current assembly)" );
+				{
+					Logging.Error( $"Failed to read networkable (Generic argument \"{genericTypeName}\" does not exist).", new InvalidOperationException() );
+					return null!;
+				}
 
 				genericTypes[i] = genericType;
 			}
@@ -73,7 +79,10 @@ public class NetworkReader : BinaryReader
 		
 		var networkable = TypeHelper.Create<INetworkable>( type );
 		if ( networkable is null )
-			throw new InvalidOperationException( "Failed to read networkable (instance creation failed)" );
+		{
+			Logging.Error( "Failed to read networkable (instance creation failed).", new InvalidOperationException() );
+			return null!;
+		}
 		
 		networkable.Deserialize( this );
 		return networkable;
@@ -92,7 +101,10 @@ public class NetworkReader : BinaryReader
 		
 		var networkable = ReadNetworkable();
 		if ( networkable is not T outputNetworkable )
-			throw new InvalidOperationException( $"Failed to read networkable ({networkable.GetType()} is not assignable to {typeof(T)})" );
+		{
+			Logging.Error( $"Failed to read networkable ({networkable.GetType()} is not assignable to {typeof(T)}).", new InvalidOperationException() );
+			return default!;
+		}
 
 		return outputNetworkable;
 	}
@@ -120,11 +132,17 @@ public class NetworkReader : BinaryReader
 		
 		var type = TypeHelper.GetTypeByName( typeName );
 		if ( type is null )
-			throw new InvalidOperationException( $"Failed to read entity (\"{typeName}\" does not exist in the current assembly)." );
+		{
+			Logging.Error( $"Failed to read entity (\"{typeName}\" does not exist)", new InvalidOperationException() );
+			return null!;
+		}
 
 		var entity = TypeHelper.Create<IEntity?>( type, entityId );
 		if ( entity is null )
-			throw new InvalidOperationException( "Failed to read entity (instance creation failed)" );
+		{
+			Logging.Error( "Failed to read entity (instance creation failed).", new InvalidOperationException() );
+			return null!;
+		}
 		
 		entity.Deserialize( this );
 		return entity;
@@ -140,7 +158,10 @@ public class NetworkReader : BinaryReader
 	{
 		var entity = ReadEntity();
 		if ( entity is not T outputEntity )
-			throw new InvalidOperationException( $"Failed to read entity ({entity.GetType()} is not assignable to {typeof(T)})" );
+		{
+			Logging.Error( $"Failed to read entity ({entity.GetType()} is not assignable to {typeof(T)})", new InvalidOperationException() );
+			return default!;
+		}
 
 		return outputEntity;
 	}

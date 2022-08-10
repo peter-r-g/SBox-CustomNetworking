@@ -48,7 +48,7 @@ public class NetworkManager
 	public NetworkManager()
 	{
 		if ( Instance is not null )
-			throw new Exception( $"An instance of {nameof(NetworkManager)} already exists." );
+			Logging.Fatal( new InvalidOperationException( $"An instance of {nameof(NetworkManager)} already exists." ) );
 		
 		Instance = this;
 		HandleMessage<RpcCallMessage>( Rpc.HandleRpcCallMessage );
@@ -251,7 +251,8 @@ public class NetworkManager
 				ClientDisconnected?.Invoke( disconnectedClient );
 				break;
 			default:
-				throw new ArgumentOutOfRangeException( nameof(clientStateChangedMessage.ClientState) );
+				Logging.Error( "Got unexpected client state.", new ArgumentOutOfRangeException( nameof(clientStateChangedMessage.ClientState) ) );
+				break;
 		}
 	}
 		
@@ -274,7 +275,10 @@ public class NetworkManager
 		{
 			var entity = SharedEntityManager?.GetEntityById( reader.ReadInt32() );
 			if ( entity is null )
-				throw new Exception( "Attempted to update an entity that does not exist." );
+			{
+				Logging.Error( "Attempted to update an entity that does not exist.", new InvalidOperationException() );
+				continue;
+			}
 		
 			reader.ReadNetworkableChanges( entity );
 		}
@@ -305,9 +309,12 @@ public class NetworkManager
 			MessageTypesReceived.Add( messageType, 0 );
 		MessageTypesReceived[messageType]++;
 #endif
-		
+
 		if ( !_messageHandlers.TryGetValue( message.GetType(), out var cb ) )
-			throw new Exception( $"Unhandled message {message.GetType()}." );
+		{
+			Logging.Error( $"Unhandled message type {message.GetType()}.", new InvalidOperationException() );
+			return;
+		}
 		
 		cb.Invoke( message );
 	}

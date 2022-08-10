@@ -12,8 +12,8 @@ public struct NetworkedQuaternion : INetworkable<NetworkedQuaternion>, INetworka
 	public event INetworkable<NetworkedQuaternion>.ChangedEventHandler? Changed = null;
 	event INetworkable<object>.ChangedEventHandler? INetworkable<object>.Changed
 	{
-		add => throw new InvalidOperationException();
-		remove => throw new InvalidOperationException();
+		add => Logging.Fatal( new InvalidOperationException() );
+		remove => Logging.Fatal( new InvalidOperationException() );
 	}
 	
 	public Quaternion Value

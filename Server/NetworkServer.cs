@@ -97,7 +97,10 @@ public class NetworkServer
 	{
 		var messageType = typeof(T);
 		if ( _messageHandlers.ContainsKey( messageType ) )
-			throw new Exception( $"Message type {messageType} is already being handled." );
+		{
+			Logging.Error( $"Message type {messageType} is already being handled.", new InvalidOperationException() );
+			return;
+		}
 
 		_messageHandlers.Add( messageType, cb );
 	}
@@ -243,7 +246,10 @@ public class NetworkServer
 		while ( _incomingQueue.TryDequeue( out var pair ) )
 		{
 			if ( !_messageHandlers.TryGetValue( pair.Item2.GetType(), out var cb ) )
-				throw new Exception( $"Unhandled message {pair.Item2.GetType()}." );
+			{
+				Logging.Error( $"Unhandled message type {pair.Item2.GetType()}.", new InvalidOperationException() );
+				continue;
+			}
 		
 			cb.Invoke( pair.Item1, pair.Item2 );	
 		}

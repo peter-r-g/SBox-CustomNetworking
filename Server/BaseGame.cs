@@ -50,7 +50,7 @@ public class BaseGame
 	public BaseGame()
 	{
 		if ( Current is not null )
-			throw new Exception( $"An instance of {nameof(BaseGame)} already exists." );
+			Logging.Fatal( new InvalidOperationException( $"An instance of {nameof(BaseGame)} already exists." ) );
 		
 		Current = this;
 	}

@@ -35,7 +35,10 @@ public sealed class ClientPawnChangedMessage : NetworkMessage
 	{
 		var clientId = reader.ReadInt64();
 		if ( !INetworkClient.All.TryGetValue( clientId, out var client ) )
-			throw new Exception( $"Failed to get client with ID \"{clientId}\"" );
+		{
+			Logging.Error( $"Failed to get client with ID \"{clientId}\"", new InvalidOperationException() );
+			return;
+		}
 
 		Client = client;
 		if ( reader.ReadBoolean() )

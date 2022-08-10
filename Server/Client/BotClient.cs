@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using CustomNetworking.Shared;
 using CustomNetworking.Shared.Entities;
 using CustomNetworking.Shared.Messages;
+using CustomNetworking.Shared.Utility;
 
 namespace CustomNetworking.Server;
 
@@ -37,14 +38,17 @@ public class BotClient : INetworkClient
 
 	public void SendMessage( byte[] bytes )
 	{
-		throw new InvalidOperationException();
+		Logging.Error( $"You should not be sending bytes to a bot. Use {nameof(SendMessage)} with the {nameof(NetworkMessage)} overload", new InvalidOperationException() );
 	}
 
 	public void SendMessage( NetworkMessage message )
 	{
 		NetworkServer.Instance.MessagesSentToClients++;
 		if ( !MessageHandlers.TryGetValue( message.GetType(), out var cb ) )
-			throw new Exception( $"Unhandled message {message.GetType()}." );
+		{
+			Logging.Error( $"Unhandled message type {message.GetType()} for bot.", new InvalidOperationException() );
+			return;
+		}
 		
 		cb.Invoke( this, message );
 	}
@@ -59,7 +63,10 @@ public class BotClient : INetworkClient
 	{
 		var messageType = typeof(T);
 		if ( MessageHandlers.ContainsKey( messageType ) )
-			throw new Exception( $"Message type {messageType} is already being handled." );
+		{
+			Logging.Error( $"Message type {messageType} is already being handled for bots.", new InvalidOperationException() );
+			return;
+		}
 
 		MessageHandlers.Add( messageType, cb );
 	}

@@ -126,7 +126,8 @@ internal sealed class ClientSocket
 				MessageReceived?.Invoke( messageText );
 				break;
 			default:
-				throw new ArgumentOutOfRangeException( nameof(message) );
+				Logging.Error( "Got unexpected type of message while reading.", new ArgumentOutOfRangeException( nameof(message) ) );
+				break;
 		}
 	}
 
@@ -144,7 +145,8 @@ internal sealed class ClientSocket
 				await _socket.WriteStringAsync( Encoding.UTF8.GetString( data.Item2 ), ClientTokenSource.Token );
 				break;
 			default:
-				throw new ArgumentOutOfRangeException( nameof(data.Item1) );
+				Logging.Error( "Got unexpected type of message while writing.", new ArgumentOutOfRangeException( nameof(data.Item1) ) );
+				break;
 		}
 	}
 }
