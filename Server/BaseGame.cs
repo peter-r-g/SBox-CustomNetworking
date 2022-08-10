@@ -64,6 +64,7 @@ public class BaseGame
 		Program.TickRate = TickRate;
 		NetworkServer.Instance.HandleMessage<RpcCallMessage>( Rpc.HandleRpcCallMessage );
 		NetworkServer.Instance.HandleMessage<RpcCallResponseMessage>( Rpc.HandleRpcCallResponseMessage );
+		NetworkServer.Instance.HandleMessage<ClientPawnUpdateMessage>( HandleClientPawnUpdateMessage );
 
 		SharedEntityManager.EntityCreated += OnNetworkedEntityCreated;
 		SharedEntityManager.EntityDeleted += OnNetworkedEntityDeleted;
@@ -195,5 +196,26 @@ public class BaseGame
 	protected virtual void ClientOnPawnChanged( INetworkClient client, IEntity? oldpawn, IEntity? newPawn )
 	{
 		NetworkServer.Instance.QueueMessage( To.All, new ClientPawnChangedMessage( client, oldpawn, newPawn ) );
+	}
+
+	/// <summary>
+	/// Called when a <see cref="INetworkClient"/>s <see cref="INetworkClient.Pawn"/> has updated and the server needs to process it.
+	/// </summary>
+	/// <param name="client">The <see cref="INetworkClient"/> that sent this update.</param>
+	/// <param name="message">The <see cref="NetworkMessage"/> of the update.</param>
+	protected virtual void HandleClientPawnUpdateMessage( INetworkClient client, NetworkMessage message )
+	{
+		if ( message is not ClientPawnUpdateMessage clientPawnUpdateMessage )
+			return;
+
+		if ( client.Pawn is null )
+		{
+			Logging.Error( $"Received a {nameof(ClientPawnUpdateMessage)} when the client has no pawn.", new InvalidOperationException() );
+			return;
+		}
+		
+		var reader = new NetworkReader( new MemoryStream( clientPawnUpdateMessage.PartialPawnData ) );
+		client.Pawn.DeserializeChanges( reader );
+		reader.Close();
 	}
 }
