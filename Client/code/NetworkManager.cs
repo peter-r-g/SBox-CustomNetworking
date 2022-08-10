@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Buffers;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
 using CustomNetworking.Shared;
@@ -25,6 +26,7 @@ public class NetworkManager
 #endif
 	
 	public readonly Dictionary<long, INetworkClient> Clients = new();
+	public readonly INetworkClient LocalClient = new NetworkClient( Local.PlayerId );
 	public readonly EntityManager SharedEntityManager = new();
 
 	public bool Connected { get; private set; }
@@ -44,6 +46,8 @@ public class NetworkManager
 	private WebSocket? _webSocket;
 	private readonly Dictionary<Type, Action<NetworkMessage>> _messageHandlers = new();
 	private readonly Dictionary<Guid, List<PartialMessage>> _partialMessages = new();
+	private readonly Stopwatch _pawnSw = Stopwatch.StartNew();
+	private bool _localPawnChanged;
 
 	public NetworkManager()
 	{
@@ -100,6 +104,7 @@ public class NetworkManager
 		_webSocket.OnMessageReceived -= WebSocketOnMessageReceived;
 		_webSocket.Dispose();
 		Clients.Clear();
+		LocalClient.Pawn = null;
 		SharedEntityManager.DeleteAllEntities();
 		_partialMessages.Clear();
 #if DEBUG
@@ -114,6 +119,25 @@ public class NetworkManager
 	{
 		foreach ( var entity in SharedEntityManager.Entities )
 			entity.Update();
+
+		if ( !_localPawnChanged || _pawnSw.Elapsed.TotalMilliseconds < 20 )
+			return;
+
+		if ( LocalClient.Pawn is null )
+		{
+			Logging.Error( "Pawn was marked as changed but the client has no pawn.", new InvalidOperationException() );
+			_localPawnChanged = false;
+			return;
+		}
+			
+		var stream = new MemoryStream();
+		var writer = new NetworkWriter( stream );
+		writer.WriteNetworkableChanges( LocalClient.Pawn );
+		writer.Close();
+
+		_ = SendToServer( new ClientPawnUpdateMessage( stream.ToArray() ) );
+		_localPawnChanged = false;
+		_pawnSw.Restart();
 	}
 	
 	private void WebSocketOnDisconnected( int status, string reason )
@@ -261,7 +285,24 @@ public class NetworkManager
 		if ( message is not ClientPawnChangedMessage clientPawnChangedMessage )
 			return;
 
-		
+		if ( LocalClient.Pawn is not null )
+		{
+			LocalClient.Pawn.Changed -= OnLocalPawnChanged;
+			LocalClient.Pawn.Owner = null;
+		}
+
+		LocalClient.Pawn = clientPawnChangedMessage.NewPawn;
+
+		if ( LocalClient.Pawn is not null )
+		{
+			LocalClient.Pawn.Changed += OnLocalPawnChanged;
+			LocalClient.Pawn.Owner = LocalClient;
+		}
+	}
+
+	private void OnLocalPawnChanged( IEntity _, IEntity pawn )
+	{
+		_localPawnChanged = true;
 	}
 	
 	private void HandleMultiEntityUpdateMessage( NetworkMessage message )
@@ -269,7 +310,7 @@ public class NetworkManager
 		if ( message is not MultiEntityUpdateMessage entityUpdateMessage )
 			return;
 
-		var reader = new NetworkReader( new MemoryStream( entityUpdateMessage.EntityData ) );
+		var reader = new NetworkReader( new MemoryStream( entityUpdateMessage.PartialEntityData ) );
 		var entityCount = reader.ReadInt32();
 		for ( var i = 0; i < entityCount; i++ )
 		{
