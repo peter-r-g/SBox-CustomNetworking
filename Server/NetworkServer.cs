@@ -189,7 +189,7 @@ public class NetworkServer
 			}
 			catch ( Exception e )
 			{
-				Program.Logger.Enqueue( e.ToString() );
+				Logging.Error( e );
 			}
 		}
 	}

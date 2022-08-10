@@ -16,7 +16,7 @@ public partial class EntityManager
 		var entityType = TypeHelper.GetTypeByName( entityClass );
 		if ( entityType is null || !entityType.IsClass || !entityType.IsAssignableTo( typeof(IEntity) ) )
 		{
-			Log.Error( $"Failed to create entity (type is not a class that implements {nameof(IEntity)})." );
+			Logging.Error( $"Failed to create entity (type is not a class that implements {nameof(IEntity)})." );
 			return;
 		}
 

@@ -1,6 +1,7 @@
 ﻿using CustomNetworking.Client.UI;
 using CustomNetworking.Shared;
 using Sandbox;
+using Logging = CustomNetworking.Shared.Utility.Logging;
 
 namespace CustomNetworking.Client;
 
@@ -35,12 +36,12 @@ public class BaseGame : Game
 	
 	protected virtual void OnConnectedToServer()
 	{
-		Log.Info( "Connected" );
+		Logging.Info( "Connected" );
 	}
 	
 	protected virtual void OnDisconnectedFromServer()
 	{
-		Log.Info( "Disconnected" );
+		Logging.Info( "Disconnected" );
 	}
 	
 	protected virtual void OnClientConnected( INetworkClient client )

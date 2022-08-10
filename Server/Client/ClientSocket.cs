@@ -4,6 +4,7 @@ using System.IO;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using CustomNetworking.Shared.Utility;
 using vtortola.WebSockets;
 
 namespace CustomNetworking.Server;
@@ -89,7 +90,7 @@ internal sealed class ClientSocket
 		}
 		catch ( Exception e )
 		{
-			Program.Logger.Enqueue( e.ToString() );
+			Logging.Error( e );
 			await CloseAsync( WebSocketCloseReason.UnexpectedCondition );
 		}
 		finally

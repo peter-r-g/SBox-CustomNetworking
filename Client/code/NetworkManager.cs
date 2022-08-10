@@ -7,6 +7,7 @@ using CustomNetworking.Shared;
 using CustomNetworking.Shared.Messages;
 using CustomNetworking.Shared.Utility;
 using Sandbox;
+using Logging = CustomNetworking.Shared.Utility.Logging;
 
 namespace CustomNetworking.Client;
 
@@ -81,7 +82,7 @@ public class NetworkManager
 		}
 		catch ( Exception e )
 		{
-			Log.Error( e );
+			Logging.Error( e );
 			Close();
 		}
 	}

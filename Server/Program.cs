@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Concurrent;
 using System.Diagnostics;
-using System.Globalization;
 using System.Threading;
 using CustomNetworking.Shared;
 
@@ -19,11 +17,6 @@ public static class Program
 	/// </summary>
 	public static int TickRate = int.MaxValue;
 	private static double TickRateDt => (double)1000 / TickRate;
-	
-	public static readonly ConcurrentQueue<string> Logger = new();
-	private static readonly string LogFileName = Environment.CurrentDirectory + '\\' +
-	                                             DateTime.Now.ToString( CultureInfo.CurrentCulture )
-		                                             .Replace( ':', '-' ) + ".log";
 
 	private static MonitorServer _monitor = null!;
 	private static NetworkServer _server = null!;
@@ -53,12 +46,6 @@ public static class Program
 		var sw = Stopwatch.StartNew();
 		while ( !ProgramCancellation.IsCancellationRequested )
 		{
-			while ( !Logger.IsEmpty )
-			{
-				if ( Logger.TryDequeue( out var message ) )
-					Console.WriteLine( message );
-			}
-			
 			// TODO: Cooking the CPU is not a very cool way of doing this
 			while ( sw.Elapsed.TotalMilliseconds < TickRateDt )
 			{
