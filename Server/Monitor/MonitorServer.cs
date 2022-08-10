@@ -4,7 +4,6 @@ using System.Net.Sockets;
 using System.Threading;
 using System.Threading.Tasks;
 using CustomNetworking.Shared.Utility;
-using System;
 using CustomNetworking.Shared;
 
 namespace CustomNetworking.Server;
