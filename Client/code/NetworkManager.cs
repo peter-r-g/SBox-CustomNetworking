@@ -234,7 +234,7 @@ public class NetworkManager
 		foreach ( var entityData in entityListMessage.EntityData )
 		{
 			var reader = new NetworkReader( new MemoryStream( entityData ) );
-			SharedEntityManager?.DeserializeAndAddEntity( reader );
+			SharedEntityManager.DeserializeAndAddEntity( reader );
 			reader.Close();
 		}
 	}
