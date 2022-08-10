@@ -1,5 +1,5 @@
-using CustomNetworking.Shared.Networkables.Builtin;
 #if CLIENT
+using CustomNetworking.Shared.Networkables.Builtin;
 using CustomNetworking.Client;
 using Sandbox;
 #endif
@@ -27,10 +27,10 @@ public class BasePlayer  : NetworkEntity
 		if ( Local.Client.Pawn != _player )
 			return;
 
-		if ( !Position.Equals( _player.Position ) )
+		if ( _player.Position.Distance( Position ) >= 0.001 )
 			Position = _player.Position;
 
-		if ( !Rotation.Equals( _player.Rotation ) )
+		if ( _player.Rotation.Distance( Rotation ) >= 1 )
 			Rotation = _player.Rotation;
 	}
 #endif
