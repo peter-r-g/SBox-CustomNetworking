@@ -98,6 +98,7 @@ public partial class EntityManager
 		}
 
 		DeleteEntity( entity );
+		_entities.Remove( entity );
 	}
 
 	/// <summary>
@@ -107,6 +108,8 @@ public partial class EntityManager
 	{
 		foreach ( var entity in _entities )
 			DeleteEntity( entity );
+		
+		_entities.Clear();
 	}
 
 	/// <summary>
