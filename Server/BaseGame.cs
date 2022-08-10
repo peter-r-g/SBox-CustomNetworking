@@ -126,6 +126,8 @@ public class BaseGame
 		NetworkServer.Instance.QueueMessage( To.AllExcept( client ), new ClientStateChangedMessage( client.ClientId, ClientState.Connected ) );
 		
 		client.PawnChanged += ClientOnPawnChanged;
+		client.Pawn = SharedEntityManager.Create<BasePlayer>();
+		client.Pawn.Owner = client;
 	}
 
 	/// <summary>
