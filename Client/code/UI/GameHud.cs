@@ -9,7 +9,7 @@ namespace CustomNetworking.Client;
 public class GameHud : RootPanel
 {
 	public string ClientCount => $"{NetworkManager.Instance?.Clients.Count} clients connected";
-	public string NetworkedEntityCount => $"{NetworkManager.Instance?.SharedEntityManager.Entities.Count} networked entities";
+	public string NetworkedEntityCount => $"{IEntity.All.Entities.Count} networked entities";
 	
 #if DEBUG
 	public string MessagesReceived => $"{NetworkManager.Instance?.MessagesReceived} messages received";
