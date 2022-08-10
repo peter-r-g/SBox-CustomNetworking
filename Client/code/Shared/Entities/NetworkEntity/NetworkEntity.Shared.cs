@@ -115,7 +115,7 @@ public partial class NetworkEntity : IEntity
 	/// </summary>
 	/// <param name="oldOwner">The old owner of the entity.</param>
 	/// <param name="newOwner">The new owner of the entity.</param>
-	protected virtual void OnOwnerChanged( INetworkClient oldOwner, INetworkClient newOwner )
+	protected virtual void OnOwnerChanged( INetworkClient? oldOwner, INetworkClient? newOwner )
 	{
 	}
 	
@@ -152,9 +152,19 @@ public partial class NetworkEntity : IEntity
 		var changedCount = reader.ReadInt32();
 		for ( var i = 0; i < changedCount; i++ )
 		{
-			var propertyName = reader.ReadString();
-			var currentValue = _propertyNameCache[propertyName].GetValue( this );
+			var property = _propertyNameCache[reader.ReadString()];
+#if CLIENT
+			if ( Owner == INetworkClient.Local && property.GetCustomAttribute<ClientAuthorityAttribute>() is not null )
+			{
+				// TODO: What a cunt of a workaround
+				TypeHelper.Create<INetworkable>( property.PropertyType )!.DeserializeChanges( reader );
+				continue;
+			}
+#endif
+			
+			var currentValue = property.GetValue( this );
 			(currentValue as INetworkable)!.DeserializeChanges( reader );
+			TriggerNetworkingChange( property.Name );
 		}
 	}
 	
