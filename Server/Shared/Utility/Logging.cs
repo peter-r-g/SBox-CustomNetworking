@@ -107,4 +107,26 @@ public static class Logging
 		Log.Error( exception );
 #endif
 	}
+
+	/// <summary>
+	/// Logs an <see cref="Exception"/> then throws it.
+	/// </summary>
+	/// <param name="exception">The <see cref="Exception"/> to log then throw.</param>
+	/// <exception cref="Exception">The <see cref="Exception"/> passed.</exception>
+	public static void Fatal( Exception exception )
+	{
+#if SERVER
+		var oldColor = Console.ForegroundColor;
+		Console.ForegroundColor = ConsoleColor.DarkRed;
+		
+		Console.WriteLine( $"[{DateTime.Now}] [FATAL]: {exception}" );
+
+		Console.ForegroundColor = oldColor;
+#endif
+#if CLIENT
+		Log.Error( exception );
+#endif
+
+		throw exception;
+	}
 }
