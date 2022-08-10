@@ -23,6 +23,7 @@ public class GameHud : RootPanel
 				return string.Empty;
 			
 			var sb = new StringBuilder();
+			sb.Append( "Received Types:\n" );
 
 			foreach ( var pair in NetworkManager.Instance.MessageTypesReceived )
 			{
