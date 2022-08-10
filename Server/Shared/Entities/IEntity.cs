@@ -20,6 +20,11 @@ public interface IEntity : INetworkable<IEntity>
 	/// The unique identifier of the entity.
 	/// </summary>
 	NetworkedInt EntityId { get; }
+	
+	/// <summary>
+	/// The <see cref="INetworkClient"/> that owns this entity.
+	/// </summary>
+	INetworkClient? Owner { get; set; }
 
 	/// <summary>
 	/// Deletes this <see cref="IEntity"/>.

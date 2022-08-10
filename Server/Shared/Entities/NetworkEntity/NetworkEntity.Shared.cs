@@ -17,6 +17,19 @@ public partial class NetworkEntity : IEntity
 	public event INetworkable<IEntity>.ChangedEventHandler? Changed;
 	public NetworkedInt EntityId { get; }
 
+	public INetworkClient? Owner
+	{
+		get => _owner;
+		set
+		{
+			var oldOwner = _owner;
+			_owner = value;
+			OnOwnerChanged( oldOwner, value );
+		}
+	}
+
+	private INetworkClient? _owner;
+
 	/// <summary>
 	/// The world position of the <see cref="NetworkEntity"/>.
 	/// </summary>
@@ -95,6 +108,15 @@ public partial class NetworkEntity : IEntity
 		
 		_changedProperties.Add( propertyName );
 		Changed?.Invoke( this, this );
+	}
+
+	/// <summary>
+	/// Called when ownership of the entity has changed.
+	/// </summary>
+	/// <param name="oldOwner">The old owner of the entity.</param>
+	/// <param name="newOwner">The new owner of the entity.</param>
+	protected virtual void OnOwnerChanged( INetworkClient oldOwner, INetworkClient newOwner )
+	{
 	}
 	
 	/// <summary>
