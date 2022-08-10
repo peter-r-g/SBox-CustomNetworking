@@ -1,8 +1,7 @@
 #if CLIENT
-using CustomNetworking.Shared.Entities;
 using CustomNetworking.Shared.Utility;
 
-namespace CustomNetworking.Shared;
+namespace CustomNetworking.Shared.Entities;
 
 public partial class EntityManager
 {

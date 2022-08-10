@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
-using CustomNetworking.Shared.Entities;
+using CustomNetworking.Shared.Utility;
 
-namespace CustomNetworking.Shared;
+namespace CustomNetworking.Shared.Entities;
 
 /// <summary>
 /// Container for a collection of entities.

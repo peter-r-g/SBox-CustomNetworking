@@ -7,7 +7,7 @@ using CustomNetworking.Shared.Messages;
 using CustomNetworking.Shared.Networkables;
 using CustomNetworking.Shared.Utility;
 
-namespace CustomNetworking.Shared;
+namespace CustomNetworking.Shared.Messages;
 
 /// <summary>
 /// Base class for sending any information between a client and a server.

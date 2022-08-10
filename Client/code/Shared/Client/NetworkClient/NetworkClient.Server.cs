@@ -1,6 +1,7 @@
 #if SERVER
 using System.IO;
 using CustomNetworking.Server;
+using CustomNetworking.Shared.Messages;
 using CustomNetworking.Shared.Utility;
 
 namespace CustomNetworking.Shared;
