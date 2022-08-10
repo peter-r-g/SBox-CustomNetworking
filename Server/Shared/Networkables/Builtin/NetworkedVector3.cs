@@ -107,6 +107,11 @@ public struct NetworkedVector3 : INetworkable<NetworkedVector3>, INetworkable, I
 	{
 		return networkedVector3.Value;
 	}
+
+	public static implicit operator NetworkedVector3( Vector3 vector3 )
+	{
+		return new NetworkedVector3( vector3 );
+	}
 #endif
 
 	public static implicit operator System.Numerics.Vector3( NetworkedVector3 networkedVector3 )

@@ -98,6 +98,11 @@ public struct NetworkedQuaternion : INetworkable<NetworkedQuaternion>, INetworka
 	{
 		return networkedQuaternion.Value;
 	}
+
+	public static implicit operator NetworkedQuaternion( Rotation rotation )
+	{
+		return new NetworkedQuaternion( new Quaternion( rotation.x, rotation.y, rotation.z, rotation.w ) );
+	}
 #endif
 
 	public static implicit operator Quaternion( NetworkedQuaternion networkedQuaternion )
