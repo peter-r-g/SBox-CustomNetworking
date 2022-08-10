@@ -32,10 +32,20 @@ public interface IEntity : INetworkable<IEntity>
 	void Update();
 	
 #if SERVER
+	/// <summary>
+	/// Contains all networked entities in the server.
+	/// </summary>
 	public static EntityManager All => BaseGame.Current.SharedEntityManager;
+	/// <summary>
+	/// Contains all entities that only exist on the server.
+	/// </summary>
 	public static EntityManager Local => BaseGame.Current.ServerEntityManager;
 #endif
 #if CLIENT
+	/// <summary>
+	/// Contains all networked entities in the server.
+	/// <remarks>This may not actually contain all networked entities as the server could be limiting this information.</remarks>
+	/// </summary>
 	public static EntityManager All
 	{
 		get

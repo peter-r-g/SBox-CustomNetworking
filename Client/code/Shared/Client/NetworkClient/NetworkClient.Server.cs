@@ -13,22 +13,30 @@ public partial class NetworkClient
 	{
 		ClientId = clientId;
 		ClientSocket = clientSocket;
-		clientSocket.OnDataReceived += OnDataReceived;
-		clientSocket.OnMessageReceived += OnMessageReceived;
+		clientSocket.DataReceived += OnDataReceived;
+		clientSocket.MessageReceived += OnMessageReceived;
 	}
 
 	~NetworkClient()
 	{
-		ClientSocket.OnDataReceived -= OnDataReceived;
-		ClientSocket.OnMessageReceived -= OnMessageReceived;
+		ClientSocket.DataReceived -= OnDataReceived;
+		ClientSocket.MessageReceived -= OnMessageReceived;
 	}
 	
+	/// <summary>
+	/// Sends an array of bytes to the <see cref="NetworkClient"/>.
+	/// </summary>
+	/// <param name="bytes">The data to send to the <see cref="NetworkClient"/>.</param>
 	public void SendMessage( byte[] bytes )
 	{
 		NetworkServer.Instance.MessagesSentToClients++;
 		ClientSocket.Send( bytes );
 	}
 	
+	/// <summary>
+	/// Sends a <see cref="NetworkMessage"/> to the <see cref="NetworkClient"/>.
+	/// </summary>
+	/// <param name="message">The <see cref="NetworkMessage"/> to send to the <see cref="NetworkClient"/>.</param>
 	public void SendMessage( NetworkMessage message )
 	{
 		var stream = new MemoryStream();

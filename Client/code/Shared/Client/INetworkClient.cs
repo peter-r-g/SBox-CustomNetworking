@@ -46,10 +46,17 @@ public interface INetworkClient
 	/// <param name="message">The message to send to the client.</param>
 	void SendMessage( NetworkMessage message );
 	
+	/// <summary>
+	/// Contains all currently connected players in the server.
+	/// </summary>
 	public static IReadOnlyDictionary<long, INetworkClient> All => NetworkServer.Instance.Clients;
 #endif
 
 #if CLIENT
+	/// <summary>
+	/// Contains all currently connected players in the server.
+	/// <remarks>This may not actually contain all connected clients as the server could be limiting this information.</remarks>
+	/// </summary>
 	public static IReadOnlyDictionary<long, INetworkClient> All
 	{
 		get

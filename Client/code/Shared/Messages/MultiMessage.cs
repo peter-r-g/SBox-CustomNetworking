@@ -2,8 +2,14 @@ using CustomNetworking.Shared.Utility;
 
 namespace CustomNetworking.Shared.Messages;
 
+/// <summary>
+/// A <see cref="NetworkMessage"/> that contains multiple <see cref="NetworkMessage"/>s in itself.
+/// </summary>
 public sealed class MultiMessage : NetworkMessage
 {
+	/// <summary>
+	/// The <see cref="NetworkMessage"/>s to send.
+	/// </summary>
 	public NetworkMessage[] Messages { get; private set; }
 	
 #if SERVER
