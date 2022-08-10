@@ -134,9 +134,8 @@ public class BaseGame
 	/// <param name="client">The handle of the client that has disconnected.</param>
 	public virtual void OnClientDisconnected( INetworkClient client )
 	{
-		var message = new ClientStateChangedMessage( client.ClientId, ClientState.Disconnected );
-		NetworkServer.Instance.QueueMessage( To.AllExcept( client ), message );
-
+		NetworkServer.Instance.QueueMessage( To.AllExcept( client ), new ClientStateChangedMessage( client.ClientId, ClientState.Disconnected ) );
+		client.Pawn?.Delete();
 		client.PawnChanged -= ClientOnPawnChanged;
 	}
 	
