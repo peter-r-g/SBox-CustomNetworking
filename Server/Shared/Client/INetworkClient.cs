@@ -72,5 +72,22 @@ public interface INetworkClient
 			return NetworkManager.Instance.Clients;
 		}
 	}
+
+	/// <summary>
+	/// Gets the local client in the server.
+	/// </summary>
+	public static INetworkClient Local
+	{
+		get
+		{
+			if ( NetworkManager.Instance is null )
+			{
+				Logging.Error( $"Attempted to access local client when the {nameof(NetworkManager)} doesn't exist.", new InvalidOperationException() );
+				return null!;
+			}
+			
+			return NetworkManager.Instance.LocalClient;
+		}
+	}
 #endif
 }
