@@ -23,8 +23,15 @@ public sealed class DeleteEntityMessage : NetworkMessage
 	
 	public override void Deserialize( NetworkReader reader )
 	{
-		var entity = IEntity.All.GetEntityById( reader.ReadInt32() );
-		Entity = entity ?? throw new InvalidOperationException( "Attempted to delete an entity that does not exist on the client." );
+		var entityId = reader.ReadInt32();
+		var entity = IEntity.All.GetEntityById( entityId );
+		if ( entity is null )
+		{
+			Logging.Error( $"Attempted to delete entity \"{entityId}\" which does not exist.", new InvalidOperationException() );
+			return;
+		}
+
+		Entity = entity;
 	}
 
 	public override void Serialize( NetworkWriter writer )

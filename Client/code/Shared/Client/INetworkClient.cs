@@ -2,6 +2,7 @@
 #if CLIENT
 using System;
 using CustomNetworking.Client;
+using CustomNetworking.Shared.Utility;
 #endif
 #if SERVER
 using CustomNetworking.Server;
@@ -63,7 +64,10 @@ public interface INetworkClient
 		get
 		{
 			if ( NetworkManager.Instance is null )
-				throw new Exception( "Attempted to access all clients when the NetworkManager doesn't exist." );
+			{
+				Logging.Error( $"Attempted to access all clients when the {nameof(NetworkManager)} doesn't exist.", new InvalidOperationException() );
+				return null!;
+			}
 			
 			return NetworkManager.Instance.Clients;
 		}
