@@ -26,7 +26,7 @@ public class NetworkManager
 #endif
 	
 	public readonly Dictionary<long, INetworkClient> Clients = new();
-	public readonly INetworkClient LocalClient = new NetworkClient( Local.PlayerId );
+	public INetworkClient LocalClient => GetClientById( _localClientId )!;
 	public readonly EntityManager SharedEntityManager = new();
 
 	public bool Connected { get; private set; }
@@ -43,11 +43,14 @@ public class NetworkManager
 	public delegate void ClientDisconnectedEventHandler( INetworkClient client );
 	public static event ClientDisconnectedEventHandler? ClientDisconnected;
 
-	private WebSocket? _webSocket;
+	private WebSocket _webSocket;
 	private readonly Dictionary<Type, Action<NetworkMessage>> _messageHandlers = new();
 	private readonly Dictionary<Guid, List<PartialMessage>> _partialMessages = new();
+	private readonly Queue<byte[]> _incomingQueue = new();
+	private readonly Queue<NetworkMessage> _outgoingQueue = new();
 	private readonly Stopwatch _pawnSw = Stopwatch.StartNew();
 	private bool _localPawnChanged;
+	private long _localClientId;
 
 	public NetworkManager()
 	{
@@ -55,6 +58,11 @@ public class NetworkManager
 			Logging.Fatal( new InvalidOperationException( $"An instance of {nameof(NetworkManager)} already exists." ) );
 		
 		Instance = this;
+		_webSocket = new WebSocket( SharedConstants.MaxBufferSize );
+		_webSocket.OnDisconnected += WebSocketOnDisconnected;
+		_webSocket.OnDataReceived += WebSocketOnDataReceived;
+		_webSocket.OnMessageReceived += WebSocketOnMessageReceived;
+		
 		HandleMessage<RpcCallMessage>( Rpc.HandleRpcCallMessage );
 		HandleMessage<RpcCallResponseMessage>( Rpc.HandleRpcCallResponseMessage );
 		HandleMessage<PartialMessage>( HandlePartialMessage );
@@ -71,16 +79,13 @@ public class NetworkManager
 
 	public async Task ConnectAsync( string uri, int port, bool secure )
 	{
-		if ( _webSocket is not null )
+		if ( Connected )
 			Close();
-
-		_webSocket = new WebSocket( SharedConstants.MaxBufferSize );
-		_webSocket.OnDisconnected += WebSocketOnDisconnected;
-		_webSocket.OnDataReceived += WebSocketOnDataReceived;
-		_webSocket.OnMessageReceived += WebSocketOnMessageReceived;
+		
 		try
 		{
-			var headers = new Dictionary<string, string> {{"Steam", Local.PlayerId.ToString()}};
+			_localClientId = Random.Shared.NextInt64();
+			var headers = new Dictionary<string, string> {{"Steam", _localClientId.ToString()}};
 			var webSocketUri = (secure ? "wss://" : "ws://") + uri + ':' + port + '/' ;
 			await _webSocket.Connect( webSocketUri, headers );
 			Connected = true;
@@ -95,21 +100,17 @@ public class NetworkManager
 
 	public void Close()
 	{
-		if ( _webSocket is null )
-			return;
-
 		Connected = false;
-		_webSocket.OnDisconnected -= WebSocketOnDisconnected;
-		_webSocket.OnDataReceived -= WebSocketOnDataReceived;
-		_webSocket.OnMessageReceived -= WebSocketOnMessageReceived;
 		_webSocket.Dispose();
+		_webSocket = new WebSocket( SharedConstants.MaxBufferSize );
 		Clients.Clear();
-		LocalClient.Pawn = null;
 		SharedEntityManager.DeleteAllEntities();
 		_partialMessages.Clear();
+		
 #if DEBUG
 		MessagesReceived = 0;
 		MessagesSent = 0;
+		MessageTypesReceived.Clear();
 #endif
 		
 		DisconnectedFromServer?.Invoke();
@@ -120,7 +121,7 @@ public class NetworkManager
 		foreach ( var entity in SharedEntityManager.Entities )
 			entity.Update();
 
-		if ( !_localPawnChanged || _pawnSw.Elapsed.TotalMilliseconds < 20 )
+		if ( !_localPawnChanged || _pawnSw.Elapsed.TotalMilliseconds < 100 )
 			return;
 
 		if ( LocalClient.Pawn is null )
@@ -243,10 +244,10 @@ public class NetworkManager
 		if ( message is not ClientListMessage clientListMessage )
 			return;
 
-		foreach ( var (playerId, pawnId) in clientListMessage.ClientIds )
+		foreach ( var (clientId, pawnId) in clientListMessage.ClientIds )
 		{
-			var client = new NetworkClient( playerId ) {Pawn = SharedEntityManager.GetEntityById( pawnId )};
-			Clients.Add( playerId, client );
+			var client = new NetworkClient( clientId ) {Pawn = SharedEntityManager.GetEntityById( pawnId )};
+			Clients.Add( clientId, client );
 		}
 	}
 	
@@ -309,18 +310,20 @@ public class NetworkManager
 		if ( message is not ClientPawnChangedMessage clientPawnChangedMessage )
 			return;
 
-		if ( LocalClient.Pawn is not null )
+		if ( clientPawnChangedMessage.Client.Pawn is not null )
 		{
-			LocalClient.Pawn.Changed -= OnLocalPawnChanged;
-			LocalClient.Pawn.Owner = null;
+			if ( clientPawnChangedMessage.Client == LocalClient )
+				clientPawnChangedMessage.Client.Pawn.Changed -= OnLocalPawnChanged;
+			clientPawnChangedMessage.Client.Pawn.Owner = null;
 		}
 
-		LocalClient.Pawn = clientPawnChangedMessage.NewPawn;
+		clientPawnChangedMessage.Client.Pawn = clientPawnChangedMessage.NewPawn;
 
-		if ( LocalClient.Pawn is not null )
+		if ( clientPawnChangedMessage.Client.Pawn is not null )
 		{
-			LocalClient.Pawn.Changed += OnLocalPawnChanged;
-			LocalClient.Pawn.Owner = LocalClient;
+			if ( clientPawnChangedMessage.Client == LocalClient )
+				clientPawnChangedMessage.Client.Pawn.Changed += OnLocalPawnChanged;
+			clientPawnChangedMessage.Client.Pawn.Owner = clientPawnChangedMessage.Client;
 		}
 	}
 
