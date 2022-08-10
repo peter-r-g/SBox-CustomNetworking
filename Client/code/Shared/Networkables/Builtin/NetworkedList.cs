@@ -13,8 +13,8 @@ public class NetworkedList<T> : INetworkable<NetworkedList<T>>, INetworkable whe
 	public event INetworkable<NetworkedList<T>>.ChangedEventHandler? Changed;
 	event INetworkable<object>.ChangedEventHandler? INetworkable<object>.Changed
 	{
-		add => throw new InvalidOperationException();
-		remove => throw new InvalidOperationException();
+		add => Logging.Fatal( new InvalidOperationException() );
+		remove => Logging.Fatal( new InvalidOperationException() );
 	}
 	
 	public List<T> Value

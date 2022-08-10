@@ -17,8 +17,8 @@ public abstract class NetworkMessage : INetworkable<NetworkMessage>, INetworkabl
 	public event INetworkable<NetworkMessage>.ChangedEventHandler? Changed;
 	event INetworkable<object>.ChangedEventHandler? INetworkable<object>.Changed
 	{
-		add => throw new InvalidOperationException();
-		remove => throw new InvalidOperationException();
+		add => Logging.Fatal( new InvalidOperationException() );
+		remove => Logging.Fatal( new InvalidOperationException() );
 	}
 
 	public abstract void Deserialize( NetworkReader reader );

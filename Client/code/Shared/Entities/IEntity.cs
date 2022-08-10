@@ -52,7 +52,10 @@ public interface IEntity : INetworkable<IEntity>
 		get
 		{
 			if ( NetworkManager.Instance is null )
-				throw new Exception( "Attempted to access all networked entities when the NetworkManager doesn't exist." );
+			{
+				Logging.Error( $"Attempted to access all networked entities when the {nameof(NetworkManager)} doesn't exist.", new InvalidOperationException() );
+				return null!;
+			}
 			
 			return NetworkManager.Instance.SharedEntityManager;
 		}

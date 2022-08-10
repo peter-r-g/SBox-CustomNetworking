@@ -11,8 +11,8 @@ public struct NetworkedVector3 : INetworkable<NetworkedVector3>, INetworkable, I
 	public event INetworkable<NetworkedVector3>.ChangedEventHandler? Changed = null;
 	event INetworkable<object>.ChangedEventHandler? INetworkable<object>.Changed
 	{
-		add => throw new InvalidOperationException();
-		remove => throw new InvalidOperationException();
+		add => Logging.Fatal( new InvalidOperationException() );
+		remove => Logging.Fatal( new InvalidOperationException() );
 	}
 	
 	public System.Numerics.Vector3 Value
@@ -22,7 +22,7 @@ public struct NetworkedVector3 : INetworkable<NetworkedVector3>, INetworkable, I
 		{
 			var oldValue = _value;
 			_value = value;
-			Changed?.Invoke( _value, this );
+			Changed?.Invoke( oldValue, this );
 		}
 	}
 	private System.Numerics.Vector3 _value;
