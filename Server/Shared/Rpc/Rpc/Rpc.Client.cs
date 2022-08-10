@@ -83,10 +83,10 @@ public partial class Rpc
 		if ( method is null )
 			throw new InvalidOperationException( $"Failed to handle RPC call (\"{rpcCall.MethodName}\" does not exist on \"{type}\")." );
 		
-		if ( !method.Attributes.Any( attribute => attribute is Rpc.ClientAttribute ) )
+		if ( !method.Attributes.Any( attribute => attribute is ClientAttribute ) )
 			throw new InvalidOperationException( "Failed to handle RPC call (Attempted to invoke a non-RPC method)." );
 		
-		var instance = NetworkManager.Instance?.SharedEntityManager.GetEntityById( rpcCall.EntityId );
+		var instance = IEntity.All.GetEntityById( rpcCall.EntityId );
 		if ( instance is null && rpcCall.EntityId != -1 )
 			throw new InvalidOperationException( "Failed to handle RPC call (Attempted to call RPC on a non-existant entity)." );
 
@@ -118,7 +118,7 @@ public partial class Rpc
 		if ( message is not RpcCallResponseMessage rpcResponse )
 			return;
 
-		Rpc.RpcResponses.Add( rpcResponse.CallGuid, rpcResponse );
+		RpcResponses.Add( rpcResponse.CallGuid, rpcResponse );
 	}
 }
 #endif
