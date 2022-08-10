@@ -117,13 +117,13 @@ public partial class Rpc
 		if ( returnValue is not INetworkable && returnValue is not null )
 		{
 			var failedMessage = new RpcCallResponseMessage( rpcCall.CallGuid, RpcCallState.Failed );
-			_ = NetworkManager.Instance?.SendToServer( failedMessage );
+			NetworkManager.Instance?.SendToServer( failedMessage );
 			Logging.Error( $"Failed to handle RPC call (\"{rpcCall.MethodName}\" returned a non-networkable value).", new InvalidOperationException() );
 			return;
 		}
 		
 		var response = new RpcCallResponseMessage( rpcCall.CallGuid, RpcCallState.Completed, returnValue as INetworkable ?? null );
-		_ = NetworkManager.Instance?.SendToServer( response );
+		NetworkManager.Instance?.SendToServer( response );
 	}
 	
 	internal static void HandleRpcCallResponseMessage( NetworkMessage message )

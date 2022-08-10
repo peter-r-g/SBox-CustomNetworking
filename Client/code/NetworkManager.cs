@@ -135,7 +135,7 @@ public class NetworkManager
 		writer.WriteNetworkableChanges( LocalClient.Pawn );
 		writer.Close();
 
-		_ = SendToServer( new ClientPawnUpdateMessage( stream.ToArray() ) );
+		SendToServer( new ClientPawnUpdateMessage( stream.ToArray() ) );
 		_localPawnChanged = false;
 		_pawnSw.Restart();
 	}
@@ -151,14 +151,38 @@ public class NetworkManager
 		MessagesReceived++;
 #endif
 		
-		var reader = new NetworkReader( new MemoryStream( data.ToArray() ) );
-		var message = NetworkMessage.DeserializeMessage( reader );
-		reader.Close();
-		DispatchMessage( message );
+		_incomingQueue.Enqueue( data.ToArray() );
 	}
 
 	private void WebSocketOnMessageReceived( string message )
 	{
+	}
+
+	internal void DispatchIncoming()
+	{
+		while ( _incomingQueue.TryDequeue( out var bytes ) )
+		{
+			var reader = new NetworkReader( new MemoryStream( bytes ) );
+			var message = NetworkMessage.DeserializeMessage( reader );
+			reader.Close();
+			DispatchMessage( message );
+		}
+	}
+
+	internal void DispatchOutgoing()
+	{
+		while ( _outgoingQueue.TryDequeue( out var message ) )
+		{
+#if DEBUG
+			MessagesSent++;
+#endif
+			var stream = new MemoryStream();
+			var writer = new NetworkWriter( stream );
+			writer.WriteNetworkable<NetworkMessage>( message );
+			writer.Close();
+		
+			_ = _webSocket?.Send( stream.ToArray() );	
+		}
 	}
 
 	private void HandlePartialMessage( NetworkMessage message )
@@ -326,20 +350,9 @@ public class NetworkManager
 		reader.Close();
 	}
 
-	public async Task SendToServer( NetworkMessage message )
+	public void SendToServer( NetworkMessage message )
 	{
-		if ( _webSocket is null )
-			return;
-
-#if DEBUG
-		MessagesSent++;
-#endif
-		var stream = new MemoryStream();
-		var writer = new NetworkWriter( stream );
-		writer.WriteNetworkable<NetworkMessage>( message );
-		writer.Close();
-		
-		await _webSocket.Send( stream.ToArray() );
+		_outgoingQueue.Enqueue( message );
 	}
 
 	private void DispatchMessage( NetworkMessage message )

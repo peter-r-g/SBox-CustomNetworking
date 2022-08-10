@@ -31,7 +31,9 @@ public class BaseGame : Game
 		if ( NetworkManager is null || !NetworkManager.Connected )
 			return;
 
+		NetworkManager.DispatchIncoming();
 		NetworkManager.Update();
+		NetworkManager.DispatchOutgoing();
 	}
 	
 	protected virtual void OnConnectedToServer()
