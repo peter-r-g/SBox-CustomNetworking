@@ -5,6 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using CustomNetworking.Shared.Utility;
 using CustomNetworking.Shared;
+using CustomNetworking.Shared.Messages;
 
 namespace CustomNetworking.Server;
 

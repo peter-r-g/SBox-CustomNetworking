@@ -1,4 +1,4 @@
-namespace CustomNetworking.Shared;
+namespace CustomNetworking.Shared.RemoteProcedureCalls;
 
 /// <summary>
 /// Represents a state the Rpc resulted in.

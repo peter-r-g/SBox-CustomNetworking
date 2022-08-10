@@ -1,7 +1,7 @@
 #if CLIENT
 using System;
 
-namespace CustomNetworking.Shared;
+namespace CustomNetworking.Shared.Utility;
 
 public static partial class TypeHelper
 {

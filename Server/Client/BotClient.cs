@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using CustomNetworking.Shared;
 using CustomNetworking.Shared.Entities;
+using CustomNetworking.Shared.Messages;
 
 namespace CustomNetworking.Server;
 

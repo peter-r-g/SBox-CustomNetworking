@@ -1,4 +1,5 @@
 ﻿using System.Text;
+using CustomNetworking.Shared.Entities;
 using Sandbox.UI;
 using Sandbox.UI.Construct;
 

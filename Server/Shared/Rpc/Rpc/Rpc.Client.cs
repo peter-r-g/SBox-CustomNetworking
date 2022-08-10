@@ -7,8 +7,9 @@ using CustomNetworking.Client;
 using CustomNetworking.Shared.Entities;
 using CustomNetworking.Shared.Messages;
 using CustomNetworking.Shared.Networkables;
+using CustomNetworking.Shared.Utility;
 
-namespace CustomNetworking.Shared;
+namespace CustomNetworking.Shared.RemoteProcedureCalls;
 
 public partial class Rpc
 {

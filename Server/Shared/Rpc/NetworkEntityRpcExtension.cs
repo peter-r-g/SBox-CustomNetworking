@@ -7,7 +7,7 @@ using CustomNetworking.Shared.Entities;
 using CustomNetworking.Shared.Messages;
 using CustomNetworking.Shared.Networkables;
 
-namespace CustomNetworking.Shared;
+namespace CustomNetworking.Shared.RemoteProcedureCalls;
 
 /// <summary>
 /// Extension of helper entity methods to call RPCs on themselves.

@@ -8,7 +8,7 @@ using CustomNetworking.Shared.Entities;
 using CustomNetworking.Shared.Messages;
 using CustomNetworking.Shared.Networkables;
 
-namespace CustomNetworking.Shared;
+namespace CustomNetworking.Shared.RemoteProcedureCalls;
 
 /// <summary>
 /// A collection of methods to execute Remote Procedure Calls (RPCs).

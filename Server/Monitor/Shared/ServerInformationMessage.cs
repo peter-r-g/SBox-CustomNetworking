@@ -1,5 +1,6 @@
 using CustomNetworking.Shared;
 using CustomNetworking.Shared.Entities;
+using CustomNetworking.Shared.Messages;
 using CustomNetworking.Shared.Utility;
 
 namespace CustomNetworking.Server;

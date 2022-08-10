@@ -5,6 +5,7 @@ using CustomNetworking.Client;
 #endif
 #if SERVER
 using CustomNetworking.Server;
+using CustomNetworking.Shared.Messages;
 #endif
 using CustomNetworking.Shared.Entities;
 

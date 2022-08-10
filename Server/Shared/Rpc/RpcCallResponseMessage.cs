@@ -1,5 +1,6 @@
 using System;
 using CustomNetworking.Shared.Networkables;
+using CustomNetworking.Shared.RemoteProcedureCalls;
 using CustomNetworking.Shared.Utility;
 
 namespace CustomNetworking.Shared.Messages;
