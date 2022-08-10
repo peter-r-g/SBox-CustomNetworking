@@ -1,6 +1,7 @@
 #if CLIENT
 using System;
 using CustomNetworking.Client;
+using CustomNetworking.Shared.Utility;
 #endif
 #if SERVER
 using CustomNetworking.Server;
