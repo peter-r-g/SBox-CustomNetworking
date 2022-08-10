@@ -55,9 +55,9 @@ public class BaseGame : Game
 	}
 
 	[ConCmd.Client( "connect_to_server" )]
-	public static void ConnectToServer()
+	public static void ConnectToServer( string uri )
 	{
-		_ = NetworkManager.Instance?.ConnectAsync( "127.0.0.1", SharedConstants.Port, false );
+		_ = NetworkManager.Instance?.ConnectAsync( uri, SharedConstants.Port, false );
 	}
 
 	[ConCmd.Client( "disconnect_from_server" )]
