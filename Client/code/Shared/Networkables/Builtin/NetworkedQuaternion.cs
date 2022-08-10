@@ -7,7 +7,7 @@ namespace CustomNetworking.Shared.Networkables.Builtin;
 /// <summary>
 /// Represents a networkable <see cref="Quaternion"/>.
 /// </summary>
-public struct NetworkedQuaternion : INetworkable<NetworkedQuaternion>, INetworkable
+public struct NetworkedQuaternion : INetworkable<NetworkedQuaternion>, INetworkable, IEquatable<NetworkedQuaternion>
 {
 	public event INetworkable<NetworkedQuaternion>.ChangedEventHandler? Changed = null;
 	event INetworkable<object>.ChangedEventHandler? INetworkable<object>.Changed
@@ -73,6 +73,21 @@ public struct NetworkedQuaternion : INetworkable<NetworkedQuaternion>, INetworka
 		Serialize( writer );
 	}
 
+	public bool Equals( NetworkedQuaternion other )
+	{
+		return _value.Equals( other._value );
+	}
+
+	public override bool Equals( object? obj )
+	{
+		return obj is NetworkedVector3 other && Equals( other );
+	}
+
+	public override int GetHashCode()
+	{
+		return _value.GetHashCode();
+	}
+
 	public override string ToString()
 	{
 		return Value.ToString();
@@ -82,6 +97,11 @@ public struct NetworkedQuaternion : INetworkable<NetworkedQuaternion>, INetworka
 	public static implicit operator Rotation( NetworkedQuaternion networkedQuaternion )
 	{
 		return networkedQuaternion.Value;
+	}
+
+	public static implicit operator NetworkedQuaternion( Rotation rotation )
+	{
+		return new NetworkedQuaternion( new Quaternion( rotation.x, rotation.y, rotation.z, rotation.w ) );
 	}
 #endif
 

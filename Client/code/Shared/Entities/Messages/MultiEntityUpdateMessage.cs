@@ -11,30 +11,30 @@ namespace CustomNetworking.Shared.Messages;
 public sealed class MultiEntityUpdateMessage : NetworkMessage
 {
 	/// <summary>
-	/// Contains all data relating to entities.
+	/// Contains all data changes relating to entities.
 	/// </summary>
-	public byte[] EntityData { get; private set; }
+	public byte[] PartialEntityData { get; private set; }
 	
 #if SERVER
-	public MultiEntityUpdateMessage( byte[] entityData )
+	public MultiEntityUpdateMessage( byte[] partialEntityData )
 	{
-		EntityData = entityData;
+		PartialEntityData = partialEntityData;
 	}
 #endif
 	
 	public override void Deserialize( NetworkReader reader )
 	{
 #if CLIENT
-		EntityData = new byte[reader.ReadInt32()];
-		_ = reader.Read( EntityData, 0, EntityData.Length );
+		PartialEntityData = new byte[reader.ReadInt32()];
+		_ = reader.Read( PartialEntityData, 0, PartialEntityData.Length );
 #endif
 	}
 	
 	public override void Serialize( NetworkWriter writer )
 	{
 #if SERVER
-		writer.Write( EntityData.Length );
-		writer.Write( EntityData );
+		writer.Write( PartialEntityData.Length );
+		writer.Write( PartialEntityData );
 #endif
 	}
 }
