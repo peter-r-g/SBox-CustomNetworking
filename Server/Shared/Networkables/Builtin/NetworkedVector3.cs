@@ -87,7 +87,7 @@ public struct NetworkedVector3 : INetworkable<NetworkedVector3>, INetworkable, I
 
 	public override string ToString()
 	{
-		return Value.ToString();
+		return $"{X:0.####}, {Y:0.####}, {Z:0.####}";
 	}
 
 	public static NetworkedVector3 operator +( NetworkedVector3 left, NetworkedVector3 right ) => left.Value + right.Value;
