@@ -164,6 +164,7 @@ public partial class NetworkEntity : IEntity
 			
 			var currentValue = property.GetValue( this );
 			(currentValue as INetworkable)!.DeserializeChanges( reader );
+			property.SetValue( this, currentValue );
 			TriggerNetworkingChange( property.Name );
 		}
 	}
