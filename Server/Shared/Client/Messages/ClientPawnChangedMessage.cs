@@ -4,10 +4,22 @@ using CustomNetworking.Shared.Utility;
 
 namespace CustomNetworking.Shared.Messages;
 
+/// <summary>
+/// 
+/// </summary>
 public sealed class ClientPawnChangedMessage : NetworkMessage
 {
+	/// <summary>
+	/// The <see cref="INetworkClient"/> that has had its <see cref="INetworkClient.Pawn"/> changed.
+	/// </summary>
 	public INetworkClient Client { get; private set; }
+	/// <summary>
+	/// The old <see cref="IEntity"/> the <see cref="Client"/> was controlling.
+	/// </summary>
 	public IEntity? OldPawn { get; private set; }
+	/// <summary>
+	/// The new <see cref="IEntity"/> the <see cref="Client"/> is controlling.
+	/// </summary>
 	public IEntity? NewPawn { get; private set; }
 	
 #if SERVER

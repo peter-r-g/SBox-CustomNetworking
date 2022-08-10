@@ -10,6 +10,9 @@ namespace CustomNetworking.Shared.Messages;
 /// </summary>
 public sealed class MultiEntityUpdateMessage : NetworkMessage
 {
+	/// <summary>
+	/// Contains all data relating to entities.
+	/// </summary>
 	public byte[] EntityData { get; private set; }
 	
 #if SERVER

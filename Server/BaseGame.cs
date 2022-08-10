@@ -4,7 +4,6 @@ using System.IO;
 using CustomNetworking.Shared;
 using CustomNetworking.Shared.Entities;
 using CustomNetworking.Shared.Messages;
-using CustomNetworking.Shared.Networkables;
 using CustomNetworking.Shared.Utility;
 
 namespace CustomNetworking.Server;
@@ -159,21 +158,39 @@ public class BaseGame
 		return SharedEntityManager.GetEntityById( entityId );
 	}
 
+	/// <summary>
+	/// Called when an <see cref="IEntity"/> is created in the <see cref="SharedEntityManager"/>.
+	/// </summary>
+	/// <param name="entity">The <see cref="IEntity"/> that has been created.</param>
 	protected virtual void OnNetworkedEntityCreated( IEntity entity )
 	{
 		NetworkServer.Instance.QueueMessage( To.All, new CreateEntityMessage( entity ) );
 	}
 
+	/// <summary>
+	/// Called when an <see cref="IEntity"/> is deleted in the <see cref="SharedEntityManager"/>.
+	/// </summary>
+	/// <param name="entity">The <see cref="IEntity"/> that has been deleted.</param>
 	protected virtual void OnNetworkedEntityDeleted( IEntity entity )
 	{
 		NetworkServer.Instance.QueueMessage( To.All, new DeleteEntityMessage( entity ) );
 	}
 	
+	/// <summary>
+	/// Called when an <see cref="IEntity"/> has been changed in the <see cref="SharedEntityManager"/>.
+	/// </summary>
+	/// <param name="entity">The <see cref="IEntity"/> that has been changed.</param>
 	protected virtual void OnNetworkedEntityChanged( IEntity entity )
 	{
 		_changedEntities.Add( entity );
 	}
 	
+	/// <summary>
+	/// Called when a <see cref="INetworkClient"/>s pawn has been swapped.
+	/// </summary>
+	/// <param name="client">The <see cref="INetworkClient"/> that has its pawn changed.</param>
+	/// <param name="oldpawn">The old <see cref="IEntity"/> the <see cref="client"/> was controlling.</param>
+	/// <param name="newPawn">The new <see cref="IEntity"/> the <see cref="client"/> is now controlling.</param>
 	protected virtual void ClientOnPawnChanged( INetworkClient client, IEntity? oldpawn, IEntity? newPawn )
 	{
 		NetworkServer.Instance.QueueMessage( To.All, new ClientPawnChangedMessage( client, oldpawn, newPawn ) );

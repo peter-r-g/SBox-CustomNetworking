@@ -9,11 +9,16 @@ namespace CustomNetworking.Server;
 
 public static class Program
 {
+	/// <summary>
+	/// The whole programs cancellation source. If you want to exit the program then cancel this and the program will exit at the end of the tick.
+	/// </summary>
 	public static readonly CancellationTokenSource ProgramCancellation = new();
 
+	/// <summary>
+	/// The target tick rate for the server.
+	/// </summary>
 	public static int TickRate = int.MaxValue;
 	private static double TickRateDt => (double)1000 / TickRate;
-
 	
 	public static readonly ConcurrentQueue<string> Logger = new();
 	private static readonly string LogFileName = Environment.CurrentDirectory + '\\' +
@@ -40,8 +45,8 @@ public static class Program
 		_monitorThread = new Thread( _monitor.MonitorMain );
 		_monitorThread.Start();
 
-		_server.ClientConnected += OnClientConnected;
-		_server.ClientDisconnected += OnClientDisconnected;
+		_server.ClientConnected += _game.OnClientConnected;
+		_server.ClientDisconnected += _game.OnClientDisconnected;
 		_networkingThread = new Thread( _server.NetworkingMain );
 		_networkingThread.Start();
 
@@ -73,20 +78,10 @@ public static class Program
 		_game.Shutdown();
 		ProgramCancellation.Cancel();
 		
-		_server.ClientConnected -= OnClientConnected;
-		_server.ClientDisconnected -= OnClientDisconnected;
+		_server.ClientConnected -= _game.OnClientConnected;
+		_server.ClientDisconnected -= _game.OnClientDisconnected;
 		
 		_networkingThread?.Join();
 		_monitorThread?.Join();
-	}
-
-	private static void OnClientConnected( INetworkClient client )
-	{
-		_game.OnClientConnected( client );
-	}
-	
-	private static void OnClientDisconnected( INetworkClient client )
-	{
-		_game.OnClientDisconnected( client );
 	}
 }

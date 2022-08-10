@@ -10,12 +10,27 @@ namespace CustomNetworking.Server;
 
 internal sealed class ClientSocket
 {
+	/// <summary>
+	/// This clients cancellation source. If you want to disconnect the client then cancel this.
+	/// </summary>
 	public readonly CancellationTokenSource ClientTokenSource = new();
 	
-	public delegate void OnDataReceivedEventHandler( MemoryStream stream );
-	public event OnDataReceivedEventHandler? OnDataReceived;
-	public delegate void OnMessageReceivedEventHandler( string message );
-	public event OnMessageReceivedEventHandler? OnMessageReceived;
+	/// <summary>
+	/// The event handler for <see cref="ClientSocket"/>.<see cref="ClientSocket.DataReceived"/>.
+	/// </summary>
+	public delegate void DataReceivedEventHandler( MemoryStream stream );
+	/// <summary>
+	/// Called when data has been received from this <see cref="ClientSocket"/>.
+	/// </summary>
+	public event DataReceivedEventHandler? DataReceived;
+	/// <summary>
+	/// The event handler for <see cref="ClientSocket"/>.<see cref="ClientSocket.MessageReceived"/>.
+	/// </summary>
+	public delegate void MessageReceivedEventHandler( string message );
+	/// <summary>
+	/// Called when a message has been received from this <see cref="ClientSocket"/>.
+	/// </summary>
+	public event MessageReceivedEventHandler? MessageReceived;
 	
 	private readonly WebSocket _socket;
 	private readonly ConcurrentQueue<(WebSocketMessageType, byte[])> _dataQueue = new();
@@ -27,23 +42,35 @@ internal sealed class ClientSocket
 		_socket = socket;
 	}
 
+	/// <summary>
+	/// Closes this web socket connection with the provided reason.
+	/// </summary>
+	/// <param name="reason">The reason for the connection closing.</param>
 	public async Task CloseAsync( WebSocketCloseReason reason = WebSocketCloseReason.NormalClose )
 	{
 		ClientTokenSource.Cancel();
 		await _socket.CloseAsync( reason );
 	}
 
+	/// <summary>
+	/// Sends an array of bytes to the web socket client.
+	/// </summary>
+	/// <param name="data">The data to send to the client.</param>
 	public void Send( byte[] data )
 	{
 		_dataQueue.Enqueue( (WebSocketMessageType.Binary, data) );
 	}
 
+	/// <summary>
+	/// Sends a string message to the web socket client.
+	/// </summary>
+	/// <param name="message">The message to send to the client.</param>
 	public void Send( string message )
 	{
 		_dataQueue.Enqueue( (WebSocketMessageType.Text, Encoding.UTF8.GetBytes( message )) );
 	}
 	
-	public async Task HandleConnectionAsync()
+	internal async Task HandleConnectionAsync()
 	{
 		try
 		{
@@ -87,7 +114,7 @@ internal sealed class ClientSocket
 				var stream = new MemoryStream();
 				await message.CopyToAsync( stream );
 				stream.Position = 0;
-				OnDataReceived?.Invoke( stream );
+				DataReceived?.Invoke( stream );
 				message.Close();
 				stream.Close();
 				break;
@@ -95,7 +122,7 @@ internal sealed class ClientSocket
 				var sReader = new StreamReader( message, new UTF8Encoding( false, false ) );
 				var messageText = await sReader.ReadToEndAsync().ConfigureAwait( false );
 				sReader.Close();
-				OnMessageReceived?.Invoke( messageText );
+				MessageReceived?.Invoke( messageText );
 				break;
 			default:
 				throw new ArgumentOutOfRangeException( nameof(message) );

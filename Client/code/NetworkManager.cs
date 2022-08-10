@@ -226,7 +226,7 @@ public class NetworkManager
 		if ( message is not DeleteEntityMessage deleteEntityMessage )
 			return;
 		
-		SharedEntityManager.DeleteEntity( deleteEntityMessage.EntityId );
+		SharedEntityManager.DeleteEntity( deleteEntityMessage.Entity );
 	}
 		
 	private void HandleClientStateChangedMessage( NetworkMessage message )
