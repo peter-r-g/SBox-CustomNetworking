@@ -62,6 +62,8 @@ public partial class NetworkEntity : BaseNetworkable, IEntity
 		}
 	}
 	private NetworkedQuaternion _rotation;
+	
+	public ComponentContainer Components { get; }
 	public TagContainer Tags { get; }
 
 	public NetworkEntity( int entityId )
@@ -69,6 +71,8 @@ public partial class NetworkEntity : BaseNetworkable, IEntity
 		EntityId = entityId;
 		PropertyNameCache.Remove( nameof(EntityId) );
 		
+		Components = new ComponentContainer( this );
+		Components.Changed += OnComponentsChanged;
 		Tags = new TagContainer();
 		Tags.Changed += OnTagsChanged;
 	}
@@ -142,7 +146,9 @@ public partial class NetworkEntity : BaseNetworkable, IEntity
 		}
 	}
 	
+	private void OnComponentsChanged( ComponentContainer _, ComponentContainer newvalue )
 	{
+		TriggerNetworkingChange( nameof(Components) );
 	}
 	
 	private void OnTagsChanged( TagContainer _, TagContainer newvalue )
