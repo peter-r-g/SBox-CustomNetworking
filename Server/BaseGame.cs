@@ -68,11 +68,8 @@ public class BaseGame
 	/// </summary>
 	public virtual void Shutdown()
 	{
-		foreach ( var serverEntity in ServerEntityManager.Entities )
-			serverEntity.Delete();
-		
-		foreach ( var sharedEntity in SharedEntityManager.Entities )
-			sharedEntity.Delete();
+		ServerEntityManager.DeleteAllEntities();	
+		SharedEntityManager.DeleteAllEntities();
 	}
 
 	/// <summary>
