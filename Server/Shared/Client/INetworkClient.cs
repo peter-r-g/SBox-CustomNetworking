@@ -52,6 +52,11 @@ public interface INetworkClient
 	/// Contains all currently connected players in the server.
 	/// </summary>
 	public static IReadOnlyDictionary<long, INetworkClient> All => NetworkServer.Instance.Clients;
+
+	/// <summary>
+	/// Contains all currently connected bots in the server.
+	/// </summary>
+	public static IReadOnlyDictionary<long, BotClient> Bots => NetworkServer.Instance.Bots;
 #endif
 
 #if CLIENT
