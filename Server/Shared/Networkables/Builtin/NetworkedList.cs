@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using CustomNetworking.Shared.Utility;
 
@@ -8,7 +9,7 @@ namespace CustomNetworking.Shared.Networkables.Builtin;
 /// Represents a networkable <see cref="List{T}"/>.
 /// </summary>
 /// <typeparam name="T">The type contained in the <see cref="List{T}"/>.</typeparam>
-public class NetworkedList<T> : INetworkable<NetworkedList<T>>, INetworkable where T : INetworkable<T>
+public class NetworkedList<T> : INetworkable<NetworkedList<T>>, INetworkable, IEnumerable<T> where T : INetworkable<T>
 {
 	public event INetworkable<NetworkedList<T>>.ChangedEventHandler? Changed;
 	event INetworkable<object>.ChangedEventHandler? INetworkable<object>.Changed
@@ -92,6 +93,16 @@ public class NetworkedList<T> : INetworkable<NetworkedList<T>>, INetworkable whe
 		_changes.Clear();
 		_changes.Add( (ListChangeType.Clear, default) );
 		Changed?.Invoke( this, this );
+	}
+	
+	public IEnumerator<T> GetEnumerator()
+	{
+		return Value.GetEnumerator();
+	}
+
+	IEnumerator IEnumerable.GetEnumerator()
+	{
+		return GetEnumerator();
 	}
 
 	public void Deserialize( NetworkReader reader )
