@@ -1,8 +1,6 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
+#if CLIENT
 using System.Reflection;
-using System.Runtime.CompilerServices;
+#endif
 using CustomNetworking.Shared.Networkables;
 using CustomNetworking.Shared.Networkables.Builtin;
 using CustomNetworking.Shared.Utility;
@@ -12,9 +10,9 @@ namespace CustomNetworking.Shared.Entities;
 /// <summary>
 /// The base class for all of your entity needs.
 /// </summary>
-public partial class NetworkEntity : IEntity
+public partial class NetworkEntity : BaseNetworkable, IEntity
 {
-	public event INetworkable<IEntity>.ChangedEventHandler? Changed;
+	public new event INetworkable<IEntity>.ChangedEventHandler? Changed;
 	public NetworkedInt EntityId { get; }
 
 	public INetworkClient? Owner
@@ -27,7 +25,6 @@ public partial class NetworkEntity : IEntity
 			OnOwnerChanged( oldOwner, value );
 		}
 	}
-
 	private INetworkClient? _owner;
 
 	/// <summary>
@@ -65,22 +62,19 @@ public partial class NetworkEntity : IEntity
 		}
 	}
 	private NetworkedQuaternion _rotation;
-
-	private readonly Dictionary<string, PropertyInfo> _propertyNameCache = new();
-	private readonly HashSet<string> _changedProperties = new();
+	
+	public ComponentContainer Components { get; }
+	public TagContainer Tags { get; }
 
 	public NetworkEntity( int entityId )
 	{
 		EntityId = entityId;
+		PropertyNameCache.Remove( nameof(EntityId) );
 		
-		foreach ( var property in GetType().GetProperties()
-			         .Where( property => property.PropertyType.IsAssignableTo( typeof(INetworkable) ) ) )
-		{
-			if ( property.Name == nameof(EntityId) )
-				continue;
-			
-			_propertyNameCache.Add( property.Name, property );
-		}
+		Components = new ComponentContainer( this );
+		Components.Changed += OnComponentsChanged;
+		Tags = new TagContainer();
+		Tags.Changed += OnTagsChanged;
 	}
 
 	public virtual void Delete()
@@ -95,19 +89,6 @@ public partial class NetworkEntity : IEntity
 #if CLIENT
 		UpdateClient();
 #endif
-	}
-	
-	/// <summary>
-	/// Marks a property as changed and invokes the <see cref="Changed"/> event.
-	/// </summary>
-	/// <param name="propertyName">The name of the property that changed.</param>
-	protected void TriggerNetworkingChange( [CallerMemberName] string propertyName = "" )
-	{
-		if ( !_propertyNameCache.ContainsKey( propertyName ) )
-			throw new InvalidOperationException( $"\"{propertyName}\" is not a networkable property on {GetType().Name}." );
-		
-		_changedProperties.Add( propertyName );
-		Changed?.Invoke( this, this );
 	}
 
 	/// <summary>
@@ -139,20 +120,19 @@ public partial class NetworkEntity : IEntity
 		TriggerNetworkingChange( nameof(Rotation) );
 	}
 
-	public void Deserialize( NetworkReader reader )
+	protected override void TriggerNetworkingChange( string propertyName = "" )
 	{
-		_ = reader.ReadInt32();
+		base.TriggerNetworkingChange( propertyName );
 		
-		foreach ( var property in _propertyNameCache.Values )
-			property.SetValue( this, reader.ReadNetworkable() );
+		Changed?.Invoke( this, this );
 	}
 
-	public void DeserializeChanges( NetworkReader reader )
+	public sealed override void DeserializeChanges( NetworkReader reader )
 	{
 		var changedCount = reader.ReadInt32();
 		for ( var i = 0; i < changedCount; i++ )
 		{
-			var property = _propertyNameCache[reader.ReadString()];
+			var property = PropertyNameCache[reader.ReadString()];
 #if CLIENT
 			if ( Owner == INetworkClient.Local && property.GetCustomAttribute<ClientAuthorityAttribute>() is not null )
 			{
@@ -169,22 +149,13 @@ public partial class NetworkEntity : IEntity
 		}
 	}
 	
-	public void Serialize( NetworkWriter writer )
+	private void OnComponentsChanged( ComponentContainer _, ComponentContainer newvalue )
 	{
-		writer.Write( EntityId );
-		
-		foreach ( var property in _propertyNameCache.Values )
-			writer.WriteNetworkable( (INetworkable)property.GetValue( this )! );
+		TriggerNetworkingChange( nameof(Components) );
 	}
-
-	public void SerializeChanges( NetworkWriter writer )
+	
+	private void OnTagsChanged( TagContainer _, TagContainer newvalue )
 	{
-		writer.Write( _changedProperties.Count );
-		foreach ( var propertyName in _changedProperties )
-		{
-			writer.Write( propertyName );
-			writer.WriteNetworkableChanges( (INetworkable)_propertyNameCache[propertyName].GetValue( this )! );
-		}
-		_changedProperties.Clear();
+		TriggerNetworkingChange( nameof(Tags) );
 	}
 }

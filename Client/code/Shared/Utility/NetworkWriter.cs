@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Numerics;
+using CustomNetworking.Shared.Entities;
 using CustomNetworking.Shared.Networkables;
 
 namespace CustomNetworking.Shared.Utility;
@@ -64,6 +65,12 @@ public class NetworkWriter : BinaryWriter
 		}
 		
 		networkable.Serialize( this );
+	}
+
+	public void WriteEntity( IEntity entity )
+	{
+		Write( entity.EntityId );
+		WriteNetworkable( entity );
 	}
 
 	/// <summary>

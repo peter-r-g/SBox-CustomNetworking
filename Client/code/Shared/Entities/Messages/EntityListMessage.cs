@@ -30,7 +30,7 @@ public sealed class EntityListMessage : NetworkMessage
 		{
 			var stream = new MemoryStream();
 			var writer = new NetworkWriter( stream );
-			writer.WriteNetworkable( entity );
+			writer.WriteEntity( entity );
 			writer.Close();
 			EntityData.Add( stream.ToArray() );
 		}

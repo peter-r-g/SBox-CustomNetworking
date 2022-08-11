@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using CustomNetworking.Shared.Utility;
 
@@ -8,7 +9,7 @@ namespace CustomNetworking.Shared.Networkables.Builtin;
 /// Represents a networkable <see cref="List{T}"/>.
 /// </summary>
 /// <typeparam name="T">The type contained in the <see cref="List{T}"/>.</typeparam>
-public class NetworkedList<T> : INetworkable<NetworkedList<T>>, INetworkable where T : INetworkable<T>
+public class NetworkedList<T> : INetworkable<NetworkedList<T>>, INetworkable, IEnumerable<T> where T : INetworkable<T>
 {
 	public event INetworkable<NetworkedList<T>>.ChangedEventHandler? Changed;
 	event INetworkable<object>.ChangedEventHandler? INetworkable<object>.Changed
@@ -28,7 +29,15 @@ public class NetworkedList<T> : INetworkable<NetworkedList<T>>, INetworkable whe
 	}
 	private List<T> _value;
 
+	/// <summary>
+	/// Gets the total number of elements the internal data structure can hold without resizing.
+	/// <returns>The number of elements that the <see cref="List{T}"/> can contain before resizing is required.</returns>
+	/// </summary>
 	public int Capacity => Value.Capacity;
+	/// <summary>
+	/// Gets the number of elements contained in the <see cref="List{T}"/>.
+	/// <returns>The number of elements contained in the <see cref="List{T}"/>.</returns>
+	/// </summary>
 	public int Count => Value.Count;
 
 	private readonly List<(ListChangeType, T?)> _changes = new();
@@ -84,6 +93,16 @@ public class NetworkedList<T> : INetworkable<NetworkedList<T>>, INetworkable whe
 		_changes.Clear();
 		_changes.Add( (ListChangeType.Clear, default) );
 		Changed?.Invoke( this, this );
+	}
+	
+	public IEnumerator<T> GetEnumerator()
+	{
+		return Value.GetEnumerator();
+	}
+
+	IEnumerator IEnumerable.GetEnumerator()
+	{
+		return GetEnumerator();
 	}
 
 	public void Deserialize( NetworkReader reader )

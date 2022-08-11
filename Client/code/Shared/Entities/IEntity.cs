@@ -17,14 +17,24 @@ namespace CustomNetworking.Shared.Entities;
 public interface IEntity : INetworkable<IEntity>
 {
 	/// <summary>
-	/// The unique identifier of the entity.
+	/// The unique identifier of the <see cref="IEntity"/>.
 	/// </summary>
 	NetworkedInt EntityId { get; }
 	
 	/// <summary>
-	/// The <see cref="INetworkClient"/> that owns this entity.
+	/// The <see cref="INetworkClient"/> that owns this <see cref="IEntity"/>.
 	/// </summary>
 	INetworkClient? Owner { get; set; }
+	
+	/// <summary>
+	/// A container for all <see cref="BaseComponent"/>s that are held by this <see cref="IEntity"/>.
+	/// </summary>
+	ComponentContainer Components { get; }
+	
+	/// <summary>
+	/// A container for all tags the <see cref="IEntity"/> has.
+	/// </summary>
+	TagContainer Tags { get; }
 
 	/// <summary>
 	/// Deletes this <see cref="IEntity"/>.
