@@ -126,9 +126,8 @@ public class NetworkReader : BinaryReader
 	/// <exception cref="InvalidOperationException">Thrown when reading the <see cref="IEntity"/> has failed.</exception>
 	public IEntity ReadEntity()
 	{
-		var typeName = ReadString();
 		var entityId = ReadInt32();
-		BaseStream.Position -= sizeof(int);
+		var typeName = ReadString();
 		
 		var type = TypeHelper.GetTypeByName( typeName );
 		if ( type is null )
