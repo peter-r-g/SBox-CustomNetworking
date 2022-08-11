@@ -19,7 +19,7 @@ public interface IEntity : INetworkable<IEntity>
 	/// <summary>
 	/// The unique identifier of the <see cref="IEntity"/>.
 	/// </summary>
-	NetworkedInt EntityId { get; }
+	int EntityId { get; }
 	
 	/// <summary>
 	/// The <see cref="INetworkClient"/> that owns this <see cref="IEntity"/>.

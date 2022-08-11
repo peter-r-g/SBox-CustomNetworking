@@ -8,7 +8,7 @@ namespace CustomNetworking.Shared.Entities;
 public class ComponentContainer : BaseNetworkable, INetworkable<ComponentContainer>
 {
 	public new event INetworkable<ComponentContainer>.ChangedEventHandler? Changed;
-	public IEntity Entity { get; internal set; } = null!;
+	public IEntity Entity { get; internal set; }
 	
 	private NetworkedHashSet<BaseComponent> Components { get; }
 
