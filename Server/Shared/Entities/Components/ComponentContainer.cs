@@ -14,6 +14,7 @@ public class ComponentContainer : BaseNetworkable, INetworkable<ComponentContain
 
 	internal ComponentContainer( IEntity entity )
 	{
+		Entity = entity;
 		Components = new NetworkedHashSet<BaseComponent>();
 		Components.Changed += OnComponentsChanged;
 	}
@@ -54,6 +55,17 @@ public class ComponentContainer : BaseNetworkable, INetworkable<ComponentContain
 		{
 			if ( tType.IsEquivalentTo( component.GetType() ) )
 				return component as T;
+		}
+
+		return default;
+	}
+
+	public BaseComponent? Get( string componentName )
+	{
+		foreach ( var component in Components )
+		{
+			if ( component.GetType().Name == componentName )
+				return component;
 		}
 
 		return default;

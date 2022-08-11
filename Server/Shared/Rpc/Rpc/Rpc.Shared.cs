@@ -16,14 +16,15 @@ namespace CustomNetworking.Shared.RemoteProcedureCalls;
 /// </summary>
 public static partial class Rpc
 {
-	private static RpcCallMessage CreateRpc( bool respondable, IEntity entity, string methodName, INetworkable[] parameters )
+	private static RpcCallMessage CreateRpc( bool respondable, IEntity entity, string methodName, string? componentName,
+		INetworkable[] parameters )
 	{
-		return new RpcCallMessage( respondable, entity.GetType(), entity, methodName, parameters );
+		return new RpcCallMessage( respondable, entity.GetType(), entity, methodName, componentName, parameters );
 	}
 
 	private static RpcCallMessage CreateRpc( bool respondable, Type type, string methodName, INetworkable[] parameters )
 	{
-		return new RpcCallMessage( respondable, type, null, methodName, parameters );
+		return new RpcCallMessage( respondable, type, null, methodName, null, parameters );
 	}
 
 	private static async Task<RpcCallResponseMessage> WaitForResponseAsync( Guid callGuid )
