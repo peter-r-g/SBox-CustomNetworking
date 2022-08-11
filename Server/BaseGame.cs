@@ -18,15 +18,6 @@ public class BaseGame
 	/// The only instance of the game in existence.
 	/// </summary>
 	public static BaseGame Current = null!;
-
-	/// <summary>
-	/// A quick access to <see cref="NetworkServer"/>.<see cref="NetworkServer.Instance"/>.<see cref="NetworkServer.Clients"/>.
-	/// </summary>
-	public IReadOnlyDictionary<long, INetworkClient> Clients => NetworkServer.Instance.Clients;
-	/// <summary>
-	/// A quick access to <see cref="NetworkServer"/>.<see cref="NetworkServer.Instance"/>.<see cref="NetworkServer.Bots"/>.
-	/// </summary>
-	public IReadOnlyDictionary<long, BotClient> Bots => NetworkServer.Instance.Bots;
 	
 	/// <summary>
 	/// Manages all server-side only entities.
