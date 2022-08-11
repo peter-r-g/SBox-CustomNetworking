@@ -25,6 +25,11 @@ public interface IEntity : INetworkable<IEntity>
 	/// The <see cref="INetworkClient"/> that owns this <see cref="IEntity"/>.
 	/// </summary>
 	INetworkClient? Owner { get; set; }
+	
+	/// <summary>
+	/// A container for all tags the <see cref="IEntity"/> has.
+	/// </summary>
+	TagContainer Tags { get; }
 
 	/// <summary>
 	/// Deletes this <see cref="IEntity"/>.

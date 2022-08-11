@@ -62,12 +62,15 @@ public partial class NetworkEntity : BaseNetworkable, IEntity
 		}
 	}
 	private NetworkedQuaternion _rotation;
+	public TagContainer Tags { get; }
 
 	public NetworkEntity( int entityId )
 	{
 		EntityId = entityId;
 		PropertyNameCache.Remove( nameof(EntityId) );
 		
+		Tags = new TagContainer();
+		Tags.Changed += OnTagsChanged;
 	}
 
 	public virtual void Delete()
@@ -141,6 +144,9 @@ public partial class NetworkEntity : BaseNetworkable, IEntity
 	
 	{
 	}
+	
+	private void OnTagsChanged( TagContainer _, TagContainer newvalue )
 	{
+		TriggerNetworkingChange( nameof(Tags) );
 	}
 }
