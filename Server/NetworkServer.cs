@@ -39,15 +39,9 @@ public class NetworkServer
 	/// <remarks>This does account for any <see cref="BotClient"/>s connected.</remarks>
 	/// </summary>
 	public int MessagesSentToClients { get; internal set; }
-
-	/// <summary>
-	/// Contains all connected clients. This includes any <see cref="BotClient"/>s.
-	/// </summary>
-	public ConcurrentDictionary<long, INetworkClient> Clients { get; } = new();
-	/// <summary>
-	/// Contains all connected bots.
-	/// </summary>
-	public ConcurrentDictionary<long, BotClient> Bots { get; } = new();
+	
+	internal ConcurrentDictionary<long, INetworkClient> Clients { get; } = new();
+	internal ConcurrentDictionary<long, BotClient> Bots { get; } = new();
 
 	internal delegate void ClientConnectedEventHandler( INetworkClient client );
 	internal event ClientConnectedEventHandler? ClientConnected;
