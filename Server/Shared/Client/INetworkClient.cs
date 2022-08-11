@@ -50,6 +50,7 @@ public interface INetworkClient
 	
 	/// <summary>
 	/// Contains all currently connected players in the server.
+	/// <remarks>This contains all bots as well.</remarks>
 	/// </summary>
 	public static IReadOnlyDictionary<long, INetworkClient> All => NetworkServer.Instance.Clients;
 
