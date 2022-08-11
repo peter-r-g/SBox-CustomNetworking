@@ -28,7 +28,15 @@ public class NetworkedList<T> : INetworkable<NetworkedList<T>>, INetworkable whe
 	}
 	private List<T> _value;
 
+	/// <summary>
+	/// Gets the total number of elements the internal data structure can hold without resizing.
+	/// <returns>The number of elements that the <see cref="List{T}"/> can contain before resizing is required.</returns>
+	/// </summary>
 	public int Capacity => Value.Capacity;
+	/// <summary>
+	/// Gets the number of elements contained in the <see cref="List{T}"/>.
+	/// <returns>The number of elements contained in the <see cref="List{T}"/>.</returns>
+	/// </summary>
 	public int Count => Value.Count;
 
 	private readonly List<(ListChangeType, T?)> _changes = new();

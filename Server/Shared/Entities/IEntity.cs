@@ -17,12 +17,12 @@ namespace CustomNetworking.Shared.Entities;
 public interface IEntity : INetworkable<IEntity>
 {
 	/// <summary>
-	/// The unique identifier of the entity.
+	/// The unique identifier of the <see cref="IEntity"/>.
 	/// </summary>
 	NetworkedInt EntityId { get; }
 	
 	/// <summary>
-	/// The <see cref="INetworkClient"/> that owns this entity.
+	/// The <see cref="INetworkClient"/> that owns this <see cref="IEntity"/>.
 	/// </summary>
 	INetworkClient? Owner { get; set; }
 
