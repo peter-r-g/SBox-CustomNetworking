@@ -32,6 +32,11 @@ public static partial class TypeHelper
 		return null;
 	}
 
+	public static T Create<T>()
+	{
+		return Activator.CreateInstance<T>();
+	}
+
 	public static T? Create<T>( Type typeToCreate, params object[] parameters )
 	{
 		return (T?)Activator.CreateInstance( typeToCreate, parameters );

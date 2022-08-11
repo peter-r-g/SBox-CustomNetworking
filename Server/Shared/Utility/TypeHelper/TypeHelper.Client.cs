@@ -10,6 +10,11 @@ public static partial class TypeHelper
 		return TypeLibrary.GetTypeByName( name );
 	}
 
+	public static T Create<T>()
+	{
+		return TypeLibrary.Create<T>();
+	}
+
 	public static T? Create<T>( Type typeToCreate )
 	{
 		return TypeLibrary.Create<T>( typeToCreate );
