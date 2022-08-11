@@ -120,8 +120,11 @@ public partial class NetworkEntity : BaseNetworkable, IEntity
 		TriggerNetworkingChange( nameof(Rotation) );
 	}
 
+	protected override void TriggerNetworkingChange( string propertyName = "" )
 	{
+		base.TriggerNetworkingChange( propertyName );
 		
+		Changed?.Invoke( this, this );
 	}
 
 	public sealed override void DeserializeChanges( NetworkReader reader )
