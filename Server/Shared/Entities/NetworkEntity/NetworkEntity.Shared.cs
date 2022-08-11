@@ -13,7 +13,7 @@ namespace CustomNetworking.Shared.Entities;
 public partial class NetworkEntity : BaseNetworkable, IEntity
 {
 	public new event INetworkable<IEntity>.ChangedEventHandler? Changed;
-	public NetworkedInt EntityId { get; }
+	public int EntityId { get; }
 
 	public INetworkClient? Owner
 	{
@@ -69,7 +69,6 @@ public partial class NetworkEntity : BaseNetworkable, IEntity
 	public NetworkEntity( int entityId )
 	{
 		EntityId = entityId;
-		PropertyNameCache.Remove( nameof(EntityId) );
 		
 		Components = new ComponentContainer( this );
 		Components.Changed += OnComponentsChanged;
