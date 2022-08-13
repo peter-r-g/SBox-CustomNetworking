@@ -20,11 +20,10 @@ public partial class Rpc
 	/// </summary>
 	/// <param name="entity">The entity instance to call the RPC on.</param>
 	/// <param name="methodName">The name of the method to call.</param>
-	/// <param name="componentName">The name of the component that the <see cref="methodName"/> is from. Null if on the entity.</param>
 	/// <param name="parameters">The parameters to pass to the method.</param>
-	public static void Call( IEntity entity, string methodName, string? componentName = null, params INetworkable[] parameters )
+	public static void Call( IEntity entity, string methodName, params INetworkable[] parameters )
 	{
-		Call( To.All, entity, methodName, componentName, parameters );
+		Call( To.All, entity, methodName, parameters );
 	}
 	
 	/// <summary>
@@ -33,13 +32,12 @@ public partial class Rpc
 	/// <param name="client">The client to send the RPC to.</param>
 	/// <param name="entity">The entity instance to call the RPC on.</param>
 	/// <param name="methodName">The name of the method to call.</param>
-	/// <param name="componentName">The name of the component that the <see cref="methodName"/> is from. Null if on the entity.</param>
 	/// <param name="parameters">The parameters to pass to the method.</param>
 	/// <returns>A task that will complete once a <see cref="RpcCallResponseMessage"/> is received that contains the sent <see cref="RpcCallMessage"/>.<see cref="RpcCallMessage.CallGuid"/>.</returns>
 	public static async Task<RpcCallResponseMessage> CallAsync( INetworkClient client, IEntity entity, string methodName,
-		string? componentName = null, params INetworkable[] parameters )
+		params INetworkable[] parameters )
 	{
-		var message = CreateRpc( true, entity, methodName, componentName, parameters );
+		var message = CreateRpc( true, entity, methodName, parameters );
 		NetworkServer.Instance.QueueMessage( To.Single( client ), message );
 		return await WaitForResponseAsync( message.CallGuid );
 	}
@@ -77,11 +75,10 @@ public partial class Rpc
 	/// <param name="to">The clients to send the RPC to.</param>
 	/// <param name="entity">The entity instance to call the RPC on.</param>
 	/// <param name="methodName">The name of the method to call.</param>
-	/// <param name="componentName">The name of the component that the <see cref="methodName"/> is from. Null if on the entity.</param>
 	/// <param name="parameters">The parameters to pass to the method.</param>
-	public static void Call( To to, IEntity entity, string methodName, string? componentName = null, params INetworkable[] parameters )
+	public static void Call( To to, IEntity entity, string methodName, params INetworkable[] parameters )
 	{
-		NetworkServer.Instance.QueueMessage( to, CreateRpc( false, entity, methodName, componentName, parameters ) );
+		NetworkServer.Instance.QueueMessage( to, CreateRpc( false, entity, methodName, parameters ) );
 	}
 	
 	/// <summary>
@@ -106,14 +103,6 @@ public partial class Rpc
 			throw new InvalidOperationException(
 				$"Failed to handle RPC call (\"{rpcCall.ClassName}\" doesn't exist in the current assembly)." );
 
-		if ( rpcCall.ComponentName is not null )
-		{
-			type = TypeHelper.GetTypeByName( rpcCall.ComponentName );
-			if ( type is null )
-				throw new InvalidOperationException(
-					$"Failed to handle RPC call (\"{rpcCall.ComponentName}\" doesn't exist in the current assembly)." );
-		}
-
 		var method = type.GetMethod( rpcCall.MethodName );
 		if ( method is null )
 			throw new InvalidOperationException(
@@ -127,11 +116,7 @@ public partial class Rpc
 			throw new InvalidOperationException(
 				"Failed to handle RPC call (Attempted to call RPC on a non-existant entity)." );
 
-		BaseComponent? component = null;
-		if ( entity is not null && rpcCall.ComponentName is not null )
-			component = entity.Components.Get( rpcCall.ComponentName );
-		
-		var returnValue = method.Invoke( component ?? (object?)entity, rpcCall.Parameters );
+		var returnValue = method.Invoke( entity, rpcCall.Parameters );
 		if ( rpcCall.CallGuid == Guid.Empty )
 			return;
 

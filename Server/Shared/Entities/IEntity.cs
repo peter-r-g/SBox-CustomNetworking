@@ -27,11 +27,6 @@ public interface IEntity : INetworkable<IEntity>
 	INetworkClient? Owner { get; set; }
 	
 	/// <summary>
-	/// A container for all <see cref="BaseComponent"/>s that are held by this <see cref="IEntity"/>.
-	/// </summary>
-	ComponentContainer Components { get; }
-	
-	/// <summary>
 	/// A container for all tags the <see cref="IEntity"/> has.
 	/// </summary>
 	TagContainer Tags { get; }

@@ -23,10 +23,6 @@ public sealed class RpcCallMessage : NetworkMessage
 	/// </summary>
 	public string MethodName { get; private set; }
 	/// <summary>
-	/// The name of the <see cref="IEntity"/> component that the <see cref="MethodName"/> came from.
-	/// </summary>
-	public string? ComponentName { get; private set; }
-	/// <summary>
 	/// The entity instance identifier to call the <see cref="MethodName"/> on.
 	/// </summary>
 	public int EntityId { get; private set; }
@@ -35,7 +31,7 @@ public sealed class RpcCallMessage : NetworkMessage
 	/// </summary>
 	public INetworkable[] Parameters { get; private set; }
 
-	public RpcCallMessage( bool respondable, Type entityType, IEntity? entity, string methodName, string? componentName,
+	public RpcCallMessage( bool respondable, Type entityType, IEntity? entity, string methodName,
 		params INetworkable[] parameters )
 	{
 		CallGuid = respondable ? Guid.NewGuid() : Guid.Empty;
@@ -46,7 +42,6 @@ public sealed class RpcCallMessage : NetworkMessage
 			EntityId = entity.EntityId;
 
 		MethodName = methodName;
-		ComponentName = componentName;
 		Parameters = parameters;
 	}
 
@@ -55,7 +50,6 @@ public sealed class RpcCallMessage : NetworkMessage
 		CallGuid = Guid.Empty;
 		ClassName = string.Empty;
 		MethodName = string.Empty;
-		ComponentName = null;
 		EntityId = -1;
 		Parameters = Array.Empty<INetworkable>();
 	}
@@ -65,8 +59,6 @@ public sealed class RpcCallMessage : NetworkMessage
 		CallGuid = reader.ReadGuid();
 		ClassName = reader.ReadString();
 		MethodName = reader.ReadString();
-		if ( reader.ReadBoolean() )
-			ComponentName = reader.ReadString();
 		EntityId = reader.ReadInt32();
 		
 		Parameters = new INetworkable[reader.ReadInt32()];
@@ -79,10 +71,6 @@ public sealed class RpcCallMessage : NetworkMessage
 		writer.Write( CallGuid );
 		writer.Write( ClassName );
 		writer.Write( MethodName );
-		var hasComponentName = ComponentName is not null;
-		writer.Write( hasComponentName );
-		if ( hasComponentName )
-			writer.Write( ComponentName! );
 		writer.Write( EntityId );
 		
 		writer.Write( Parameters.Length );
