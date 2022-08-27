@@ -7,14 +7,9 @@ namespace CustomNetworking.Shared.Networkables.Builtin;
 /// <summary>
 /// Represents a networkable <see cref="int"/>.
 /// </summary>
-public struct NetworkedInt : INetworkable<NetworkedInt>, INetworkable, IEquatable<NetworkedInt>
+public struct NetworkedInt : INetworkable, IEquatable<NetworkedInt>
 {
-	public event INetworkable<NetworkedInt>.ChangedEventHandler? Changed = null;
-	event INetworkable<object>.ChangedEventHandler? INetworkable<object>.Changed
-	{
-		add => Logging.Fatal( new InvalidOperationException() );
-		remove => Logging.Fatal( new InvalidOperationException() );
-	}
+	public event EventHandler? Changed = null;
 	
 	public int Value
 	{
@@ -23,7 +18,7 @@ public struct NetworkedInt : INetworkable<NetworkedInt>, INetworkable, IEquatabl
 		{
 			var oldValue = _value;
 			_value = value;
-			Changed?.Invoke( oldValue, this );
+			Changed?.Invoke( oldValue, EventArgs.Empty );
 		}
 	}
 	private int _value;

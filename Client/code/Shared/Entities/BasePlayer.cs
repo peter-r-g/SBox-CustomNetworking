@@ -1,4 +1,5 @@
 #if CLIENT
+using System;
 using CustomNetworking.Shared.Networkables.Builtin;
 using CustomNetworking.Client;
 using Sandbox;
@@ -57,18 +58,18 @@ public class BasePlayer  : NetworkEntity
 			Local.Client.Pawn = _player;
 	}
 
-	protected override void OnPositionChanged( NetworkedVector3 oldPosition, NetworkedVector3 newPosition )
+	protected override void OnPositionChanged( object? sender, EventArgs args )
 	{
-		base.OnPositionChanged( oldPosition, newPosition );
+		base.OnPositionChanged( sender, args );
 
-		_player.Position = newPosition;
+		_player.Position = (NetworkedVector3)sender;
 	}
 
-	protected override void OnRotationChanged( NetworkedQuaternion oldRotation, NetworkedQuaternion newRotation )
+	protected override void OnRotationChanged( object? sender, EventArgs args )
 	{
-		base.OnRotationChanged( oldRotation, newRotation );
+		base.OnRotationChanged( sender, args );
 
-		_player.Rotation = newRotation;
+		_player.Rotation = (NetworkedQuaternion)sender;
 	}
 #endif
 }

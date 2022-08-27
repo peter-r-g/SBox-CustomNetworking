@@ -1,12 +1,13 @@
+using System;
 using CustomNetworking.Shared.Networkables;
 using CustomNetworking.Shared.Networkables.Builtin;
 
 namespace CustomNetworking.Shared.Entities;
 
-public class TagContainer : BaseNetworkable, INetworkable<TagContainer>
+public class TagContainer : BaseNetworkable
 {
-	public new event INetworkable<TagContainer>.ChangedEventHandler? Changed;
-
+	public new event EventHandler? Changed;
+	
 	private NetworkedHashSet<NetworkedString> Tags { get; }
 
 	internal TagContainer()
@@ -40,8 +41,8 @@ public class TagContainer : BaseNetworkable, INetworkable<TagContainer>
 		Tags.Clear();
 	}
 	
-	private void OnTagsChanged( NetworkedHashSet<NetworkedString> _, NetworkedHashSet<NetworkedString> newvalue )
+	private void OnTagsChanged( object? sender, EventArgs args )
 	{
-		Changed?.Invoke( this, this );
+		Changed?.Invoke( sender, args );
 	}
 }

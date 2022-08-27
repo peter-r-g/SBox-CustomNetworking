@@ -6,14 +6,9 @@ namespace CustomNetworking.Shared.Networkables.Builtin;
 /// <summary>
 /// Represents a networkable <see cref="NetworkedString"/>.
 /// </summary>
-public struct NetworkedString : INetworkable<NetworkedString>, INetworkable, IEquatable<NetworkedString>
+public struct NetworkedString : INetworkable, IEquatable<NetworkedString>
 {
-	public event INetworkable<NetworkedString>.ChangedEventHandler? Changed = null;
-	event INetworkable<object>.ChangedEventHandler? INetworkable<object>.Changed
-	{
-		add => Logging.Fatal( new InvalidOperationException() );
-		remove => Logging.Fatal( new InvalidOperationException() );
-	}
+	public event EventHandler? Changed = null;
 	
 	public string Value
 	{
@@ -22,7 +17,7 @@ public struct NetworkedString : INetworkable<NetworkedString>, INetworkable, IEq
 		{
 			var oldValue = _value;
 			_value = value;
-			Changed?.Invoke( oldValue, this );
+			Changed?.Invoke( oldValue, EventArgs.Empty );
 		}
 	}
 	private string _value;

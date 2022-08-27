@@ -1,3 +1,4 @@
+using System;
 using CustomNetworking.Shared.Utility;
 
 namespace CustomNetworking.Shared.Networkables;
@@ -5,16 +6,12 @@ namespace CustomNetworking.Shared.Networkables;
 /// <summary>
 /// Contract to define something that can be networked.
 /// </summary>
-public interface INetworkable<T>
+public interface INetworkable
 {
-	/// <summary>
-	/// The event handler for <see cref="INetworkable"/>.<see cref="INetworkable.Changed"/>.
-	/// </summary>
-	delegate void ChangedEventHandler( T oldValue, T newValue );
 	/// <summary>
 	/// Called when something in the <see cref="INetworkable"/> has changed.
 	/// </summary>
-	event ChangedEventHandler? Changed;
+	event EventHandler? Changed;
 	
 	/// <summary>
 	/// Deserializes all information relating to the <see cref="INetworkable"/>.
@@ -36,9 +33,4 @@ public interface INetworkable<T>
 	/// </summary>
 	/// <param name="writer">The writer to write to.</param>
 	void SerializeChanges( NetworkWriter writer );
-}
-
-public interface INetworkable : INetworkable<object>
-{
-	
 }

@@ -41,7 +41,7 @@ internal sealed class MonitorServer
 			
 			var stream = new MemoryStream();
 			var writer = new NetworkWriter( stream );
-			writer.WriteNetworkable<NetworkMessage>( new ServerInformationMessage() );
+			writer.WriteNetworkable( new ServerInformationMessage() );
 			writer.Close();
 			var bytes = stream.ToArray();
 

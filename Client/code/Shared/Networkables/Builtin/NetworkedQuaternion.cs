@@ -7,14 +7,9 @@ namespace CustomNetworking.Shared.Networkables.Builtin;
 /// <summary>
 /// Represents a networkable <see cref="Quaternion"/>.
 /// </summary>
-public struct NetworkedQuaternion : INetworkable<NetworkedQuaternion>, INetworkable, IEquatable<NetworkedQuaternion>
+public struct NetworkedQuaternion : INetworkable, IEquatable<NetworkedQuaternion>
 {
-	public event INetworkable<NetworkedQuaternion>.ChangedEventHandler? Changed = null;
-	event INetworkable<object>.ChangedEventHandler? INetworkable<object>.Changed
-	{
-		add => Logging.Fatal( new InvalidOperationException() );
-		remove => Logging.Fatal( new InvalidOperationException() );
-	}
+	public event EventHandler? Changed = null;
 	
 	public Quaternion Value
 	{
@@ -23,7 +18,7 @@ public struct NetworkedQuaternion : INetworkable<NetworkedQuaternion>, INetworka
 		{
 			var oldValue = _value;
 			_value = value;
-			Changed?.Invoke( oldValue, this );
+			Changed?.Invoke( oldValue, EventArgs.Empty );
 		}
 	}
 	private Quaternion _value;

@@ -6,14 +6,9 @@ namespace CustomNetworking.Shared.Networkables.Builtin;
 /// <summary>
 /// Represents a networkable <see cref="System.Numerics.Vector3"/>.
 /// </summary>
-public struct NetworkedVector3 : INetworkable<NetworkedVector3>, INetworkable, IEquatable<NetworkedVector3>
+public struct NetworkedVector3 : INetworkable, IEquatable<NetworkedVector3>
 {
-	public event INetworkable<NetworkedVector3>.ChangedEventHandler? Changed = null;
-	event INetworkable<object>.ChangedEventHandler? INetworkable<object>.Changed
-	{
-		add => Logging.Fatal( new InvalidOperationException() );
-		remove => Logging.Fatal( new InvalidOperationException() );
-	}
+	public event EventHandler? Changed = null;
 	
 	public System.Numerics.Vector3 Value
 	{
@@ -22,7 +17,7 @@ public struct NetworkedVector3 : INetworkable<NetworkedVector3>, INetworkable, I
 		{
 			var oldValue = _value;
 			_value = value;
-			Changed?.Invoke( oldValue, this );
+			Changed?.Invoke( oldValue, EventArgs.Empty );
 		}
 	}
 	private System.Numerics.Vector3 _value;

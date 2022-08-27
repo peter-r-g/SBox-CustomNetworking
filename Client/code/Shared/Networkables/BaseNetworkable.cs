@@ -7,14 +7,9 @@ using CustomNetworking.Shared.Utility;
 
 namespace CustomNetworking.Shared.Networkables;
 
-public abstract class BaseNetworkable : INetworkable<BaseNetworkable>, INetworkable
+public abstract class BaseNetworkable : INetworkable
 {
-	public event INetworkable<BaseNetworkable>.ChangedEventHandler? Changed;
-	event INetworkable<object>.ChangedEventHandler? INetworkable<object>.Changed
-	{
-		add => Logging.Fatal( new InvalidOperationException() );
-		remove => Logging.Fatal( new InvalidOperationException() );
-	}
+	public event EventHandler? Changed;
 	
 	/// <summary>
 	/// A <see cref="PropertyInfo"/> cache of all networked properties.
@@ -42,7 +37,7 @@ public abstract class BaseNetworkable : INetworkable<BaseNetworkable>, INetworka
 			throw new InvalidOperationException( $"\"{propertyName}\" is not a networkable property on {GetType().Name}." );
 		
 		ChangedProperties.Add( propertyName );
-		Changed?.Invoke( this, this );
+		Changed?.Invoke( this, EventArgs.Empty );
 	}
 
 	public virtual void Deserialize( NetworkReader reader )

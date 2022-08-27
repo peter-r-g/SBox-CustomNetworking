@@ -267,7 +267,7 @@ public class NetworkServer
 		
 		var stream = new MemoryStream();
 		var writer = new NetworkWriter( stream );
-		writer.WriteNetworkable<NetworkMessage>( message );
+		writer.WriteNetworkable( message );
 		var numBytes = stream.Length;
 		writer.Close();
 		var bytes = stream.ToArray();

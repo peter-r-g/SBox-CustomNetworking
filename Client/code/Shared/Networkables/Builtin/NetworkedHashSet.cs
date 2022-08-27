@@ -9,22 +9,17 @@ namespace CustomNetworking.Shared.Networkables.Builtin;
 /// Represents a networkable <see cref="HashSet{T}"/>.
 /// </summary>
 /// <typeparam name="T">The type contained in the <see cref="HashSet{T}"/>.</typeparam>
-public class NetworkedHashSet<T> : INetworkable<NetworkedHashSet<T>>, INetworkable, IEnumerable<T> where T : INetworkable<T>
+public class NetworkedHashSet<T> : INetworkable, IEnumerable<T> where T : INetworkable
 {
-	public event INetworkable<NetworkedHashSet<T>>.ChangedEventHandler? Changed;
-	event INetworkable<object>.ChangedEventHandler? INetworkable<object>.Changed
-	{
-		add => Logging.Fatal( new InvalidOperationException() );
-		remove => Logging.Fatal( new InvalidOperationException() );
-	}
-
+	public event EventHandler? Changed;
+	
 	public HashSet<T> Value
 	{
 		get => _value;
 		set
 		{
 			_value = value;
-			Changed?.Invoke( this, this );
+			Changed?.Invoke( this, EventArgs.Empty );
 		}
 	}
 	private HashSet<T> _value;
@@ -59,7 +54,7 @@ public class NetworkedHashSet<T> : INetworkable<NetworkedHashSet<T>>, INetworkab
 			return false;
 
 		_changes.Add( (HashSetChangeType.Add, item) );
-		Changed?.Invoke( this, this );
+		Changed?.Invoke( this, EventArgs.Empty );
 
 		return true;
 	}
@@ -86,7 +81,7 @@ public class NetworkedHashSet<T> : INetworkable<NetworkedHashSet<T>>, INetworkab
 			return false;
 		
 		_changes.Add( (HashSetChangeType.Remove, item) );
-		Changed?.Invoke( this, this );
+		Changed?.Invoke( this, EventArgs.Empty );
 
 		return true;
 	}
@@ -99,7 +94,7 @@ public class NetworkedHashSet<T> : INetworkable<NetworkedHashSet<T>>, INetworkab
 		Value.Clear();
 		_changes.Clear();
 		_changes.Add( (HashSetChangeType.Clear, default) );
-		Changed?.Invoke( this, this );
+		Changed?.Invoke( this, EventArgs.Empty );
 	}
 	
 	public IEnumerator<T> GetEnumerator()

@@ -143,8 +143,14 @@ public partial class EntityManager
 		return entity;
 	}
 	
-	private void EntityOnChanged( IEntity oldEntity, IEntity newEntity )
+	private void EntityOnChanged( object? sender, EventArgs args )
 	{
-		EntityChanged?.Invoke( newEntity );
+		if ( sender is not IEntity entity )
+		{
+			Logging.Error( "Sender was not valid" );
+			return;
+		}
+		
+		EntityChanged?.Invoke( entity );
 	}
 }

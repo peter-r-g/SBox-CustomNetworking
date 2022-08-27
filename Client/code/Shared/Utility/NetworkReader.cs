@@ -94,7 +94,7 @@ public class NetworkReader : BinaryReader
 	/// <typeparam name="T">The <see cref="INetworkable"/> type to cast into.</typeparam>
 	/// <returns>The parsed <see cref="INetworkable"/>.</returns>
 	/// <exception cref="InvalidOperationException">Thrown when reading the <see cref="INetworkable"/> has failed.</exception>
-	public T ReadNetworkable<T>() where T : INetworkable<T>
+	public T ReadNetworkable<T>() where T : INetworkable
 	{
 		if ( typeof(T).IsAssignableTo( typeof(IEntity) ) )
 			return ReadEntity<T>();
@@ -113,7 +113,7 @@ public class NetworkReader : BinaryReader
 	/// Reads all changes relating to an <see cref="INetworkable"/> instance.
 	/// </summary>
 	/// <param name="networkable">The <see cref="INetworkable"/> to deserialize the changes into.</param>
-	public void ReadNetworkableChanges<T>( INetworkable<T> networkable )
+	public void ReadNetworkableChanges( INetworkable networkable )
 	{
 		networkable.DeserializeChanges( this );
 	}

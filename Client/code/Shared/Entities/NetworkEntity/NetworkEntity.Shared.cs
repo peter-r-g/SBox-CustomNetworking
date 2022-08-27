@@ -1,6 +1,7 @@
 #if CLIENT
 using System.Reflection;
 #endif
+using System;
 using CustomNetworking.Shared.Networkables;
 using CustomNetworking.Shared.Networkables.Builtin;
 using CustomNetworking.Shared.Utility;
@@ -12,7 +13,8 @@ namespace CustomNetworking.Shared.Entities;
 /// </summary>
 public partial class NetworkEntity : BaseNetworkable, IEntity
 {
-	public new event INetworkable<IEntity>.ChangedEventHandler? Changed;
+	public new event EventHandler? Changed;
+	
 	public int EntityId { get; }
 
 	public INetworkClient? Owner
@@ -40,7 +42,7 @@ public partial class NetworkEntity : BaseNetworkable, IEntity
 			_position.Changed -= OnPositionChanged;
 			_position = value;
 			value.Changed += OnPositionChanged;
-			OnPositionChanged( oldPosition, value );
+			OnPositionChanged( value, EventArgs.Empty );
 		}
 	}
 	private NetworkedVector3 _position;
@@ -58,7 +60,7 @@ public partial class NetworkEntity : BaseNetworkable, IEntity
 			_rotation.Changed -= OnRotationChanged;
 			_rotation = value;
 			value.Changed += OnRotationChanged;
-			OnRotationChanged( oldRotation, value );
+			OnRotationChanged( value, EventArgs.Empty );
 		}
 	}
 	private NetworkedQuaternion _rotation;
@@ -101,9 +103,7 @@ public partial class NetworkEntity : BaseNetworkable, IEntity
 	/// <summary>
 	/// Called when <see cref="Position"/> has changed.
 	/// </summary>
-	/// <param name="oldPosition">The old instance of <see cref="Position"/>.</param>
-	/// <param name="newPosition">The new instance of <see cref="Position"/>.</param>
-	protected virtual void OnPositionChanged( NetworkedVector3 oldPosition, NetworkedVector3 newPosition )
+	protected virtual void OnPositionChanged( object? sender, EventArgs args )
 	{
 		TriggerNetworkingChange( nameof(Position) );
 	}
@@ -111,18 +111,21 @@ public partial class NetworkEntity : BaseNetworkable, IEntity
 	/// <summary>
 	/// Called when <see cref="Rotation"/> has changed.
 	/// </summary>
-	/// <param name="oldRotation">The old instance of <see cref="Rotation"/>.</param>
-	/// <param name="newRotation">The new instance of <see cref="Rotation"/>.</param>
-	protected virtual void OnRotationChanged( NetworkedQuaternion oldRotation, NetworkedQuaternion newRotation )
+	protected virtual void OnRotationChanged( object? sender, EventArgs args )
 	{
 		TriggerNetworkingChange( nameof(Rotation) );
+	}
+	
+	private void OnTagsChanged( object? sender, EventArgs args )
+	{
+		TriggerNetworkingChange( nameof(Tags) );
 	}
 
 	protected override void TriggerNetworkingChange( string propertyName = "" )
 	{
 		base.TriggerNetworkingChange( propertyName );
 		
-		Changed?.Invoke( this, this );
+		Changed?.Invoke( this, EventArgs.Empty );
 	}
 
 	public sealed override void Deserialize( NetworkReader reader )
@@ -168,10 +171,5 @@ public partial class NetworkEntity : BaseNetworkable, IEntity
 		base.SerializeChanges( writer );
 		
 		Tags.SerializeChanges( writer );
-	}
-	
-	private void OnTagsChanged( TagContainer _, TagContainer newvalue )
-	{
-		TriggerNetworkingChange( nameof(Tags) );
 	}
 }

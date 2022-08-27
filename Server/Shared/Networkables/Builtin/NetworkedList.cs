@@ -9,14 +9,9 @@ namespace CustomNetworking.Shared.Networkables.Builtin;
 /// Represents a networkable <see cref="List{T}"/>.
 /// </summary>
 /// <typeparam name="T">The type contained in the <see cref="List{T}"/>.</typeparam>
-public class NetworkedList<T> : INetworkable<NetworkedList<T>>, INetworkable, IEnumerable<T> where T : INetworkable<T>
+public class NetworkedList<T> : INetworkable, IEnumerable<T> where T : INetworkable
 {
-	public event INetworkable<NetworkedList<T>>.ChangedEventHandler? Changed;
-	event INetworkable<object>.ChangedEventHandler? INetworkable<object>.Changed
-	{
-		add => Logging.Fatal( new InvalidOperationException() );
-		remove => Logging.Fatal( new InvalidOperationException() );
-	}
+	public event EventHandler? Changed;
 	
 	public List<T> Value
 	{
@@ -24,7 +19,7 @@ public class NetworkedList<T> : INetworkable<NetworkedList<T>>, INetworkable, IE
 		set
 		{
 			_value = value;
-			Changed?.Invoke( this, this );
+			Changed?.Invoke( this, EventArgs.Empty );
 		}
 	}
 	private List<T> _value;
@@ -60,7 +55,7 @@ public class NetworkedList<T> : INetworkable<NetworkedList<T>>, INetworkable, IE
 	{
 		Value.Add( item );
 		_changes.Add( (ListChangeType.Add, item) );
-		Changed?.Invoke( this, this );
+		Changed?.Invoke( this, EventArgs.Empty );
 	}
 
 	/// <summary>
@@ -81,7 +76,7 @@ public class NetworkedList<T> : INetworkable<NetworkedList<T>>, INetworkable, IE
 	{
 		Value.Remove( item );
 		_changes.Add( (ListChangeType.Remove, item) );
-		Changed?.Invoke( this, this );
+		Changed?.Invoke( this, EventArgs.Empty );
 	}
 
 	/// <summary>
@@ -92,7 +87,7 @@ public class NetworkedList<T> : INetworkable<NetworkedList<T>>, INetworkable, IE
 		Value.Clear();
 		_changes.Clear();
 		_changes.Add( (ListChangeType.Clear, default) );
-		Changed?.Invoke( this, this );
+		Changed?.Invoke( this, EventArgs.Empty );
 	}
 	
 	public IEnumerator<T> GetEnumerator()

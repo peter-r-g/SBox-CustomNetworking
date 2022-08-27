@@ -30,6 +30,6 @@ public sealed class MultiMessage : NetworkMessage
 	{
 		writer.Write( Messages.Length );
 		foreach ( var message in Messages )
-			writer.WriteNetworkable<NetworkMessage>( message );
+			writer.WriteNetworkable( message );
 	}
 }

@@ -179,7 +179,7 @@ public class NetworkManager
 #endif
 			var stream = new MemoryStream();
 			var writer = new NetworkWriter( stream );
-			writer.WriteNetworkable<NetworkMessage>( message );
+			writer.WriteNetworkable( message );
 			writer.Close();
 		
 			_ = _webSocket?.Send( stream.ToArray() );	
@@ -327,7 +327,7 @@ public class NetworkManager
 		}
 	}
 
-	private void OnLocalPawnChanged( IEntity _, IEntity pawn )
+	private void OnLocalPawnChanged( object? sender, EventArgs args )
 	{
 		_localPawnChanged = true;
 	}
