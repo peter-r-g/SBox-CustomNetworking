@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.Threading;
 using CustomNetworking.Shared;
+using CustomNetworking.Shared.Utility;
 
 namespace CustomNetworking.Server;
 
@@ -35,14 +36,13 @@ public static class Program
 		_server = new NetworkServer( SharedConstants.Port, true );
 		NetworkServer.Instance = _server;
 		_game = new BaseGame();
-
+		_server.ClientConnected += _game.OnClientConnected;
+		_server.ClientDisconnected += _game.OnClientDisconnected;
 		_game.Start();
 		
 		_monitorThread = new Thread( _monitor.MonitorMain );
 		_monitorThread.Start();
-
-		_server.ClientConnected += _game.OnClientConnected;
-		_server.ClientDisconnected += _game.OnClientDisconnected;
+		
 		_networkingThread = new Thread( _server.NetworkingMain );
 		_networkingThread.Start();
 
