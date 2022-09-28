@@ -45,6 +45,11 @@ public class NetworkServer
 	/// </summary>
 	public int Port { get; }
 	
+	/// <summary>
+	/// Whether or not steam verification is being used.
+	/// </summary>
+	public bool UsingSteam { get; }
+	
 	internal ConcurrentDictionary<long, INetworkClient> Clients { get; } = new();
 	internal ConcurrentDictionary<long, BotClient> Bots { get; } = new();
 
@@ -58,9 +63,10 @@ public class NetworkServer
 	private readonly ConcurrentQueue<(To, NetworkMessage)> _outgoingQueue = new();
 	private readonly ConcurrentQueue<(INetworkClient, NetworkMessage)> _incomingQueue = new();
 
-	internal NetworkServer( int port )
+	internal NetworkServer( int port, bool useSteam )
 	{
 		Port = port;
+		UsingSteam = useSteam;
 	}
 	
 	/// <summary>
@@ -164,13 +170,16 @@ public class NetworkServer
 			return Task.FromResult( false );
 		}
 
-		var steam = request.Headers.Get( "Steam" );
-		if ( !long.TryParse( steam, out var clientId ) || Clients.TryGetValue( clientId, out _ ) )
+		if ( UsingSteam )
 		{
-			response.Status = HttpStatusCode.Unauthorized;
-			return Task.FromResult( false );
+			var steam = request.Headers.Get( "Steam" );
+			if ( !long.TryParse( steam, out var clientId ) || Clients.TryGetValue( clientId, out _ ) )
+			{
+				response.Status = HttpStatusCode.Unauthorized;
+				return Task.FromResult( false );
+			}
 		}
-					
+
 		return Task.FromResult( true );
 	}
 

@@ -29,7 +29,7 @@ public static class Program
 	{
 		AppDomain.CurrentDomain.ProcessExit += OnProcessExit;
 		_monitor = new MonitorServer( SharedConstants.MonitorPort );
-		_server = new NetworkServer( SharedConstants.Port );
+		_server = new NetworkServer( SharedConstants.Port, true );
 		NetworkServer.Instance = _server;
 		_game = new BaseGame();
 
