@@ -15,7 +15,7 @@ using vtortola.WebSockets.Rfc6455;
 namespace CustomNetworking.Server;
 
 /// <summary>
-/// Handles a web socket server, its clients, and dispatches messages from them.
+/// Handles a web socket server, its clients, and dispatches messages to and from them.
 /// </summary>
 public class NetworkServer
 {
@@ -50,11 +50,27 @@ public class NetworkServer
 	/// </summary>
 	public bool UsingSteam { get; }
 	
+	/// <summary>
+	/// A dictionary containing all connected clients.
+	/// <remarks>This dictionary includes bots.</remarks>
+	/// </summary>
 	internal ConcurrentDictionary<long, INetworkClient> Clients { get; } = new();
+	/// <summary>
+	/// A dictionary containing all connected bots.
+	/// </summary>
 	internal ConcurrentDictionary<long, BotClient> Bots { get; } = new();
 	
+	/// <summary>
+	/// The handlers for incoming messages.
+	/// </summary>
 	private readonly Dictionary<Type, Action<INetworkClient, NetworkMessage>> _messageHandlers = new();
+	/// <summary>
+	/// The queue for messages outgoing to clients.
+	/// </summary>
 	private readonly ConcurrentQueue<(To, NetworkMessage)> _outgoingQueue = new();
+	/// <summary>
+	/// The queue for messages incoming to the server.
+	/// </summary>
 	private readonly ConcurrentQueue<(INetworkClient, NetworkMessage)> _incomingQueue = new();
 
 	internal NetworkServer( int port, bool useSteam )
@@ -114,6 +130,9 @@ public class NetworkServer
 		return Clients.ContainsKey( clientId ) ? Clients[clientId] : null;
 	}
 	
+	/// <summary>
+	/// Starts the network server and closes once the programs token is cancelled.
+	/// </summary>
 	internal async Task Start()
 	{
 		var options = new WebSocketListenerOptions
@@ -139,6 +158,12 @@ public class NetworkServer
 		await server.StopAsync();
 	}
 	
+	/// <summary>
+	/// The handler to authenticate incoming client web sockets.
+	/// </summary>
+	/// <param name="request">The clients web socket request.</param>
+	/// <param name="response">The response to send to the client.</param>
+	/// <returns>Whether or not the connection should be accepted.</returns>
 	private async Task<bool> HttpAuthenticationHandler( WebSocketHttpRequest request, WebSocketHttpResponse response )
 	{
 		var userAgent = request.Headers.Get( RequestHeader.UserAgent );
@@ -175,6 +200,11 @@ public class NetworkServer
 		return true;
 	}
 
+	/// <summary>
+	/// Asynchronous task to accept any incoming clients.
+	/// </summary>
+	/// <param name="server">The web socket server.</param>
+	/// <param name="token">The token to watch for when it is cancelled.</param>
 	private static async Task AcceptWebSocketClientsAsync( WebSocketListener server, CancellationToken token )
 	{
 		while ( !token.IsCancellationRequested )
@@ -195,6 +225,10 @@ public class NetworkServer
 		}
 	}
 	
+	/// <summary>
+	/// Drops a client from the game.
+	/// </summary>
+	/// <param name="clientSocket">The client socket to drop.</param>
 	internal async Task AbandonClient( ClientSocket clientSocket )
 	{
 		// TODO: This needs to be better.
@@ -220,16 +254,29 @@ public class NetworkServer
 		await clientSocket.CloseAsync();
 	}
 	
+	/// <summary>
+	/// Accepts a new client to the server.
+	/// </summary>
+	/// <param name="clientId">The unique identifier of the client.</param>
+	/// <param name="clientSocket">The socket the client is using.</param>
 	internal void AcceptClient( long clientId, ClientSocket clientSocket )
 	{
 		AcceptClient( new NetworkClient( clientId, clientSocket ) );
 	}
 	
+	/// <summary>
+	/// Accepts a bot to the server.
+	/// </summary>
+	/// <param name="clientId">The unique identifier of the bot.</param>
 	internal void AcceptClient( long clientId )
 	{
 		AcceptClient( new BotClient( clientId ) );
 	}
 	
+	/// <summary>
+	/// Accepts a network client to the server.
+	/// </summary>
+	/// <param name="client">The network client to accept.</param>
 	private void AcceptClient( INetworkClient client )
 	{
 		Clients.TryAdd( client.ClientId, client );
@@ -239,6 +286,9 @@ public class NetworkServer
 		BaseGame.Current.OnClientConnected( client );
 	}
 	
+	/// <summary>
+	/// Dispatches any incoming server messages.
+	/// </summary>
 	internal void DispatchIncoming()
 	{
 		while ( _incomingQueue.TryDequeue( out var pair ) )
@@ -253,22 +303,32 @@ public class NetworkServer
 		}
 	}
 
+	/// <summary>
+	/// Dispatches any outgoing messages to clients.
+	/// </summary>
 	internal void DispatchOutgoing()
 	{
 		while ( _outgoingQueue.TryDequeue( out var pair ) )
 			SendMessage( pair.Item1, pair.Item2 );
 	}
 
+	/// <summary>
+	/// Sends a message to clients.
+	/// </summary>
+	/// <param name="to">The clients to send the message to.</param>
+	/// <param name="message">The message to send.</param>
 	private void SendMessage( To to, NetworkMessage message )
 	{
 		MessagesSent++;
 		
+		// Quick send message to bots.
 		foreach ( var client in to )
 		{
 			if ( client is BotClient )
 				client.SendMessage( message );
 		}
 		
+		// Write message once.
 		var stream = new MemoryStream();
 		var writer = new NetworkWriter( stream );
 		writer.WriteNetworkable( message );
@@ -276,6 +336,7 @@ public class NetworkServer
 		writer.Close();
 		var bytes = stream.ToArray();
 
+		// If message is less than max buffer size then send this to all clients.
 		if ( numBytes <= SharedConstants.MaxBufferSize )
 		{
 			foreach ( var client in to )
@@ -289,6 +350,7 @@ public class NetworkServer
 			return;
 		}
 
+		// Break down message to many messages and send.
 		var partialMessages = NetworkMessage.Split( bytes );
 		foreach ( var client in to )
 		{

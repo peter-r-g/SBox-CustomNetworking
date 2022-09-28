@@ -7,6 +7,9 @@ using CustomNetworking.Shared.Utility;
 
 namespace CustomNetworking.Server;
 
+/// <summary>
+/// Bootstraps the server.
+/// </summary>
 public static class Program
 {
 	/// <summary>
@@ -18,12 +21,28 @@ public static class Program
 	/// The target tick rate for the server.
 	/// </summary>
 	public static int TickRate = int.MaxValue;
+	/// <summary>
+	/// The target delta time for the server.
+	/// </summary>
 	private static float TickRateDt => (float)1000 / TickRate;
 	
+	/// <summary>
+	/// The network server handling communication of the game.
+	/// </summary>
 	private static NetworkServer _server = null!;
+	/// <summary>
+	/// The start method task of the server.
+	/// </summary>
 	private static Task? _serverTask;
+	/// <summary>
+	/// The game to run.
+	/// </summary>
 	private static BaseGame _game = null!;
 
+	/// <summary>
+	/// The entry point to the program.
+	/// </summary>
+	/// <param name="args">The command line arguments.</param>
 	public static void Main( string[] args )
 	{
 		Logging.Initialize();
@@ -52,6 +71,9 @@ public static class Program
 		}
 	}
 
+	/// <summary>
+	/// Handler for when the program is shutting down.
+	/// </summary>
 	private static void OnProcessExit( object? sender, EventArgs e )
 	{
 		_game.Shutdown();
