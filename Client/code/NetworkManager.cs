@@ -84,7 +84,8 @@ public class NetworkManager
 		
 		try
 		{
-			_localClientId = Random.Shared.NextInt64();
+			var rand = new Random( Time.Tick );
+			_localClientId = rand.NextInt64();
 			var headers = new Dictionary<string, string> {{"Steam", _localClientId.ToString()}};
 			var webSocketUri = (secure ? "wss://" : "ws://") + uri + ':' + port + '/' ;
 			await _webSocket.Connect( webSocketUri, headers );
