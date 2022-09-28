@@ -2,7 +2,7 @@ using Sandbox;
 
 namespace CustomNetworking.Client;
 
-public class TestPlayer : AnimatedEntity
+public class TestPlayer : Player
 {
 	/// <summary>
 	/// The grubs movement controller.
@@ -40,6 +40,8 @@ public class TestPlayer : AnimatedEntity
 	public override void Simulate( Sandbox.Client cl )
 	{
 		base.Simulate( cl );
+		
+		Controller.Simulate( cl, this, null );
 
 		if ( Input.Pressed( InputButton.View ) )
 			Camera = Camera is FirstPersonCamera ? new ThirdPersonCamera() : new FirstPersonCamera();
