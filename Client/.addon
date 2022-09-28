@@ -1,8 +1,8 @@
 {
   "Title": "CNClient",
   "Type": "game",
-  "Org": "gunman",
-  "Ident": "CNClient",
+  "Org": "local",
+  "Ident": "cnclient",
   "Schema": 1,
   "HasAssets": false,
   "AssetsPath": "",
