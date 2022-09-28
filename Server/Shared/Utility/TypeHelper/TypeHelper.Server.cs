@@ -47,5 +47,10 @@ public static partial class TypeHelper
 		return (T?)Activator.CreateInstance( baseTypeToCreate.MakeGenericType( genericTypes ) );
 	}
 
+	public static Type[] GetGenericArguments( Type type )
+	{
+		return type.GetGenericArguments();
+	}
+
 }
 #endif

@@ -31,5 +31,10 @@ public static partial class TypeHelper
 		return TypeLibrary.GetDescription( baseTypeToCreate ).CreateGeneric<T>( genericTypes );
 	}
 
+	public static Type[] GetGenericArguments( Type type )
+	{
+		return TypeLibrary.GetDescription( type ).GenericArguments;
+	}
+	
 }
 #endif
