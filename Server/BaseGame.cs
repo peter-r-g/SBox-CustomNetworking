@@ -108,6 +108,8 @@ public class BaseGame
 	/// <param name="client">The handle of the client that has connected.</param>
 	public virtual void OnClientConnected( INetworkClient client )
 	{
+		Logging.Info( $"{client} has connected" );
+		
 		var toClient = To.Single( client );
 		NetworkServer.Instance.QueueMessage( toClient, new ClientListMessage( NetworkServer.Instance.Clients.Values ) );
 		NetworkServer.Instance.QueueMessage( toClient, new EntityListMessage( SharedEntityManager.Entities ) );
@@ -124,6 +126,8 @@ public class BaseGame
 	/// <param name="client">The handle of the client that has disconnected.</param>
 	public virtual void OnClientDisconnected( INetworkClient client )
 	{
+		Logging.Info( $"{client} has disconnected" );
+		
 		NetworkServer.Instance.QueueMessage( To.AllExcept( client ), new ClientStateChangedMessage( client.ClientId, ClientState.Disconnected ) );
 		client.Pawn?.Delete();
 		client.PawnChanged -= ClientOnPawnChanged;
