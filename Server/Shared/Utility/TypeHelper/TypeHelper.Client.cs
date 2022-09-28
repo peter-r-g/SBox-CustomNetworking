@@ -7,7 +7,7 @@ public static partial class TypeHelper
 {
 	public static Type? GetTypeByName( string name )
 	{
-		return TypeLibrary.GetTypeByName( name );
+		return TypeLibrary.GetDescription( name ).TargetType;
 	}
 
 	public static T Create<T>()
