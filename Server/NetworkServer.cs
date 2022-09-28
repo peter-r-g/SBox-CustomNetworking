@@ -52,12 +52,6 @@ public class NetworkServer
 	
 	internal ConcurrentDictionary<long, INetworkClient> Clients { get; } = new();
 	internal ConcurrentDictionary<long, BotClient> Bots { get; } = new();
-
-	internal delegate void ClientConnectedEventHandler( INetworkClient client );
-	internal event ClientConnectedEventHandler? ClientConnected;
-	
-	internal delegate void ClientDisconnectedEventHandler( INetworkClient client );
-	internal event ClientDisconnectedEventHandler? ClientDisconnected;
 	
 	private readonly Dictionary<Type, Action<INetworkClient, NetworkMessage>> _messageHandlers = new();
 	private readonly ConcurrentQueue<(To, NetworkMessage)> _outgoingQueue = new();
@@ -222,7 +216,7 @@ public class NetworkServer
 		if ( idToRemove is not null )
 		{
 			if ( Clients.TryRemove( idToRemove.Value, out var client ) )
-				ClientDisconnected?.Invoke( client );
+				BaseGame.Current.OnClientDisconnected( client );
 		}
 		
 		await clientSocket.CloseAsync();
@@ -244,7 +238,7 @@ public class NetworkServer
 		if ( client is BotClient bot )
 			Bots.TryAdd( bot.ClientId, bot );
 		
-		ClientConnected?.Invoke( client );
+		BaseGame.Current.OnClientConnected( client );
 	}
 	
 	internal void DispatchIncoming()

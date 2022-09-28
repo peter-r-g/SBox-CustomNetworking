@@ -36,8 +36,6 @@ public static class Program
 		_server = new NetworkServer( SharedConstants.Port, true );
 		NetworkServer.Instance = _server;
 		_game = new BaseGame();
-		_server.ClientConnected += _game.OnClientConnected;
-		_server.ClientDisconnected += _game.OnClientDisconnected;
 		_game.Start();
 		
 		_monitorThread = new Thread( _monitor.MonitorMain );
@@ -67,10 +65,6 @@ public static class Program
 	{
 		_game.Shutdown();
 		ProgramCancellation.Cancel();
-		
-		_server.ClientConnected -= _game.OnClientConnected;
-		_server.ClientDisconnected -= _game.OnClientDisconnected;
-		
 		_networkingThread?.Join();
 		_monitorThread?.Join();
 		
