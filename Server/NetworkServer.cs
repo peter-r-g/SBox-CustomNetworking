@@ -40,6 +40,11 @@ public class NetworkServer
 	/// </summary>
 	public int MessagesSentToClients { get; internal set; }
 	
+	/// <summary>
+	/// The port that the server is listening on.
+	/// </summary>
+	public int Port { get; }
+	
 	internal ConcurrentDictionary<long, INetworkClient> Clients { get; } = new();
 	internal ConcurrentDictionary<long, BotClient> Bots { get; } = new();
 
@@ -53,11 +58,9 @@ public class NetworkServer
 	private readonly ConcurrentQueue<(To, NetworkMessage)> _outgoingQueue = new();
 	private readonly ConcurrentQueue<(INetworkClient, NetworkMessage)> _incomingQueue = new();
 
-	private readonly int _port;
-
 	internal NetworkServer( int port )
 	{
-		_port = port;
+		Port = port;
 	}
 	
 	/// <summary>
@@ -124,7 +127,7 @@ public class NetworkServer
 			tcp.SendBufferSize = SharedConstants.MaxBufferSize;
 		} );
 		
-		var server = new WebSocketListener( new IPEndPoint( IPAddress.Any, _port ), options );
+		var server = new WebSocketListener( new IPEndPoint( IPAddress.Any, Port ), options );
 		await server.StartAsync();
 		var clientAcceptTask = Task.Run( () => AcceptWebSocketClientsAsync( server, Program.ProgramCancellation.Token ) );
 
