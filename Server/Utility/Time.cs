@@ -8,5 +8,5 @@ public static class Time
 	/// <summary>
 	/// The delta between the last tick and the current.
 	/// </summary>
-	public static double Delta;
+	public static float Delta;
 }

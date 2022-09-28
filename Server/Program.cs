@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Threading;
+using System.Threading.Tasks;
 using CustomNetworking.Shared;
 using CustomNetworking.Shared.Utility;
 
@@ -17,14 +18,11 @@ public static class Program
 	/// The target tick rate for the server.
 	/// </summary>
 	public static int TickRate = int.MaxValue;
-	private static double TickRateDt => (double)1000 / TickRate;
-
-	private static MonitorServer _monitor = null!;
+	private static float TickRateDt => (float)1000 / TickRate;
+	
 	private static NetworkServer _server = null!;
+	private static Task? _serverTask;
 	private static BaseGame _game = null!;
-
-	private static Thread? _networkingThread;
-	private static Thread? _monitorThread;
 
 	public static void Main( string[] args )
 	{
@@ -32,17 +30,10 @@ public static class Program
 		Logging.Info( "Log started" );
 		
 		AppDomain.CurrentDomain.ProcessExit += OnProcessExit;
-		_monitor = new MonitorServer( SharedConstants.MonitorPort );
 		_server = new NetworkServer( SharedConstants.Port, true );
-		NetworkServer.Instance = _server;
+		_serverTask = _server.Start();
 		_game = new BaseGame();
 		_game.Start();
-		
-		_monitorThread = new Thread( _monitor.MonitorMain );
-		_monitorThread.Start();
-		
-		_networkingThread = new Thread( _server.NetworkingMain );
-		_networkingThread.Start();
 
 		var sw = Stopwatch.StartNew();
 		while ( !ProgramCancellation.IsCancellationRequested )
@@ -52,7 +43,7 @@ public static class Program
 			{
 			}
 
-			Time.Delta = sw.Elapsed.TotalMilliseconds;
+			Time.Delta = (float)sw.Elapsed.TotalMilliseconds;
 			sw.Restart();
 			
 			_server.DispatchIncoming();
@@ -65,8 +56,7 @@ public static class Program
 	{
 		_game.Shutdown();
 		ProgramCancellation.Cancel();
-		_networkingThread?.Join();
-		_monitorThread?.Join();
+		_serverTask?.Wait();
 		
 		Logging.Dispose();
 	}

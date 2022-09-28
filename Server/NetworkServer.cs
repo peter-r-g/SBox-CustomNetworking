@@ -59,6 +59,8 @@ public class NetworkServer
 
 	internal NetworkServer( int port, bool useSteam )
 	{
+		Instance = this;
+		
 		Port = port;
 		UsingSteam = useSteam;
 	}
@@ -112,7 +114,7 @@ public class NetworkServer
 		return Clients.ContainsKey( clientId ) ? Clients[clientId] : null;
 	}
 	
-	internal async void NetworkingMain()
+	internal async Task Start()
 	{
 		var options = new WebSocketListenerOptions
 		{
@@ -129,39 +131,35 @@ public class NetworkServer
 		
 		var server = new WebSocketListener( new IPEndPoint( IPAddress.Any, Port ), options );
 		await server.StartAsync();
+		
 		var clientAcceptTask = Task.Run( () => AcceptWebSocketClientsAsync( server, Program.ProgramCancellation.Token ) );
-
-		// TODO: Cooking the CPU is not a very cool way of doing this
-		while ( !Program.ProgramCancellation.IsCancellationRequested )
-		{
-		}
-
-		clientAcceptTask.Wait();
+		await clientAcceptTask;
+		
 		SendMessage( To.All, new ShutdownMessage() );
 		await server.StopAsync();
 	}
 	
-	private Task<bool> HttpAuthenticationHandler( WebSocketHttpRequest request, WebSocketHttpResponse response )
+	private async Task<bool> HttpAuthenticationHandler( WebSocketHttpRequest request, WebSocketHttpResponse response )
 	{
 		var userAgent = request.Headers.Get( RequestHeader.UserAgent );
 		if ( userAgent != "facepunch-s&box" )
 		{
 			response.Status = HttpStatusCode.Unauthorized;
-			return Task.FromResult( false );
+			return false;
 		}
 					
 		var origin = request.Headers.Get( RequestHeader.Origin );
 		if ( origin != "https://sbox.facepunch.com/" )
 		{
 			response.Status = HttpStatusCode.Unauthorized;
-			return Task.FromResult( false );
+			return false;
 		}
 
 		var version = request.Headers.Get( RequestHeader.WebSocketVersion );
 		if ( version != "13" )
 		{
 			response.Status = HttpStatusCode.Unauthorized;
-			return Task.FromResult( false );
+			return false;
 		}
 
 		if ( UsingSteam )
@@ -170,11 +168,11 @@ public class NetworkServer
 			if ( !long.TryParse( steam, out var clientId ) || Clients.TryGetValue( clientId, out _ ) )
 			{
 				response.Status = HttpStatusCode.Unauthorized;
-				return Task.FromResult( false );
+				return false;
 			}
 		}
 
-		return Task.FromResult( true );
+		return true;
 	}
 
 	private static async Task AcceptWebSocketClientsAsync( WebSocketListener server, CancellationToken token )
