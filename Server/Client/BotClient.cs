@@ -53,6 +53,11 @@ public class BotClient : INetworkClient
 		cb.Invoke( this, message );
 	}
 
+	public override string ToString()
+	{
+		return $"Bot (ID: {ClientId})";
+	}
+
 	/// <summary>
 	/// Adds a handler for the bot to dispatch the message to.
 	/// </summary>
