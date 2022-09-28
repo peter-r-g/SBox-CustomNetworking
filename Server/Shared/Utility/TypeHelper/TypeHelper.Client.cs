@@ -12,7 +12,7 @@ public static partial class TypeHelper
 
 	public static T Create<T>()
 	{
-		return TypeLibrary.Create<T>();
+		return TypeLibrary.Create<T>( typeof(T) );
 	}
 
 	public static T? Create<T>( Type typeToCreate )
