@@ -78,7 +78,7 @@ public class NetworkReader : BinaryReader
 			networkable = TypeHelper.Create<INetworkable>( type, genericTypes );
 		}
 		else
-			networkable = TypeHelper.Create<INetworkable>();
+			networkable = TypeHelper.Create<INetworkable>( type );
 		
 		if ( networkable is null )
 		{
