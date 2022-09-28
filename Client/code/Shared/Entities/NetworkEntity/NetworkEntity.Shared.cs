@@ -64,17 +64,10 @@ public partial class NetworkEntity : BaseNetworkable, IEntity
 		}
 	}
 	private NetworkedQuaternion _rotation;
-	
-	public TagContainer Tags { get; }
 
 	public NetworkEntity( int entityId )
 	{
-		PropertyNameCache.Remove( nameof(Tags) );
-		
 		EntityId = entityId;
-
-		Tags = new TagContainer();
-		Tags.Changed += OnTagsChanged;
 	}
 
 	public virtual void Delete()
@@ -115,24 +108,12 @@ public partial class NetworkEntity : BaseNetworkable, IEntity
 	{
 		TriggerNetworkingChange( nameof(Rotation) );
 	}
-	
-	private void OnTagsChanged( object? sender, EventArgs args )
-	{
-		TriggerNetworkingChange( nameof(Tags) );
-	}
 
 	protected override void TriggerNetworkingChange( string propertyName = "" )
 	{
 		base.TriggerNetworkingChange( propertyName );
 		
 		Changed?.Invoke( this, EventArgs.Empty );
-	}
-
-	public sealed override void Deserialize( NetworkReader reader )
-	{
-		base.Deserialize( reader );
-		
-		Tags.Deserialize( reader );
 	}
 
 	public sealed override void DeserializeChanges( NetworkReader reader )
@@ -155,21 +136,5 @@ public partial class NetworkEntity : BaseNetworkable, IEntity
 			property.SetValue( this, currentValue );
 			TriggerNetworkingChange( property.Name );
 		}
-		
-		Tags.DeserializeChanges( reader );
-	}
-
-	public sealed override void Serialize( NetworkWriter writer )
-	{
-		base.Serialize( writer );
-		
-		Tags.Serialize( writer );
-	}
-
-	public override void SerializeChanges( NetworkWriter writer )
-	{
-		base.SerializeChanges( writer );
-		
-		Tags.SerializeChanges( writer );
 	}
 }
