@@ -36,5 +36,10 @@ public static partial class TypeHelper
 		return TypeLibrary.GetDescription( type ).GenericArguments;
 	}
 	
+	public static PropertyDescription[] GetProperties( Type type )
+	{
+		return TypeLibrary.GetDescription( type ).Properties;
+	}
+
 }
 #endif

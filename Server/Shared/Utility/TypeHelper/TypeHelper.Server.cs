@@ -52,5 +52,10 @@ public static partial class TypeHelper
 		return type.GetGenericArguments();
 	}
 
+	public static PropertyInfo[] GetProperties( Type type )
+	{
+		return type.GetProperties();
+	}
+
 }
 #endif
