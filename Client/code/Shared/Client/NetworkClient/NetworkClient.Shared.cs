@@ -28,4 +28,9 @@ public partial class NetworkClient : INetworkClient
 		}
 	}
 	private IEntity? _pawn;
+
+	public override string ToString()
+	{
+		return $"Client (ID: {ClientId})";
+	}
 }
