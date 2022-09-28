@@ -41,5 +41,9 @@ public static partial class TypeHelper
 		return TypeLibrary.GetDescription( type ).Properties;
 	}
 
+	public static bool IsClass( Type type )
+	{
+		return TypeLibrary.GetDescription( type ).IsClass;
+	}
 }
 #endif

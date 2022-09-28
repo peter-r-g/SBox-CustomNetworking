@@ -57,5 +57,9 @@ public static partial class TypeHelper
 		return type.GetProperties();
 	}
 
+	public static bool IsClass( Type type )
+	{
+		return type.IsClass;
+	}
 }
 #endif
