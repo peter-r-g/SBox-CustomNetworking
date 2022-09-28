@@ -57,6 +57,7 @@ public class NetworkReader : BinaryReader
 			return null!;
 		}
 
+		INetworkable? networkable;
 		if ( type.IsGenericType )
 		{
 			var genericCount = ReadInt32();
@@ -74,10 +75,11 @@ public class NetworkReader : BinaryReader
 				genericTypes[i] = genericType;
 			}
 
-			type = type.MakeGenericType( genericTypes );
+			networkable = TypeHelper.Create<INetworkable>( type, genericTypes );
 		}
+		else
+			networkable = TypeHelper.Create<INetworkable>();
 		
-		var networkable = TypeHelper.Create<INetworkable>( type );
 		if ( networkable is null )
 		{
 			Logging.Error( "Failed to read networkable (instance creation failed).", new InvalidOperationException() );

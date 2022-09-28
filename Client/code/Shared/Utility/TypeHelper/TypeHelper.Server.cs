@@ -28,7 +28,7 @@ public static partial class TypeHelper
 			TypeNameCache.Add( name, type );
 			return type;
 		}
-
+		
 		return null;
 	}
 
@@ -40,6 +40,26 @@ public static partial class TypeHelper
 	public static T? Create<T>( Type typeToCreate, params object[] parameters )
 	{
 		return (T?)Activator.CreateInstance( typeToCreate, parameters );
+	}
+
+	public static T? Create<T>( Type baseTypeToCreate, Type[] genericTypes )
+	{
+		return (T?)Activator.CreateInstance( baseTypeToCreate.MakeGenericType( genericTypes ) );
+	}
+
+	public static Type[] GetGenericArguments( Type type )
+	{
+		return type.GetGenericArguments();
+	}
+
+	public static PropertyInfo[] GetProperties( Type type )
+	{
+		return type.GetProperties();
+	}
+
+	public static bool IsClass( Type type )
+	{
+		return type.IsClass;
 	}
 }
 #endif

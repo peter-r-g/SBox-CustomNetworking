@@ -62,7 +62,7 @@ public partial class EntityManager
 	/// <exception cref="Exception">Thrown when <see cref="entityType"/> is not a class or does not implement <see cref="IEntity"/>.</exception>
 	public IEntity Create( Type entityType )
 	{
-		if ( !entityType.IsClass || !entityType.IsAssignableTo( typeof(IEntity) ) )
+		if ( !TypeHelper.IsClass( entityType ) || !entityType.IsAssignableTo( typeof(IEntity) ) )
 		{
 			Logging.Error( $"Failed to create entity ({nameof(entityType)} is not a class that implementes {nameof(IEntity)}).", new InvalidOperationException() );
 			return null!;

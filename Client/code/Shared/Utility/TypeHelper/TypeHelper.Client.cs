@@ -1,5 +1,6 @@
 #if CLIENT
 using System;
+using Sandbox;
 
 namespace CustomNetworking.Shared.Utility;
 
@@ -7,12 +8,12 @@ public static partial class TypeHelper
 {
 	public static Type? GetTypeByName( string name )
 	{
-		return TypeLibrary.GetTypeByName( name );
+		return TypeLibrary.GetDescription( name ).TargetType;
 	}
 
 	public static T Create<T>()
 	{
-		return TypeLibrary.Create<T>();
+		return TypeLibrary.Create<T>( typeof(T) );
 	}
 
 	public static T? Create<T>( Type typeToCreate )
@@ -23,6 +24,26 @@ public static partial class TypeHelper
 	public static T? Create<T>( Type typeToCreate, params object[] parameters )
 	{
 		return TypeLibrary.Create<T>( typeToCreate, parameters );
+	}
+
+	public static T? Create<T>( Type baseTypeToCreate, Type[] genericTypes )
+	{
+		return TypeLibrary.GetDescription( baseTypeToCreate ).CreateGeneric<T>( genericTypes );
+	}
+
+	public static Type[] GetGenericArguments( Type type )
+	{
+		return TypeLibrary.GetDescription( type ).GenericArguments;
+	}
+	
+	public static PropertyDescription[] GetProperties( Type type )
+	{
+		return TypeLibrary.GetDescription( type ).Properties;
+	}
+
+	public static bool IsClass( Type type )
+	{
+		return TypeLibrary.GetDescription( type ).IsClass;
 	}
 }
 #endif
