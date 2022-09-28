@@ -1,4 +1,8 @@
 using System;
+#if SERVER
+using Serilog;
+using Serilog.Core;
+#endif
 
 namespace CustomNetworking.Shared.Utility;
 
@@ -7,6 +11,30 @@ namespace CustomNetworking.Shared.Utility;
 /// </summary>
 public static class Logging
 {
+#if SERVER
+	private static Logger _logger = null!;
+
+	/// <summary>
+	/// Initializes the server-side Serilog logger.
+	/// </summary>
+	internal static void Initialize()
+	{
+		_logger = new LoggerConfiguration()
+			.MinimumLevel.Debug()
+			.WriteTo.Console()
+			.WriteTo.File( "logs/log.txt", rollingInterval: RollingInterval.Day )
+			.CreateLogger();
+	}
+
+	/// <summary>
+	/// Disposes the server-side Serilog logger.
+	/// </summary>
+	internal static void Dispose()
+	{
+		_logger.Dispose();
+	}
+#endif
+	
 	/// <summary>
 	/// Logs information.
 	/// </summary>
@@ -14,12 +42,7 @@ public static class Logging
 	public static void Info( string message )
 	{
 #if SERVER
-		var oldColor = Console.ForegroundColor;
-		Console.ForegroundColor = ConsoleColor.Green;
-		
-		Console.WriteLine( $"[{DateTime.Now}] [INFO]: {message}" );
-		
-		Console.ForegroundColor = oldColor;
+		_logger.Information( "{A}", message );
 #endif
 #if CLIENT
 		Log.Info( message );
@@ -34,14 +57,7 @@ public static class Logging
 	public static void Warning( string message, Exception? exception = null )
 	{
 #if SERVER
-		var oldColor = Console.ForegroundColor;
-		Console.ForegroundColor = ConsoleColor.Yellow;
-		
-		Console.WriteLine( $"[{DateTime.Now}] [WARN]: {message}" );
-		if ( exception is not null )
-			Console.WriteLine( exception );
-		
-		Console.ForegroundColor = oldColor;
+		_logger.Warning( exception, "{A}", message );
 #endif
 #if CLIENT
 		Log.Warning( exception, message );
@@ -55,12 +71,7 @@ public static class Logging
 	public static void Warning( Exception exception )
 	{
 #if SERVER
-		var oldColor = Console.ForegroundColor;
-		Console.ForegroundColor = ConsoleColor.Yellow;
-		
-		Console.WriteLine( $"[{DateTime.Now}] [WARN]: {exception}" );
-		
-		Console.ForegroundColor = oldColor;
+		_logger.Warning( exception, "An exception occurred during runtime" );
 #endif
 #if CLIENT
 		Log.Warning( exception );
@@ -75,14 +86,7 @@ public static class Logging
 	public static void Error( string message, Exception? exception = null )
 	{
 #if SERVER
-		var oldColor = Console.ForegroundColor;
-		Console.ForegroundColor = ConsoleColor.Red;
-		
-		Console.WriteLine( $"[{DateTime.Now}] [ERR]: {message}" );
-		if ( exception is not null )
-			Console.WriteLine( exception );
-		
-		Console.ForegroundColor = oldColor;
+		_logger.Information( exception, "{A}", message );
 #endif
 #if CLIENT
 		Log.Error( exception, message );
@@ -96,12 +100,7 @@ public static class Logging
 	public static void Error( Exception exception )
 	{
 #if SERVER
-		var oldColor = Console.ForegroundColor;
-		Console.ForegroundColor = ConsoleColor.Red;
-		
-		Console.WriteLine( $"[{DateTime.Now}] [ERR]: {exception}" );
-		
-		Console.ForegroundColor = oldColor;
+		_logger.Information( exception, "An exception occurred during runtime" );
 #endif
 #if CLIENT
 		Log.Error( exception );
@@ -116,12 +115,7 @@ public static class Logging
 	public static void Fatal( Exception exception )
 	{
 #if SERVER
-		var oldColor = Console.ForegroundColor;
-		Console.ForegroundColor = ConsoleColor.DarkRed;
-		
-		Console.WriteLine( $"[{DateTime.Now}] [FATAL]: {exception}" );
-
-		Console.ForegroundColor = oldColor;
+		_logger.Fatal( exception, "A fatal exception occurred during runtime" );
 #endif
 #if CLIENT
 		Log.Error( exception );

@@ -27,6 +27,9 @@ public static class Program
 
 	public static void Main( string[] args )
 	{
+		Logging.Initialize();
+		Logging.Info( "Log started" );
+		
 		AppDomain.CurrentDomain.ProcessExit += OnProcessExit;
 		_monitor = new MonitorServer( SharedConstants.MonitorPort );
 		_server = new NetworkServer( SharedConstants.Port, true );
@@ -70,5 +73,7 @@ public static class Program
 		
 		_networkingThread?.Join();
 		_monitorThread?.Join();
+		
+		Logging.Dispose();
 	}
 }
