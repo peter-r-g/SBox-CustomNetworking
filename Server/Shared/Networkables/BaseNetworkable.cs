@@ -4,6 +4,9 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using CustomNetworking.Shared.Utility;
+#if CLIENT
+using Sandbox;
+#endif
 
 namespace CustomNetworking.Shared.Networkables;
 
@@ -11,10 +14,18 @@ public abstract class BaseNetworkable : INetworkable
 {
 	public event EventHandler? Changed;
 	
+#if SERVER
 	/// <summary>
 	/// A <see cref="PropertyInfo"/> cache of all networked properties.
 	/// </summary>
 	protected readonly Dictionary<string, PropertyInfo> PropertyNameCache = new();
+#endif
+#if CLIENT
+	/// <summary>
+	/// A <see cref="PropertyInfo"/> cache of all networked properties.
+	/// </summary>
+	protected readonly Dictionary<string, PropertyDescription> PropertyNameCache = new();
+#endif
 	/// <summary>
 	/// A <see cref="HashSet{T}"/> of networked properties that have been changed.
 	/// </summary>
@@ -22,7 +33,7 @@ public abstract class BaseNetworkable : INetworkable
 
 	protected BaseNetworkable()
 	{
-		foreach ( var property in GetType().GetProperties()
+		foreach ( var property in TypeHelper.GetProperties( GetType() )
 			         .Where( property => property.PropertyType.IsAssignableTo( typeof(INetworkable) ) ) )
 			PropertyNameCache.Add( property.Name, property );
 	}

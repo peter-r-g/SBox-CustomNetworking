@@ -58,7 +58,7 @@ public class NetworkWriter : BinaryWriter
 		Write( networkableType.Name );
 		if ( networkableType.IsGenericType )
 		{
-			var genericArguments = networkableType.GetGenericArguments();
+			var genericArguments = TypeHelper.GetGenericArguments( networkableType );
 			Write( genericArguments.Length );
 			foreach ( var type in genericArguments )
 				Write( type.Name );

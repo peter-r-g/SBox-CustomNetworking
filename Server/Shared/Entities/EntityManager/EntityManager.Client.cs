@@ -13,7 +13,7 @@ public partial class EntityManager
 	public void Create( string entityClass, int entityId )
 	{
 		var entityType = TypeHelper.GetTypeByName( entityClass );
-		if ( entityType is null || !entityType.IsClass || !entityType.IsAssignableTo( typeof(IEntity) ) )
+		if ( entityType is null || !TypeHelper.IsClass( entityType ) || !entityType.IsAssignableTo( typeof(IEntity) ) )
 		{
 			Logging.Error( $"Failed to create entity (type is not a class that implements {nameof(IEntity)})." );
 			return;
