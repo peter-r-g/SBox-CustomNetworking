@@ -28,7 +28,7 @@ public static partial class TypeHelper
 			TypeNameCache.Add( name, type );
 			return type;
 		}
-
+		
 		return null;
 	}
 
@@ -41,5 +41,11 @@ public static partial class TypeHelper
 	{
 		return (T?)Activator.CreateInstance( typeToCreate, parameters );
 	}
+
+	public static T? Create<T>( Type baseTypeToCreate, Type[] genericTypes )
+	{
+		return (T?)Activator.CreateInstance( baseTypeToCreate.MakeGenericType( genericTypes ) );
+	}
+
 }
 #endif

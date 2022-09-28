@@ -1,5 +1,6 @@
 #if CLIENT
 using System;
+using Sandbox;
 
 namespace CustomNetworking.Shared.Utility;
 
@@ -24,5 +25,11 @@ public static partial class TypeHelper
 	{
 		return TypeLibrary.Create<T>( typeToCreate, parameters );
 	}
+
+	public static T? Create<T>( Type baseTypeToCreate, Type[] genericTypes )
+	{
+		return TypeLibrary.GetDescription( baseTypeToCreate ).CreateGeneric<T>( genericTypes );
+	}
+
 }
 #endif
