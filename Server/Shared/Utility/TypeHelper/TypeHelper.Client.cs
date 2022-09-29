@@ -1,5 +1,6 @@
 #if CLIENT
 using System;
+using System.Linq;
 using CustomNetworking.Shared.Networkables.Builtin;
 using Sandbox;
 
@@ -52,11 +53,11 @@ public static partial class TypeHelper
 	}
 	
 	/// <summary>
-	/// Gets all public properties on the type.
+	/// Gets all properties on the type.
 	/// </summary>
-	/// <param name="type">The type to get the public properties of.</param>
-	/// <returns>The public properties on the type.</returns>
-	public static PropertyDescription[] GetProperties( Type type )
+	/// <param name="type">The type to get the properties of.</param>
+	/// <returns>The properties on the type.</returns>
+	public static PropertyDescription[] GetAllProperties( Type type )
 	{
 		return TypeLibrary.GetDescription( type ).Properties;
 	}

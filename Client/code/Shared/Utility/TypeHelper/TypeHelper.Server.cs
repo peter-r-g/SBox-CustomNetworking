@@ -61,13 +61,13 @@ public static partial class TypeHelper
 	}
 
 	/// <summary>
-	/// Gets all public properties on the type.
+	/// Gets all properties on the type.
 	/// </summary>
-	/// <param name="type">The type to get the public properties of.</param>
-	/// <returns>The public properties on the type.</returns>
-	public static PropertyInfo[] GetProperties( Type type )
+	/// <param name="type">The type to get the properties of.</param>
+	/// <returns>The properties on the type.</returns>
+	public static PropertyInfo[] GetAllProperties( Type type )
 	{
-		return type.GetProperties();
+		return type.GetProperties( BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic );
 	}
 	
 	/// <summary>

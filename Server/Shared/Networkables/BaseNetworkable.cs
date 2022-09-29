@@ -28,7 +28,7 @@ public abstract class BaseNetworkable : INetworkable
 
 	protected BaseNetworkable()
 	{
-		foreach ( var property in TypeHelper.GetProperties( GetType() )
+		foreach ( var property in TypeHelper.GetAllProperties( GetType() )
 			         .Where( property => property.PropertyType.IsAssignableTo( typeof(INetworkable) ) ) )
 			PropertyNameCache.Add( property.Name, property );
 	}
