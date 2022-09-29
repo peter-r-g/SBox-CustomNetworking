@@ -7,7 +7,7 @@ namespace CustomNetworking.Shared.Entities;
 /// <summary>
 /// Container for a collection of entities.
 /// </summary>
-public partial class EntityManager
+public sealed partial class EntityManager
 {
 	/// <summary>
 	/// A read only list of all <see cref="IEntity"/>s that are in this <see cref="EntityManager"/>.

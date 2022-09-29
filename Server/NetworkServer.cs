@@ -17,7 +17,7 @@ namespace CustomNetworking.Server;
 /// <summary>
 /// Handles a web socket server, its clients, and dispatches messages to and from them.
 /// </summary>
-public class NetworkServer
+public sealed class NetworkServer
 {
 	/// <summary>
 	/// The game server instance.

@@ -9,7 +9,7 @@ namespace CustomNetworking.Shared.Utility;
 /// <summary>
 /// Reads any data relating to networking and primitive types.
 /// </summary>
-public class NetworkReader : BinaryReader
+public sealed class NetworkReader : BinaryReader
 {
 	public NetworkReader( Stream input ) : base( input )
 	{

@@ -10,7 +10,7 @@ namespace CustomNetworking.Server;
 /// <summary>
 /// A bot client.
 /// </summary>
-public class BotClient : INetworkClient
+public sealed class BotClient : INetworkClient
 {
 	/// <summary>
 	/// A bots own client-side message handlers.

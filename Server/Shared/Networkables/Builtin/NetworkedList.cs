@@ -9,7 +9,7 @@ namespace CustomNetworking.Shared.Networkables.Builtin;
 /// Represents a networkable <see cref="List{T}"/>.
 /// </summary>
 /// <typeparam name="T">The type contained in the <see cref="List{T}"/>.</typeparam>
-public class NetworkedList<T> : INetworkable, IEnumerable<T> where T : INetworkable
+public sealed class NetworkedList<T> : INetworkable, IEnumerable<T> where T : INetworkable
 {
 	public event EventHandler? Changed;
 	
