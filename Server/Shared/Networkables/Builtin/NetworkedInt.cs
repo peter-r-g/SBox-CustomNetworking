@@ -11,6 +11,9 @@ public struct NetworkedInt : INetworkable, IEquatable<NetworkedInt>
 {
 	public event EventHandler? Changed = null;
 	
+	/// <summary>
+	/// The underlying <see cref="int"/> being contained inside.
+	/// </summary>
 	public int Value
 	{
 		get => _value;

@@ -11,6 +11,9 @@ public struct NetworkedQuaternion : INetworkable, IEquatable<NetworkedQuaternion
 {
 	public event EventHandler? Changed = null;
 	
+	/// <summary>
+	/// The underlying <see cref="Quaternion"/> contained inside.
+	/// </summary>
 	public Quaternion Value
 	{
 		get => _value;
@@ -87,6 +90,9 @@ public struct NetworkedQuaternion : INetworkable, IEquatable<NetworkedQuaternion
 	{
 		return Value.ToString();
 	}
+	
+	public static bool operator ==( NetworkedQuaternion left, NetworkedQuaternion right ) => left.Equals( right );
+	public static bool operator !=( NetworkedQuaternion left, NetworkedQuaternion right ) => !(left == right);
 	
 #if CLIENT
 	public static implicit operator Rotation( NetworkedQuaternion networkedQuaternion )

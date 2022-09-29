@@ -10,6 +10,9 @@ public struct NetworkedVector3 : INetworkable, IEquatable<NetworkedVector3>
 {
 	public event EventHandler? Changed = null;
 	
+	/// <summary>
+	/// The underlying <see cref="System.Numerics.Vector3"/> contained inside.
+	/// </summary>
 	public System.Numerics.Vector3 Value
 	{
 		get => _value;

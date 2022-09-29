@@ -13,6 +13,9 @@ public class NetworkedList<T> : INetworkable, IEnumerable<T> where T : INetworka
 {
 	public event EventHandler? Changed;
 	
+	/// <summary>
+	/// The underlying <see cref="List{T}"/> being contained inside.
+	/// </summary>
 	public List<T> Value
 	{
 		get => _value;
@@ -167,6 +170,9 @@ public class NetworkedList<T> : INetworkable, IEnumerable<T> where T : INetworka
 		return new NetworkedList<T>( list );
 	}
 
+	/// <summary>
+	/// Represents a type of change the <see cref="NetworkedList{T}"/> has gone through.
+	/// </summary>
 	private enum ListChangeType : byte
 	{
 		Add,
