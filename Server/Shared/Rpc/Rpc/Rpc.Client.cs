@@ -83,7 +83,7 @@ public partial class Rpc
 		var type = TypeHelper.GetTypeByName( rpcCall.ClassName );
 		if ( type is null )
 		{
-			Logging.Error( $"Failed to handle RPC call (\"{rpcCall.ClassName}\" doesn't exist).", new InvalidOperationException() );
+			Logging.Error( $"Failed to handle RPC call (\"{rpcCall.ClassName}\" doesn't exist)." );
 			return;
 		}
 
@@ -91,20 +91,20 @@ public partial class Rpc
 		var method = TypeLibrary.FindStaticMethods( rpcCall.MethodName ).FirstOrDefault();
 		if ( method is null )
 		{
-			Logging.Error( $"Failed to handle RPC call (\"{rpcCall.MethodName}\" does not exist on \"{type}\").", new InvalidOperationException() );
+			Logging.Error( $"Failed to handle RPC call (\"{rpcCall.MethodName}\" does not exist on \"{type}\")." );
 			return;
 		}
 		
 		if ( !method.Attributes.Any( attribute => attribute is ClientAttribute ) )
 		{
-			Logging.Error( "Failed to handle RPC call (Attempted to invoke a non-RPC method).", new InvalidOperationException() );
+			Logging.Error( "Failed to handle RPC call (Attempted to invoke a non-RPC method)." );
 			return;
 		}
 		
 		var entity = IEntity.All.GetEntityById( rpcCall.EntityId );
 		if ( entity is null && rpcCall.EntityId != -1 )
 		{
-			Logging.Error( "Failed to handle RPC call (Attempted to call RPC on a non-existant entity).", new InvalidOperationException() );
+			Logging.Error( "Failed to handle RPC call (Attempted to call RPC on a non-existant entity)." );
 			return;
 		}
 
@@ -124,7 +124,7 @@ public partial class Rpc
 		{
 			var failedMessage = new RpcCallResponseMessage( rpcCall.CallGuid, RpcCallState.Failed );
 			NetworkManager.Instance?.SendToServer( failedMessage );
-			Logging.Error( $"Failed to handle RPC call (\"{rpcCall.MethodName}\" returned a non-networkable value).", new InvalidOperationException() );
+			Logging.Error( $"Failed to handle RPC call (\"{rpcCall.MethodName}\" returned a non-networkable value)." );
 			return;
 		}
 		

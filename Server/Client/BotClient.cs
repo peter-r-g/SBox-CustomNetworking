@@ -44,7 +44,7 @@ public sealed class BotClient : INetworkClient
 	
 	public void SendMessage( byte[] bytes )
 	{
-		Logging.Error( $"You should not be sending bytes to a bot. Use {nameof(SendMessage)} with the {nameof(NetworkMessage)} overload", new InvalidOperationException() );
+		Logging.Error( $"You should not be sending bytes to a bot. Use {nameof(SendMessage)} with the {nameof(NetworkMessage)} overload" );
 	}
 	
 	public void SendMessage( NetworkMessage message )
@@ -52,7 +52,7 @@ public sealed class BotClient : INetworkClient
 		NetworkServer.Instance.MessagesSentToClients++;
 		if ( !MessageHandlers.TryGetValue( message.GetType(), out var cb ) )
 		{
-			Logging.Error( $"Unhandled message type {message.GetType()} for bot.", new InvalidOperationException() );
+			Logging.Error( $"Unhandled message type {message.GetType()} for bot." );
 			return;
 		}
 		
@@ -75,7 +75,7 @@ public sealed class BotClient : INetworkClient
 		var messageType = typeof(T);
 		if ( MessageHandlers.ContainsKey( messageType ) )
 		{
-			Logging.Error( $"Message type {messageType} is already being handled for bots.", new InvalidOperationException() );
+			Logging.Error( $"Message type {messageType} is already being handled for bots." );
 			return;
 		}
 

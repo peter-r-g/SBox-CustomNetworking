@@ -113,7 +113,7 @@ public sealed class NetworkServer
 		var messageType = typeof(T);
 		if ( _messageHandlers.ContainsKey( messageType ) )
 		{
-			Logging.Error( $"Message type {messageType} is already being handled.", new InvalidOperationException() );
+			Logging.Error( $"Message type {messageType} is already being handled." );
 			return;
 		}
 
@@ -295,7 +295,7 @@ public sealed class NetworkServer
 		{
 			if ( !_messageHandlers.TryGetValue( pair.Item2.GetType(), out var cb ) )
 			{
-				Logging.Error( $"Unhandled message type {pair.Item2.GetType()}.", new InvalidOperationException() );
+				Logging.Error( $"Unhandled message type {pair.Item2.GetType()}." );
 				continue;
 			}
 		

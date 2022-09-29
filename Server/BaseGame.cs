@@ -197,7 +197,7 @@ public class BaseGame
 
 		if ( client.Pawn is null )
 		{
-			Logging.Error( $"Received a {nameof(ClientPawnUpdateMessage)} when the client has no pawn.", new InvalidOperationException() );
+			Logging.Error( $"Received a {nameof(ClientPawnUpdateMessage)} when the client has no pawn." );
 			return;
 		}
 		

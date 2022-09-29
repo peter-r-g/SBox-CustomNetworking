@@ -27,7 +27,7 @@ public sealed class DeleteEntityMessage : NetworkMessage
 		var entity = IEntity.All.GetEntityById( entityId );
 		if ( entity is null )
 		{
-			Logging.Error( $"Attempted to delete entity \"{entityId}\" which does not exist.", new InvalidOperationException() );
+			Logging.Error( $"Attempted to delete entity \"{entityId}\" which does not exist." );
 			return;
 		}
 
