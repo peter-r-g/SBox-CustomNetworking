@@ -64,7 +64,6 @@ public struct NetworkedQuaternion : INetworkable, IEquatable<NetworkedQuaternion
 
 	public void Serialize( NetworkWriter writer )
 	{
-		_oldValue = _value;
 		writer.Write( X );
 		writer.Write( Y );
 		writer.Write( Z );
@@ -73,6 +72,7 @@ public struct NetworkedQuaternion : INetworkable, IEquatable<NetworkedQuaternion
 
 	public void SerializeChanges( NetworkWriter writer )
 	{
+		_oldValue = _value;
 		Serialize( writer );
 	}
 

@@ -101,5 +101,15 @@ public static partial class TypeHelper
 	{
 		return type.IsClass;
 	}
+	
+	/// <summary>
+	/// Returns whether or not a type is a struct.
+	/// </summary>
+	/// <param name="type">The type to check if it is a struct.</param>
+	/// <returns>Whether or not a type is a struct.</returns>
+	public static bool IsStruct( Type type )
+	{
+		return type.IsValueType && !type.IsEnum;
+	}
 }
 #endif

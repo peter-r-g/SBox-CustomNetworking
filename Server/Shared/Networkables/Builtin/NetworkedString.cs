@@ -46,16 +46,16 @@ public struct NetworkedString : INetworkable, IEquatable<NetworkedString>
 
 	public void Serialize( NetworkWriter writer )
 	{
-		_oldValue = _value;
 		writer.Write( _value );
 	}
 
 	public void SerializeChanges( NetworkWriter writer )
 	{
+		_oldValue = _value;
 		Serialize( writer );
 	}
-	
-	public bool Equals(NetworkedString other)
+
+	public bool Equals( NetworkedString other )
 	{
 		return _value == other._value;
 	}

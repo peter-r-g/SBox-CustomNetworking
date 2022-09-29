@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using CustomNetworking.Shared;
 using CustomNetworking.Shared.Entities;
 using CustomNetworking.Shared.Messages;
+using CustomNetworking.Shared.Networkables;
 using CustomNetworking.Shared.RemoteProcedureCalls;
 using CustomNetworking.Shared.Utility;
 using Sandbox;
@@ -119,15 +120,16 @@ public class NetworkManager
 
 	public void Update()
 	{
-		foreach ( var entity in SharedEntityManager.Entities )
+		foreach ( var entity in SharedEntityManager.Entities.Values )
 			entity.Update();
 
-		if ( LocalClient.Pawn is null || !LocalClient.Pawn.Changed() || _pawnSw.Elapsed.TotalMilliseconds < 100 )
+		if ( LocalClient.Pawn is not INetworkable pawn || !pawn.Changed() || _pawnSw.Elapsed.TotalMilliseconds < 100 )
 			return;
-			
+		
 		var stream = new MemoryStream();
 		var writer = new NetworkWriter( stream );
-		writer.WriteNetworkableChanges( LocalClient.Pawn );
+		
+		writer.WriteNetworkableChanges( ref pawn );
 		writer.Close();
 
 		SendToServer( new ClientPawnUpdateMessage( stream.ToArray() ) );

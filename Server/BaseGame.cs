@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.IO;
 using CustomNetworking.Shared;
 using CustomNetworking.Shared.Entities;
@@ -72,10 +71,10 @@ public class BaseGame
 	/// </summary>
 	public virtual void Update()
 	{
-		foreach ( var serverEntity in ServerEntityManager.Entities )
+		foreach ( var serverEntity in ServerEntityManager.Entities.Values )
 			serverEntity.Update();
 		
-		foreach ( var sharedEntity in SharedEntityManager.Entities )
+		foreach ( var sharedEntity in SharedEntityManager.Entities.Values )
 			sharedEntity.Update();
 
 		// TODO: PVS type system?
@@ -85,11 +84,11 @@ public class BaseGame
 		writer.BaseStream.Position += sizeof(int);
 
 		var count = 0;
-		foreach ( var entity in SharedEntityManager.Entities )
+		foreach ( var entity in SharedEntityManager.Entities.Values )
 		{
 			if ( !entity.Changed() )
 				continue;
-
+			
 			count++;
 			writer.Write( entity.EntityId );
 			entity.SerializeChanges( writer );
@@ -115,7 +114,7 @@ public class BaseGame
 		
 		var toClient = To.Single( client );
 		NetworkServer.Instance.QueueMessage( toClient, new ClientListMessage( NetworkServer.Instance.Clients.Values ) );
-		NetworkServer.Instance.QueueMessage( toClient, new EntityListMessage( SharedEntityManager.Entities ) );
+		NetworkServer.Instance.QueueMessage( toClient, new EntityListMessage( SharedEntityManager.Entities.Values ) );
 		NetworkServer.Instance.QueueMessage( To.AllExcept( client ), new ClientStateChangedMessage( client.ClientId, ClientState.Connected ) );
 		
 		client.PawnChanged += ClientOnPawnChanged;
@@ -132,7 +131,8 @@ public class BaseGame
 		Logging.Info( $"{client} has disconnected" );
 		
 		NetworkServer.Instance.QueueMessage( To.AllExcept( client ), new ClientStateChangedMessage( client.ClientId, ClientState.Disconnected ) );
-		client.Pawn?.Delete();
+		if ( client.Pawn is not null )
+			SharedEntityManager.DeleteEntity( client.Pawn );
 		client.PawnChanged -= ClientOnPawnChanged;
 	}
 	

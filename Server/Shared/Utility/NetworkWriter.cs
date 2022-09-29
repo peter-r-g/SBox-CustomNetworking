@@ -81,7 +81,7 @@ public sealed class NetworkWriter : BinaryWriter
 	/// Writes the changes of an <see cref="INetworkable"/>.
 	/// </summary>
 	/// <param name="networkable">The instance of <see cref="INetworkable"/> to write changes.</param>
-	public void WriteNetworkableChanges( INetworkable networkable )
+	public void WriteNetworkableChanges( ref INetworkable networkable )
 	{
 		networkable.SerializeChanges( this );
 	}

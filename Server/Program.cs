@@ -49,6 +49,7 @@ public static class Program
 		Logging.Info( "Log started" );
 		
 		AppDomain.CurrentDomain.ProcessExit += OnProcessExit;
+		AppDomain.CurrentDomain.UnhandledException += OnUnhandledException;
 		_server = new NetworkServer( SharedConstants.Port, true );
 		_serverTask = _server.Start();
 		_game = new BaseGame();
@@ -76,10 +77,18 @@ public static class Program
 	/// </summary>
 	private static void OnProcessExit( object? sender, EventArgs e )
 	{
+		Logging.Info( "Shutting down..." );
 		_game.Shutdown();
 		ProgramCancellation.Cancel();
 		_serverTask?.Wait();
 		
+		Logging.Info( "Log finished" );
 		Logging.Dispose();
+	}
+	
+	private static void OnUnhandledException( object sender, UnhandledExceptionEventArgs e )
+	{
+		Logging.Fatal( (Exception)e.ExceptionObject );
+		OnProcessExit( null, EventArgs.Empty );
 	}
 }

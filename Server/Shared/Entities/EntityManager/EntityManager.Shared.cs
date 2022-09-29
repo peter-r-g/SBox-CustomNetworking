@@ -12,7 +12,7 @@ public sealed partial class EntityManager
 	/// <summary>
 	/// A read only list of all <see cref="IEntity"/>s that are in this <see cref="EntityManager"/>.
 	/// </summary>
-	public IReadOnlyList<IEntity> Entities => _entities;
+	public IReadOnlyDictionary<int, IEntity> Entities => _entities;
 
 	/// <summary>
 	/// The event handler for <see cref="EntityManager"/>.<see cref="EntityManager.EntityCreated"/>.
@@ -35,7 +35,7 @@ public sealed partial class EntityManager
 	/// <summary>
 	/// The list of all entities contained in this manager.
 	/// </summary>
-	private readonly List<IEntity> _entities = new();
+	private readonly Dictionary<int, IEntity> _entities = new();
 	/// <summary>
 	/// The next identifier to be given to a new entity.
 	/// </summary>
@@ -77,6 +77,7 @@ public sealed partial class EntityManager
 	{
 		entity.Delete();
 		EntityDeleted?.Invoke( entity );
+		_entities.Remove( entity.EntityId );
 	}
 
 	/// <summary>
@@ -94,7 +95,6 @@ public sealed partial class EntityManager
 		}
 
 		DeleteEntity( entity );
-		_entities.Remove( entity );
 	}
 
 	/// <summary>
@@ -102,7 +102,7 @@ public sealed partial class EntityManager
 	/// </summary>
 	public void DeleteAllEntities()
 	{
-		foreach ( var entity in _entities )
+		foreach ( var entity in _entities.Values )
 			DeleteEntity( entity );
 		
 		_entities.Clear();
@@ -115,9 +115,9 @@ public sealed partial class EntityManager
 	/// <returns>The <see cref="IEntity"/> that was found. Null if no <see cref="IEntity"/> was found.</returns>
 	public IEntity? GetEntityById( int entityId )
 	{
-		foreach ( var entity in _entities )
+		foreach ( var (entId, entity) in _entities )
 		{
-			if ( entity.EntityId == entityId )
+			if ( entId == entityId )
 				return entity;	
 		}
 
@@ -140,7 +140,7 @@ public sealed partial class EntityManager
 			return default!;
 		}
 		
-		_entities.Add( entity );
+		_entities.Add( entityId, entity );
 		EntityCreated?.Invoke( entity );
 		return entity;
 	}

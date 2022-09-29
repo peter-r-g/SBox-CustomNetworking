@@ -29,7 +29,7 @@ public partial class EntityManager
 	public void DeserializeAndAddEntity( NetworkReader reader )
 	{
 		var entity = reader.ReadEntity();
-		_entities.Add( entity );
+		_entities.Add( entity.EntityId, entity );
 	}
 }
 #endif
