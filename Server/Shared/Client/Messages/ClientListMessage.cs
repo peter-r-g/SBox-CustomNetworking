@@ -11,7 +11,7 @@ public sealed class ClientListMessage : NetworkMessage
 	/// <summary>
 	/// Contains all client IDs to notify the client about.
 	/// </summary>
-	public List<(long, int)> ClientIds { get; private set; }
+	public List<(long, int)> ClientIds { get; private set; } = null!;
 
 #if SERVER
 	public ClientListMessage( ICollection<INetworkClient> clients )

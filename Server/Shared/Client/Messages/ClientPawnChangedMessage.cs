@@ -12,7 +12,7 @@ public sealed class ClientPawnChangedMessage : NetworkMessage
 	/// <summary>
 	/// The <see cref="INetworkClient"/> that has had its <see cref="INetworkClient.Pawn"/> changed.
 	/// </summary>
-	public INetworkClient Client { get; private set; }
+	public INetworkClient Client { get; private set; } = null!;
 	/// <summary>
 	/// The old <see cref="IEntity"/> the <see cref="Client"/> was controlling.
 	/// </summary>

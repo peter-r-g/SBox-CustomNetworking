@@ -14,7 +14,7 @@ public class BasePlayer  : NetworkEntity
 {
 #if CLIENT 
 	/// <summary>
-	/// The S&box entity of the player.
+	/// The Sbox entity of the player.
 	/// </summary>
 	private readonly TestPlayer _player;
 #endif
@@ -68,14 +68,16 @@ public class BasePlayer  : NetworkEntity
 	{
 		base.OnPositionChanged( sender, args );
 
-		_player.Position = (NetworkedVector3)sender;
+		if ( sender is not null )
+			_player.Position = (NetworkedVector3)sender;
 	}
 
 	protected override void OnRotationChanged( object? sender, EventArgs args )
 	{
 		base.OnRotationChanged( sender, args );
 
-		_player.Rotation = (NetworkedQuaternion)sender;
+		if ( sender is not null )
+			_player.Rotation = (NetworkedQuaternion)sender;
 	}
 #endif
 }
