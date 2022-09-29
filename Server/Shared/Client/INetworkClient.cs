@@ -18,11 +18,11 @@ namespace CustomNetworking.Shared;
 public interface INetworkClient
 {
 	/// <summary>
-	/// 
+	/// The delegate for handling when <see cref="INetworkClient.PawnChanged"/> has been invoked.
 	/// </summary>
 	delegate void PawnChangedEventHandler( INetworkClient client, IEntity? oldPawn, IEntity? newPawn );
 	/// <summary>
-	/// 
+	/// Called when a clients pawn has changed.
 	/// </summary>
 	event PawnChangedEventHandler? PawnChanged;
 	

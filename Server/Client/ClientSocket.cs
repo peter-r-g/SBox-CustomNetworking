@@ -9,12 +9,15 @@ using vtortola.WebSockets;
 
 namespace CustomNetworking.Server;
 
+/// <summary>
+/// A clients socket connection.
+/// </summary>
 internal sealed class ClientSocket
 {
 	/// <summary>
-	/// This clients cancellation source. If you want to disconnect the client then cancel this.
+	/// This clients cancellation source.
 	/// </summary>
-	public readonly CancellationTokenSource ClientTokenSource = new();
+	internal readonly CancellationTokenSource ClientTokenSource = new();
 	
 	/// <summary>
 	/// The event handler for <see cref="ClientSocket"/>.<see cref="ClientSocket.DataReceived"/>.
@@ -33,9 +36,21 @@ internal sealed class ClientSocket
 	/// </summary>
 	public event MessageReceivedEventHandler? MessageReceived;
 	
+	/// <summary>
+	/// The underlying socket used by the client.
+	/// </summary>
 	private readonly WebSocket _socket;
+	/// <summary>
+	/// The data queue to send to the client.
+	/// </summary>
 	private readonly ConcurrentQueue<(WebSocketMessageType, byte[])> _dataQueue = new();
+	/// <summary>
+	/// A task for sending data to the client.
+	/// </summary>
 	private Task _sendTask = Task.CompletedTask;
+	/// <summary>
+	/// A task for receiving data from the client.
+	/// </summary>
 	private Task _receiveTask = Task.CompletedTask;
 
 	public ClientSocket( WebSocket socket )
@@ -71,6 +86,9 @@ internal sealed class ClientSocket
 		_dataQueue.Enqueue( (WebSocketMessageType.Text, Encoding.UTF8.GetBytes( message )) );
 	}
 	
+	/// <summary>
+	/// Handles the client socket connected asynchronously.
+	/// </summary>
 	internal async Task HandleConnectionAsync()
 	{
 		try
@@ -99,6 +117,9 @@ internal sealed class ClientSocket
 		}
 	}
 
+	/// <summary>
+	/// Handles reading data incoming from the client.
+	/// </summary>
 	private async Task HandleReadAsync()
 	{
 		var message = await _socket.ReadMessageAsync( ClientTokenSource.Token ).ConfigureAwait( false );
@@ -131,6 +152,9 @@ internal sealed class ClientSocket
 		}
 	}
 
+	/// <summary>
+	/// Handles writing data to the client.
+	/// </summary>
 	private async Task HandleWriteAsync()
 	{
 		if ( !_dataQueue.TryDequeue( out var data ) )

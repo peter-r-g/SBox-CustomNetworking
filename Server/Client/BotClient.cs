@@ -7,8 +7,14 @@ using CustomNetworking.Shared.Utility;
 
 namespace CustomNetworking.Server;
 
+/// <summary>
+/// A bot client.
+/// </summary>
 public class BotClient : INetworkClient
 {
+	/// <summary>
+	/// A bots own client-side message handlers.
+	/// </summary>
 	private static readonly Dictionary<Type, Action<BotClient, NetworkMessage>> MessageHandlers = new();
 	public event INetworkClient.PawnChangedEventHandler? PawnChanged;
 	
@@ -35,12 +41,12 @@ public class BotClient : INetworkClient
 	{
 		ClientId = clientId;
 	}
-
+	
 	public void SendMessage( byte[] bytes )
 	{
 		Logging.Error( $"You should not be sending bytes to a bot. Use {nameof(SendMessage)} with the {nameof(NetworkMessage)} overload", new InvalidOperationException() );
 	}
-
+	
 	public void SendMessage( NetworkMessage message )
 	{
 		NetworkServer.Instance.MessagesSentToClients++;
