@@ -1,8 +1,6 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Runtime.CompilerServices;
 using CustomNetworking.Shared.Utility;
 #if CLIENT
 using Sandbox;
@@ -15,8 +13,6 @@ namespace CustomNetworking.Shared.Networkables;
 /// </summary>
 public abstract class BaseNetworkable : INetworkable
 {
-	public event EventHandler? Changed;
-	
 #if SERVER
 	/// <summary>
 	/// A <see cref="PropertyInfo"/> cache of all networked properties.
@@ -29,10 +25,6 @@ public abstract class BaseNetworkable : INetworkable
 	/// </summary>
 	protected readonly Dictionary<string, PropertyDescription> PropertyNameCache = new();
 #endif
-	/// <summary>
-	/// A <see cref="HashSet{T}"/> of networked properties that have been changed.
-	/// </summary>
-	protected readonly HashSet<string> ChangedProperties = new();
 
 	protected BaseNetworkable()
 	{
@@ -40,24 +32,22 @@ public abstract class BaseNetworkable : INetworkable
 			         .Where( property => property.PropertyType.IsAssignableTo( typeof(INetworkable) ) ) )
 			PropertyNameCache.Add( property.Name, property );
 	}
-	
-	/// <summary>
-	/// Marks a property as changed and invokes the <see cref="Changed"/> event.
-	/// </summary>
-	/// <param name="propertyName">The name of the property that changed.</param>
-	protected virtual void TriggerNetworkingChange( [CallerMemberName] string propertyName = "" )
+
+	public bool Changed()
 	{
-		if ( !PropertyNameCache.ContainsKey( propertyName ) )
-			throw new InvalidOperationException( $"\"{propertyName}\" is not a networkable property on {GetType().Name}." );
-		
-		ChangedProperties.Add( propertyName );
-		Changed?.Invoke( this, EventArgs.Empty );
+		foreach ( var propertyInfo in PropertyNameCache.Values )
+		{
+			if ( ((INetworkable)propertyInfo.GetValue( this )!).Changed() )
+				return true;
+		}
+
+		return false;
 	}
 
 	public virtual void Deserialize( NetworkReader reader )
 	{
-		foreach ( var property in PropertyNameCache.Values )
-			property.SetValue( this, reader.ReadNetworkable() );
+		foreach ( var propertyInfo in PropertyNameCache.Values )
+			propertyInfo.SetValue( this, reader.ReadNetworkable() );
 	}
 
 	public virtual void DeserializeChanges( NetworkReader reader )
@@ -70,24 +60,35 @@ public abstract class BaseNetworkable : INetworkable
 			var currentValue = property.GetValue( this );
 			(currentValue as INetworkable)!.DeserializeChanges( reader );
 			property.SetValue( this, currentValue );
-			TriggerNetworkingChange( property.Name );
 		}
 	}
 	
 	public virtual void Serialize( NetworkWriter writer )
 	{
-		foreach ( var property in PropertyNameCache.Values )
-			writer.WriteNetworkable( (INetworkable)property.GetValue( this )! );
+		foreach ( var propertyInfo in PropertyNameCache.Values )
+			writer.WriteNetworkable( (INetworkable)propertyInfo.GetValue( this )! );
 	}
 
 	public virtual void SerializeChanges( NetworkWriter writer )
 	{
-		writer.Write( ChangedProperties.Count );
-		foreach ( var propertyName in ChangedProperties )
+		var numChanged = 0;
+		var changedStreamPos = writer.BaseStream.Position;
+		writer.BaseStream.Position += sizeof(int);
+		
+		foreach ( var (propertyName, propertyInfo) in PropertyNameCache )
 		{
+			var networkable = (INetworkable)propertyInfo.GetValue( this )!;
+			if ( !networkable.Changed() )
+				continue;
+
+			numChanged++;
 			writer.Write( propertyName );
-			writer.WriteNetworkableChanges( (INetworkable)PropertyNameCache[propertyName].GetValue( this )! );
+			writer.WriteNetworkableChanges( networkable );
 		}
-		ChangedProperties.Clear();
+
+		var tempPos = writer.BaseStream.Position;
+		writer.BaseStream.Position = changedStreamPos;
+		writer.Write( numChanged );
+		writer.BaseStream.Position = tempPos;
 	}
 }

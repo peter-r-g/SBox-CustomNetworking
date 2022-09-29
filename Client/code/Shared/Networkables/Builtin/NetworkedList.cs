@@ -11,8 +11,6 @@ namespace CustomNetworking.Shared.Networkables.Builtin;
 /// <typeparam name="T">The type contained in the <see cref="List{T}"/>.</typeparam>
 public sealed class NetworkedList<T> : INetworkable, IEnumerable<T> where T : INetworkable
 {
-	public event EventHandler? Changed;
-	
 	/// <summary>
 	/// The underlying <see cref="List{T}"/> being contained inside.
 	/// </summary>
@@ -22,7 +20,11 @@ public sealed class NetworkedList<T> : INetworkable, IEnumerable<T> where T : IN
 		set
 		{
 			_value = value;
-			Changed?.Invoke( this, EventArgs.Empty );
+			
+			_changes.Clear();
+			_changes.Add( (ListChangeType.Clear, default) );
+			foreach ( var val in value )
+				_changes.Add( (ListChangeType.Add, val) );
 		}
 	}
 	private List<T> _value;
@@ -42,12 +44,12 @@ public sealed class NetworkedList<T> : INetworkable, IEnumerable<T> where T : IN
 
 	public NetworkedList( List<T> list )
 	{
-		_value = list;
+		Value = list;
 	}
 
 	public NetworkedList()
 	{
-		_value = new List<T>();
+		Value = new List<T>();
 	}
 
 	/// <summary>
@@ -58,7 +60,6 @@ public sealed class NetworkedList<T> : INetworkable, IEnumerable<T> where T : IN
 	{
 		Value.Add( item );
 		_changes.Add( (ListChangeType.Add, item) );
-		Changed?.Invoke( this, EventArgs.Empty );
 	}
 
 	/// <summary>
@@ -79,7 +80,6 @@ public sealed class NetworkedList<T> : INetworkable, IEnumerable<T> where T : IN
 	{
 		Value.Remove( item );
 		_changes.Add( (ListChangeType.Remove, item) );
-		Changed?.Invoke( this, EventArgs.Empty );
 	}
 
 	/// <summary>
@@ -90,7 +90,6 @@ public sealed class NetworkedList<T> : INetworkable, IEnumerable<T> where T : IN
 		Value.Clear();
 		_changes.Clear();
 		_changes.Add( (ListChangeType.Clear, default) );
-		Changed?.Invoke( this, EventArgs.Empty );
 	}
 	
 	public IEnumerator<T> GetEnumerator()
@@ -101,6 +100,11 @@ public sealed class NetworkedList<T> : INetworkable, IEnumerable<T> where T : IN
 	IEnumerator IEnumerable.GetEnumerator()
 	{
 		return GetEnumerator();
+	}
+
+	public bool Changed()
+	{
+		return _changes.Count > 0;
 	}
 
 	public void Deserialize( NetworkReader reader )

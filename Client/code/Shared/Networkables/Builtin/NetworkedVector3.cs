@@ -1,4 +1,5 @@
 using System;
+using System.Numerics;
 using CustomNetworking.Shared.Utility;
 
 namespace CustomNetworking.Shared.Networkables.Builtin;
@@ -8,8 +9,6 @@ namespace CustomNetworking.Shared.Networkables.Builtin;
 /// </summary>
 public struct NetworkedVector3 : INetworkable, IEquatable<NetworkedVector3>
 {
-	public event EventHandler? Changed = null;
-	
 	/// <summary>
 	/// The underlying <see cref="System.Numerics.Vector3"/> contained inside.
 	/// </summary>
@@ -18,12 +17,12 @@ public struct NetworkedVector3 : INetworkable, IEquatable<NetworkedVector3>
 		get => _value;
 		set
 		{
-			var oldValue = _value;
+			_oldValue = _value;
 			_value = value;
-			Changed?.Invoke( oldValue, EventArgs.Empty );
 		}
 	}
 	private System.Numerics.Vector3 _value;
+	private System.Numerics.Vector3 _oldValue;
 
 	/// <summary>
 	/// The <see cref="System.Numerics.Vector3.X"/> component of the <see cref="System.Numerics.Vector3"/>.
@@ -40,12 +39,20 @@ public struct NetworkedVector3 : INetworkable, IEquatable<NetworkedVector3>
 
 	public NetworkedVector3( float x, float y, float z )
 	{
-		_value = new System.Numerics.Vector3( x, y, z );
+		var vector3 = new System.Numerics.Vector3( x, y, z );
+		_value = vector3;
+		_oldValue = default;
 	}
 
 	public NetworkedVector3( System.Numerics.Vector3 vector3 )
 	{
 		_value = vector3;
+		_oldValue = default;
+	}
+
+	public bool Changed()
+	{
+		return _value != _oldValue;
 	}
 
 	public void Deserialize( NetworkReader reader )
@@ -60,6 +67,7 @@ public struct NetworkedVector3 : INetworkable, IEquatable<NetworkedVector3>
 
 	public void Serialize( NetworkWriter writer )
 	{
+		_oldValue = _value;
 		writer.Write( _value );
 	}
 

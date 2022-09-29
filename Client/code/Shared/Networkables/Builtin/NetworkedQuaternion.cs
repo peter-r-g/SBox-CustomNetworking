@@ -9,8 +9,6 @@ namespace CustomNetworking.Shared.Networkables.Builtin;
 /// </summary>
 public struct NetworkedQuaternion : INetworkable, IEquatable<NetworkedQuaternion>
 {
-	public event EventHandler? Changed = null;
-	
 	/// <summary>
 	/// The underlying <see cref="Quaternion"/> contained inside.
 	/// </summary>
@@ -19,12 +17,12 @@ public struct NetworkedQuaternion : INetworkable, IEquatable<NetworkedQuaternion
 		get => _value;
 		set
 		{
-			var oldValue = _value;
+			_oldValue = _value;
 			_value = value;
-			Changed?.Invoke( oldValue, EventArgs.Empty );
 		}
 	}
 	private Quaternion _value;
+	private Quaternion _oldValue;
 
 	/// <summary>
 	/// The <see cref="Quaternion.X"/> component of the <see cref="Quaternion"/>.
@@ -46,6 +44,12 @@ public struct NetworkedQuaternion : INetworkable, IEquatable<NetworkedQuaternion
 	private NetworkedQuaternion( Quaternion quaternion )
 	{
 		_value = quaternion;
+		_oldValue = default;
+	}
+
+	public bool Changed()
+	{
+		return _value != _oldValue;
 	}
 
 	public void Deserialize( NetworkReader reader )
@@ -60,6 +64,7 @@ public struct NetworkedQuaternion : INetworkable, IEquatable<NetworkedQuaternion
 
 	public void Serialize( NetworkWriter writer )
 	{
+		_oldValue = _value;
 		writer.Write( X );
 		writer.Write( Y );
 		writer.Write( Z );

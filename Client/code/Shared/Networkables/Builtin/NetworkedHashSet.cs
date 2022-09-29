@@ -11,8 +11,6 @@ namespace CustomNetworking.Shared.Networkables.Builtin;
 /// <typeparam name="T">The type contained in the <see cref="HashSet{T}"/>.</typeparam>
 public sealed class NetworkedHashSet<T> : INetworkable, IEnumerable<T> where T : INetworkable
 {
-	public event EventHandler? Changed;
-	
 	/// <summary>
 	/// The underlying <see cref="HashSet{T}"/> being contained inside.
 	/// </summary>
@@ -22,7 +20,11 @@ public sealed class NetworkedHashSet<T> : INetworkable, IEnumerable<T> where T :
 		set
 		{
 			_value = value;
-			Changed?.Invoke( this, EventArgs.Empty );
+			
+			_changes.Clear();
+			_changes.Add( (HashSetChangeType.Clear, default) );
+			foreach ( var val in value )
+				_changes.Add( (HashSetChangeType.Add, val) );
 		}
 	}
 	private HashSet<T> _value;
@@ -60,8 +62,6 @@ public sealed class NetworkedHashSet<T> : INetworkable, IEnumerable<T> where T :
 			return false;
 
 		_changes.Add( (HashSetChangeType.Add, item) );
-		Changed?.Invoke( this, EventArgs.Empty );
-
 		return true;
 	}
 
@@ -87,8 +87,6 @@ public sealed class NetworkedHashSet<T> : INetworkable, IEnumerable<T> where T :
 			return false;
 		
 		_changes.Add( (HashSetChangeType.Remove, item) );
-		Changed?.Invoke( this, EventArgs.Empty );
-
 		return true;
 	}
 
@@ -100,7 +98,6 @@ public sealed class NetworkedHashSet<T> : INetworkable, IEnumerable<T> where T :
 		Value.Clear();
 		_changes.Clear();
 		_changes.Add( (HashSetChangeType.Clear, default) );
-		Changed?.Invoke( this, EventArgs.Empty );
 	}
 	
 	public IEnumerator<T> GetEnumerator()
@@ -111,6 +108,11 @@ public sealed class NetworkedHashSet<T> : INetworkable, IEnumerable<T> where T :
 	IEnumerator IEnumerable.GetEnumerator()
 	{
 		return GetEnumerator();
+	}
+	
+	public bool Changed()
+	{
+		return _changes.Count > 0;
 	}
 
 	public void Deserialize( NetworkReader reader )

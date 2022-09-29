@@ -31,15 +31,6 @@ public sealed partial class EntityManager
 	/// Called when an <see cref="IEntity"/> has been deleted in the <see cref="EntityManager"/>.
 	/// </summary>
 	public DeletedEventHandler? EntityDeleted;
-
-	/// <summary>
-	/// The event handler for <see cref="EntityManager"/>.<see cref="EntityManager.EntityChanged"/>.
-	/// </summary>
-	public delegate void ChangedEventHandler( IEntity entity );
-	/// <summary>
-	/// Called when an <see cref="IEntity"/> inside this <see cref="EntityManager"/> has changed.
-	/// </summary>
-	public ChangedEventHandler? EntityChanged;
 	
 	/// <summary>
 	/// The list of all entities contained in this manager.
@@ -84,7 +75,6 @@ public sealed partial class EntityManager
 	/// <param name="entity">The entity to delete.</param>
 	public void DeleteEntity( IEntity entity )
 	{
-		entity.Changed -= EntityOnChanged;
 		entity.Delete();
 		EntityDeleted?.Invoke( entity );
 	}
@@ -151,22 +141,7 @@ public sealed partial class EntityManager
 		}
 		
 		_entities.Add( entity );
-		entity.Changed += EntityOnChanged;
 		EntityCreated?.Invoke( entity );
 		return entity;
-	}
-	
-	/// <summary>
-	/// Called when an entity has changed.
-	/// </summary>
-	private void EntityOnChanged( object? sender, EventArgs args )
-	{
-		if ( sender is not IEntity entity )
-		{
-			Logging.Error( "Sender was not valid" );
-			return;
-		}
-		
-		EntityChanged?.Invoke( entity );
 	}
 }

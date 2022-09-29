@@ -9,9 +9,9 @@ namespace CustomNetworking.Shared.Networkables;
 public interface INetworkable
 {
 	/// <summary>
-	/// Called when something in the <see cref="INetworkable"/> has changed.
+	/// Returns whether or not the <see cref="INetworkable"/> has changed.
 	/// </summary>
-	event EventHandler? Changed;
+	bool Changed();
 	
 	/// <summary>
 	/// Deserializes all information relating to the <see cref="INetworkable"/>.
