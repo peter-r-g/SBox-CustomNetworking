@@ -41,7 +41,13 @@ public partial class EntityManager
 	/// </summary>
 	public ChangedEventHandler? EntityChanged;
 	
+	/// <summary>
+	/// The list of all entities contained in this manager.
+	/// </summary>
 	private readonly List<IEntity> _entities = new();
+	/// <summary>
+	/// The next identifier to be given to a new entity.
+	/// </summary>
 	private int _nextEntityId;
 
 	/// <summary>
@@ -128,6 +134,13 @@ public partial class EntityManager
 		return null;
 	}
 	
+	/// <summary>
+	/// Creates an entity.
+	/// </summary>
+	/// <param name="entityId">The unique identifier to give to the entity.</param>
+	/// <param name="entityType">The type of the entity. Reverts to <see cref="T"/> if not given.</param>
+	/// <typeparam name="T">The type of the entity.</typeparam>
+	/// <returns>The created entity.</returns>
 	private T CreateInternal<T>( int entityId, Type? entityType = null ) where T : IEntity
 	{
 		var entity = TypeHelper.Create<T>( entityType ?? typeof(T), entityId );
@@ -143,6 +156,9 @@ public partial class EntityManager
 		return entity;
 	}
 	
+	/// <summary>
+	/// Called when an entity has changed.
+	/// </summary>
 	private void EntityOnChanged( object? sender, EventArgs args )
 	{
 		if ( sender is not IEntity entity )

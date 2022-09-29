@@ -7,9 +7,15 @@ using Sandbox;
 
 namespace CustomNetworking.Shared.Entities;
 
+/// <summary>
+/// A test class for player input and basic entity networking.
+/// </summary>
 public class BasePlayer  : NetworkEntity
 {
-#if CLIENT
+#if CLIENT 
+	/// <summary>
+	/// The S&box entity of the player.
+	/// </summary>
 	private readonly TestPlayer _player;
 #endif
 	
