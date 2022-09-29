@@ -33,11 +33,6 @@ public class BaseGame
 	/// </summary>
 	protected virtual int TickRate => 60;
 
-	/// <summary>
-	/// Keeps track of all edited entities in the <see cref="SharedEntityManager"/>.
-	/// </summary>
-	private readonly HashSet<IEntity> _changedEntities = new();
-
 	public BaseGame()
 	{
 		if ( Current is not null )
@@ -59,7 +54,6 @@ public class BaseGame
 
 		SharedEntityManager.EntityCreated += OnNetworkedEntityCreated;
 		SharedEntityManager.EntityDeleted += OnNetworkedEntityDeleted;
-		SharedEntityManager.EntityChanged += OnNetworkedEntityChanged;
 	}
 
 	/// <summary>
@@ -85,21 +79,30 @@ public class BaseGame
 			sharedEntity.Update();
 
 		// TODO: PVS type system?
-		if ( _changedEntities.Count == 0 )
-			return;
-		
 		var stream = new MemoryStream();
 		var writer = new NetworkWriter( stream );
-		writer.Write( _changedEntities.Count );
-		foreach ( var entity in _changedEntities )
+		var countPos = writer.BaseStream.Position;
+		writer.BaseStream.Position += sizeof(int);
+
+		var count = 0;
+		foreach ( var entity in SharedEntityManager.Entities )
 		{
+			if ( !entity.Changed() )
+				continue;
+
+			count++;
 			writer.Write( entity.EntityId );
 			entity.SerializeChanges( writer );
 		}
-		_changedEntities.Clear();
+
+		var tempPos = writer.BaseStream.Position;
+		writer.BaseStream.Position = countPos;
+		writer.Write( count );
+		writer.BaseStream.Position = tempPos;
 		writer.Close();
 		
-		NetworkServer.Instance.QueueMessage( To.All, new MultiEntityUpdateMessage( stream.ToArray() ) );
+		if ( count != 0 )
+			NetworkServer.Instance.QueueMessage( To.All, new MultiEntityUpdateMessage( stream.ToArray() ) );
 	}
 	
 	/// <summary>
@@ -169,15 +172,6 @@ public class BaseGame
 	protected virtual void OnNetworkedEntityDeleted( IEntity entity )
 	{
 		NetworkServer.Instance.QueueMessage( To.All, new DeleteEntityMessage( entity ) );
-	}
-	
-	/// <summary>
-	/// Called when an <see cref="IEntity"/> has been changed in the <see cref="SharedEntityManager"/>.
-	/// </summary>
-	/// <param name="entity">The <see cref="IEntity"/> that has been changed.</param>
-	protected virtual void OnNetworkedEntityChanged( IEntity entity )
-	{
-		_changedEntities.Add( entity );
 	}
 	
 	/// <summary>

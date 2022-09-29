@@ -13,8 +13,6 @@ namespace CustomNetworking.Shared.Entities;
 /// </summary>
 public partial class NetworkEntity : BaseNetworkable, IEntity
 {
-	public new event EventHandler? Changed;
-	
 	public int EntityId { get; }
 
 	public INetworkClient? Owner
@@ -33,37 +31,13 @@ public partial class NetworkEntity : BaseNetworkable, IEntity
 	/// The world position of the <see cref="NetworkEntity"/>.
 	/// </summary>
 	[ClientAuthority]
-	public NetworkedVector3 Position
-	{
-		get => _position;
-		set
-		{
-			var oldPosition = _position;
-			_position.Changed -= OnPositionChanged;
-			_position = value;
-			value.Changed += OnPositionChanged;
-			OnPositionChanged( value, EventArgs.Empty );
-		}
-	}
-	private NetworkedVector3 _position;
+	public NetworkedVector3 Position { get; set; }
 	
 	/// <summary>
 	/// The world rotation of the <see cref="NetworkEntity"/>.
 	/// </summary>
 	[ClientAuthority]
-	public NetworkedQuaternion Rotation
-	{
-		get => _rotation;
-		set
-		{
-			var oldRotation = _rotation;
-			_rotation.Changed -= OnRotationChanged;
-			_rotation = value;
-			value.Changed += OnRotationChanged;
-			OnRotationChanged( value, EventArgs.Empty );
-		}
-	}
-	private NetworkedQuaternion _rotation;
+	public NetworkedQuaternion Rotation { get; set; }
 
 	public NetworkEntity( int entityId )
 	{
@@ -98,29 +72,6 @@ public partial class NetworkEntity : BaseNetworkable, IEntity
 	protected virtual void OnOwnerChanged( INetworkClient? oldOwner, INetworkClient? newOwner )
 	{
 	}
-	
-	/// <summary>
-	/// Called when <see cref="Position"/> has changed.
-	/// </summary>
-	protected virtual void OnPositionChanged( object? sender, EventArgs args )
-	{
-		TriggerNetworkingChange( nameof(Position) );
-	}
-	
-	/// <summary>
-	/// Called when <see cref="Rotation"/> has changed.
-	/// </summary>
-	protected virtual void OnRotationChanged( object? sender, EventArgs args )
-	{
-		TriggerNetworkingChange( nameof(Rotation) );
-	}
-
-	protected override void TriggerNetworkingChange( string propertyName = "" )
-	{
-		base.TriggerNetworkingChange( propertyName );
-		
-		Changed?.Invoke( this, EventArgs.Empty );
-	}
 
 	public sealed override void DeserializeChanges( NetworkReader reader )
 	{
@@ -140,7 +91,6 @@ public partial class NetworkEntity : BaseNetworkable, IEntity
 			var currentValue = property.GetValue( this );
 			(currentValue as INetworkable)!.DeserializeChanges( reader );
 			property.SetValue( this, currentValue );
-			TriggerNetworkingChange( property.Name );
 		}
 	}
 }

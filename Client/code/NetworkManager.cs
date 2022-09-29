@@ -49,7 +49,6 @@ public class NetworkManager
 	private readonly Queue<byte[]> _incomingQueue = new();
 	private readonly Queue<NetworkMessage> _outgoingQueue = new();
 	private readonly Stopwatch _pawnSw = Stopwatch.StartNew();
-	private bool _localPawnChanged;
 	private long _localClientId;
 
 	public NetworkManager()
@@ -89,6 +88,7 @@ public class NetworkManager
 			var headers = new Dictionary<string, string> {{"Steam", _localClientId.ToString()}};
 			var webSocketUri = (secure ? "wss://" : "ws://") + uri + ':' + port + '/' ;
 			await _webSocket.Connect( webSocketUri, headers );
+			Clients.Add( _localClientId, new NetworkClient( _localClientId ) );
 			Connected = true;
 			ConnectedToServer?.Invoke();
 		}
@@ -122,15 +122,8 @@ public class NetworkManager
 		foreach ( var entity in SharedEntityManager.Entities )
 			entity.Update();
 
-		if ( !_localPawnChanged || _pawnSw.Elapsed.TotalMilliseconds < 100 )
+		if ( LocalClient.Pawn is null || !LocalClient.Pawn.Changed() || _pawnSw.Elapsed.TotalMilliseconds < 100 )
 			return;
-
-		if ( LocalClient.Pawn is null )
-		{
-			Logging.Error( "Pawn was marked as changed but the client has no pawn.", new InvalidOperationException() );
-			_localPawnChanged = false;
-			return;
-		}
 			
 		var stream = new MemoryStream();
 		var writer = new NetworkWriter( stream );
@@ -138,7 +131,6 @@ public class NetworkManager
 		writer.Close();
 
 		SendToServer( new ClientPawnUpdateMessage( stream.ToArray() ) );
-		_localPawnChanged = false;
 		_pawnSw.Restart();
 	}
 	
@@ -247,6 +239,9 @@ public class NetworkManager
 
 		foreach ( var (clientId, pawnId) in clientListMessage.ClientIds )
 		{
+			if ( clientId == _localClientId )
+				continue;
+			
 			var client = new NetworkClient( clientId ) {Pawn = SharedEntityManager.GetEntityById( pawnId )};
 			Clients.Add( clientId, client );
 		}
@@ -312,25 +307,12 @@ public class NetworkManager
 			return;
 
 		if ( clientPawnChangedMessage.Client.Pawn is not null )
-		{
-			if ( clientPawnChangedMessage.Client == LocalClient )
-				clientPawnChangedMessage.Client.Pawn.Changed -= OnLocalPawnChanged;
 			clientPawnChangedMessage.Client.Pawn.Owner = null;
-		}
 
 		clientPawnChangedMessage.Client.Pawn = clientPawnChangedMessage.NewPawn;
 
 		if ( clientPawnChangedMessage.Client.Pawn is not null )
-		{
-			if ( clientPawnChangedMessage.Client == LocalClient )
-				clientPawnChangedMessage.Client.Pawn.Changed += OnLocalPawnChanged;
 			clientPawnChangedMessage.Client.Pawn.Owner = clientPawnChangedMessage.Client;
-		}
-	}
-
-	private void OnLocalPawnChanged( object? sender, EventArgs args )
-	{
-		_localPawnChanged = true;
 	}
 	
 	private void HandleMultiEntityUpdateMessage( NetworkMessage message )

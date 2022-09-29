@@ -14,7 +14,7 @@ namespace CustomNetworking.Shared.Messages;
 /// </summary>
 public abstract class NetworkMessage : INetworkable
 {
-	public event EventHandler? Changed;
+	public bool Changed() => false;
 	
 	public abstract void Deserialize( NetworkReader reader );
 	public void DeserializeChanges( NetworkReader reader )

@@ -8,8 +8,6 @@ namespace CustomNetworking.Shared.Networkables.Builtin;
 /// </summary>
 public struct NetworkedString : INetworkable, IEquatable<NetworkedString>
 {
-	public event EventHandler? Changed = null;
-	
 	/// <summary>
 	/// The underlying <see cref="string"/> contained inside.
 	/// </summary>
@@ -18,16 +16,22 @@ public struct NetworkedString : INetworkable, IEquatable<NetworkedString>
 		get => _value;
 		set
 		{
-			var oldValue = _value;
+			_oldValue = _value;
 			_value = value;
-			Changed?.Invoke( oldValue, EventArgs.Empty );
 		}
 	}
 	private string _value;
+	private string _oldValue;
 
 	private NetworkedString( string s )
 	{
 		_value = s;
+		_oldValue = string.Empty;
+	}
+
+	public bool Changed()
+	{
+		return _value != _oldValue;
 	}
 
 	public void Deserialize( NetworkReader reader )
@@ -42,6 +46,7 @@ public struct NetworkedString : INetworkable, IEquatable<NetworkedString>
 
 	public void Serialize( NetworkWriter writer )
 	{
+		_oldValue = _value;
 		writer.Write( _value );
 	}
 

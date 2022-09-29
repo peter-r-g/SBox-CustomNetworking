@@ -9,8 +9,6 @@ namespace CustomNetworking.Shared.Networkables.Builtin;
 /// </summary>
 public struct NetworkedInt : INetworkable, IEquatable<NetworkedInt>
 {
-	public event EventHandler? Changed = null;
-	
 	/// <summary>
 	/// The underlying <see cref="int"/> being contained inside.
 	/// </summary>
@@ -19,16 +17,22 @@ public struct NetworkedInt : INetworkable, IEquatable<NetworkedInt>
 		get => _value;
 		set
 		{
-			var oldValue = _value;
+			_oldValue = _value;
 			_value = value;
-			Changed?.Invoke( oldValue, EventArgs.Empty );
 		}
 	}
 	private int _value;
+	private int _oldValue;
 
 	private NetworkedInt( int i )
 	{
 		_value = i;
+		_oldValue = default;
+	}
+
+	public bool Changed()
+	{
+		return _value != _oldValue;
 	}
 
 	public void Deserialize( NetworkReader reader )
@@ -43,6 +47,7 @@ public struct NetworkedInt : INetworkable, IEquatable<NetworkedInt>
 
 	public void Serialize( NetworkWriter writer )
 	{
+		_oldValue = _value;
 		writer.Write( _value );
 	}
 

@@ -1,6 +1,4 @@
 #if CLIENT
-using System;
-using CustomNetworking.Shared.Networkables.Builtin;
 using CustomNetworking.Client;
 using Sandbox;
 #endif
@@ -32,7 +30,11 @@ public class BasePlayer  : NetworkEntity
 		base.UpdateClient();
 
 		if ( Local.Client.Pawn != _player )
+		{
+			_player.Position = Position;
+			_player.Rotation = Rotation;
 			return;
+		}
 
 		if ( _player.Position.Distance( Position ) >= 0.001 )
 			Position = _player.Position;
@@ -62,22 +64,6 @@ public class BasePlayer  : NetworkEntity
 
 		if ( newOwner == INetworkClient.Local )
 			Local.Client.Pawn = _player;
-	}
-
-	protected override void OnPositionChanged( object? sender, EventArgs args )
-	{
-		base.OnPositionChanged( sender, args );
-
-		if ( sender is not null )
-			_player.Position = (NetworkedVector3)sender;
-	}
-
-	protected override void OnRotationChanged( object? sender, EventArgs args )
-	{
-		base.OnRotationChanged( sender, args );
-
-		if ( sender is not null )
-			_player.Rotation = (NetworkedQuaternion)sender;
 	}
 #endif
 }
