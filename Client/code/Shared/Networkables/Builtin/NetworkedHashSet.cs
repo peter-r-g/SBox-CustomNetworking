@@ -13,6 +13,9 @@ public class NetworkedHashSet<T> : INetworkable, IEnumerable<T> where T : INetwo
 {
 	public event EventHandler? Changed;
 	
+	/// <summary>
+	/// The underlying <see cref="HashSet{T}"/> being contained inside.
+	/// </summary>
 	public HashSet<T> Value
 	{
 		get => _value;
@@ -30,6 +33,9 @@ public class NetworkedHashSet<T> : INetworkable, IEnumerable<T> where T : INetwo
 	/// </summary>
 	public int Count => Value.Count;
 	
+	/// <summary>
+	/// The list of changes that have happened since the last time this was networked.
+	/// </summary>
 	private readonly List<(HashSetChangeType, T?)> _changes = new();
 	
 	public NetworkedHashSet( HashSet<T> hashSet )
@@ -164,6 +170,9 @@ public class NetworkedHashSet<T> : INetworkable, IEnumerable<T> where T : INetwo
 		_changes.Clear();
 	}
 
+	/// <summary>
+	/// Represents a type of change the <see cref="NetworkedHashSet{T}"/> has gone through.
+	/// </summary>
 	private enum HashSetChangeType : byte
 	{
 		Add,

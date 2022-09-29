@@ -31,6 +31,15 @@ public sealed class RpcCallMessage : NetworkMessage
 	/// </summary>
 	public INetworkable[] Parameters { get; private set; }
 
+	public RpcCallMessage()
+	{
+		CallGuid = Guid.Empty;
+		ClassName = string.Empty;
+		MethodName = string.Empty;
+		EntityId = -1;
+		Parameters = Array.Empty<INetworkable>();
+	}
+	
 	public RpcCallMessage( bool respondable, Type entityType, IEntity? entity, string methodName,
 		params INetworkable[] parameters )
 	{
@@ -45,15 +54,6 @@ public sealed class RpcCallMessage : NetworkMessage
 		Parameters = parameters;
 	}
 
-	public RpcCallMessage()
-	{
-		CallGuid = Guid.Empty;
-		ClassName = string.Empty;
-		MethodName = string.Empty;
-		EntityId = -1;
-		Parameters = Array.Empty<INetworkable>();
-	}
-	
 	public override void Deserialize( NetworkReader reader )
 	{
 		CallGuid = reader.ReadGuid();

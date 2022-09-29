@@ -10,7 +10,7 @@ public sealed class ClientPawnUpdateMessage : NetworkMessage
 	/// <summary>
 	/// Contains all data changes for the clients pawn.
 	/// </summary>
-	public byte[] PartialPawnData { get; private set; }
+	public byte[] PartialPawnData { get; private set; } = null!;
 
 #if CLIENT
 	public ClientPawnUpdateMessage( byte[] partialPawnData )

@@ -10,6 +10,9 @@ using Sandbox;
 
 namespace CustomNetworking.Shared.Networkables;
 
+/// <summary>
+/// Base class for a networkable that contains other <see cref="INetworkable"/>s.
+/// </summary>
 public abstract class BaseNetworkable : INetworkable
 {
 	public event EventHandler? Changed;

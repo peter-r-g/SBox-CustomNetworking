@@ -10,6 +10,9 @@ public struct NetworkedString : INetworkable, IEquatable<NetworkedString>
 {
 	public event EventHandler? Changed = null;
 	
+	/// <summary>
+	/// The underlying <see cref="string"/> contained inside.
+	/// </summary>
 	public string Value
 	{
 		get => _value;

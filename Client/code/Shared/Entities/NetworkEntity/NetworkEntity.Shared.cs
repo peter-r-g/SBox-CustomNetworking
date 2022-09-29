@@ -48,7 +48,7 @@ public partial class NetworkEntity : BaseNetworkable, IEntity
 	private NetworkedVector3 _position;
 	
 	/// <summary>
-	/// The world rotation of the <see cref="NetworkModelEntity"/>.
+	/// The world rotation of the <see cref="NetworkEntity"/>.
 	/// </summary>
 	[ClientAuthority]
 	public NetworkedQuaternion Rotation
@@ -70,10 +70,16 @@ public partial class NetworkEntity : BaseNetworkable, IEntity
 		EntityId = entityId;
 	}
 
+	/// <summary>
+	/// Deletes this entity. You should not use it after calling this.
+	/// </summary>
 	public virtual void Delete()
 	{
 	}
 	
+	/// <summary>
+	/// Updates the entity.
+	/// </summary>
 	public virtual void Update()
 	{
 #if SERVER
