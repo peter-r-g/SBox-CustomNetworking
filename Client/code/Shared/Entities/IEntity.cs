@@ -58,7 +58,7 @@ public interface IEntity : INetworkable
 		{
 			if ( NetworkManager.Instance is null )
 			{
-				Logging.Error( $"Attempted to access all networked entities when the {nameof(NetworkManager)} doesn't exist.", new InvalidOperationException() );
+				Logging.Error( $"Attempted to access all networked entities when the {nameof(NetworkManager)} doesn't exist." );
 				return null!;
 			}
 			

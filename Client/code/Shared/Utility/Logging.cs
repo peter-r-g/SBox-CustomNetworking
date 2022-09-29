@@ -20,7 +20,7 @@ public static class Logging
 	internal static void Initialize()
 	{
 		_logger = new LoggerConfiguration()
-			.MinimumLevel.Debug()
+			.MinimumLevel.Verbose()
 			.WriteTo.Console()
 			.WriteTo.File( "logs/log.txt", rollingInterval: RollingInterval.Day )
 			.CreateLogger();
@@ -46,6 +46,57 @@ public static class Logging
 #endif
 #if CLIENT
 		Log.Info( message );
+#endif
+	}
+
+	/// <summary>
+	/// Logs information.
+	/// </summary>
+	/// <param name="obj">The first object to log.</param>
+	/// <typeparam name="T">The type of <see cref="obj"/>.</typeparam>
+	public static void Info<T>( T obj )
+	{
+#if SERVER
+		_logger.Information( "{A}", obj );
+#endif
+#if CLIENT
+		Log.Info( obj );
+#endif
+	}
+
+	/// <summary>
+	/// Logs information.
+	/// </summary>
+	/// <param name="obj0">The first object to log.</param>
+	/// <param name="obj1">The second object to log.</param>
+	/// <typeparam name="T1">The type of <see cref="obj0"/>.</typeparam>
+	/// <typeparam name="T2">The type of <see cref="obj1"/>.</typeparam>
+	public static void Info<T1, T2>( T1 obj0, T2 obj1 )
+	{
+#if SERVER
+		_logger.Information( "{A}\t{B}", obj0, obj1 );
+#endif
+#if CLIENT
+		Log.Info( $"{obj0}\t{obj1}" );
+#endif
+	}
+
+	/// <summary>
+	/// Logs information.
+	/// </summary>
+	/// <param name="obj0">The first object to log.</param>
+	/// <param name="obj1">The second object to log.</param>
+	/// <param name="obj2">The third object to log.</param>
+	/// <typeparam name="T1">The type of <see cref="obj0"/>.</typeparam>
+	/// <typeparam name="T2">The type of <see cref="obj1"/>.</typeparam>
+	/// <typeparam name="T3">The type of <see cref="obj2"/>.</typeparam>
+	public static void Info<T1, T2, T3>( T1 obj0, T2 obj1, T3 obj2 )
+	{
+#if SERVER
+		_logger.Information( "{A}\t{B}\t{C}", obj0, obj1, obj2 );
+#endif
+#if CLIENT
+		Log.Info( $"{obj0}\t{obj1}\t{obj2}" );
 #endif
 	}
 

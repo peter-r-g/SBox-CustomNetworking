@@ -61,7 +61,7 @@ public sealed partial class EntityManager
 	{
 		if ( !TypeHelper.IsClass( entityType ) || !entityType.IsAssignableTo( typeof(IEntity) ) )
 		{
-			Logging.Error( $"Failed to create entity ({nameof(entityType)} is not a class that implementes {nameof(IEntity)}).", new InvalidOperationException() );
+			Logging.Error( $"Failed to create entity ({nameof(entityType)} is not a class that implementes {nameof(IEntity)})." );
 			return null!;
 		}
 
@@ -90,7 +90,7 @@ public sealed partial class EntityManager
 		var entity = GetEntityById( entityId );
 		if ( entity is null )
 		{
-			Logging.Error( $"Failed to delete entity (No entity with the ID \"{entityId}\" exists).", new InvalidOperationException() );
+			Logging.Error( $"Failed to delete entity (No entity with the ID \"{entityId}\" exists)." );
 			return;
 		}
 
@@ -136,7 +136,7 @@ public sealed partial class EntityManager
 		var entity = TypeHelper.Create<T>( entityType ?? typeof(T), entityId );
 		if ( entity is null )
 		{
-			Logging.Error( $"Failed to create instance of {entityType ?? typeof(T)}", new InvalidOperationException() );
+			Logging.Error( $"Failed to create instance of {entityType ?? typeof(T)}" );
 			return default!;
 		}
 		

@@ -53,7 +53,7 @@ public sealed class NetworkReader : BinaryReader
 		var type = TypeHelper.GetTypeByName( typeName );
 		if ( type is null )
 		{
-			Logging.Error( $"Failed to read networkable (\"{typeName}\" does not exist)", new InvalidOperationException() );
+			Logging.Error( $"Failed to read networkable (\"{typeName}\" does not exist)" );
 			return null!;
 		}
 
@@ -68,7 +68,7 @@ public sealed class NetworkReader : BinaryReader
 				var genericType = TypeHelper.GetTypeByName( genericTypeName );
 				if ( genericType is null )
 				{
-					Logging.Error( $"Failed to read networkable (Generic argument \"{genericTypeName}\" does not exist).", new InvalidOperationException() );
+					Logging.Error( $"Failed to read networkable (Generic argument \"{genericTypeName}\" does not exist)." );
 					return null!;
 				}
 
@@ -82,7 +82,7 @@ public sealed class NetworkReader : BinaryReader
 		
 		if ( networkable is null )
 		{
-			Logging.Error( "Failed to read networkable (instance creation failed).", new InvalidOperationException() );
+			Logging.Error( "Failed to read networkable (instance creation failed)." );
 			return null!;
 		}
 		
@@ -104,7 +104,7 @@ public sealed class NetworkReader : BinaryReader
 		var networkable = ReadNetworkable();
 		if ( networkable is not T outputNetworkable )
 		{
-			Logging.Error( $"Failed to read networkable ({networkable.GetType()} is not assignable to {typeof(T)}).", new InvalidOperationException() );
+			Logging.Error( $"Failed to read networkable ({networkable.GetType()} is not assignable to {typeof(T)})." );
 			return default!;
 		}
 
@@ -134,14 +134,14 @@ public sealed class NetworkReader : BinaryReader
 		var type = TypeHelper.GetTypeByName( typeName );
 		if ( type is null )
 		{
-			Logging.Error( $"Failed to read entity (\"{typeName}\" does not exist)", new InvalidOperationException() );
+			Logging.Error( $"Failed to read entity (\"{typeName}\" does not exist)" );
 			return null!;
 		}
 
 		var entity = TypeHelper.Create<IEntity?>( type, entityId );
 		if ( entity is null )
 		{
-			Logging.Error( "Failed to read entity (instance creation failed).", new InvalidOperationException() );
+			Logging.Error( "Failed to read entity (instance creation failed)." );
 			return null!;
 		}
 		
@@ -160,7 +160,7 @@ public sealed class NetworkReader : BinaryReader
 		var entity = ReadEntity();
 		if ( entity is not T outputEntity )
 		{
-			Logging.Error( $"Failed to read entity ({entity.GetType()} is not assignable to {typeof(T)})", new InvalidOperationException() );
+			Logging.Error( $"Failed to read entity ({entity.GetType()} is not assignable to {typeof(T)})" );
 			return default!;
 		}
 

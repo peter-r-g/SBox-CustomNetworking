@@ -329,7 +329,7 @@ public class NetworkManager
 			var entity = SharedEntityManager?.GetEntityById( reader.ReadInt32() );
 			if ( entity is null )
 			{
-				Logging.Error( "Attempted to update an entity that does not exist.", new InvalidOperationException() );
+				Logging.Error( "Attempted to update an entity that does not exist." );
 				continue;
 			}
 		
@@ -354,7 +354,7 @@ public class NetworkManager
 
 		if ( !_messageHandlers.TryGetValue( message.GetType(), out var cb ) )
 		{
-			Logging.Error( $"Unhandled message type {message.GetType()}.", new InvalidOperationException() );
+			Logging.Error( $"Unhandled message type {message.GetType()}." );
 			return;
 		}
 		
