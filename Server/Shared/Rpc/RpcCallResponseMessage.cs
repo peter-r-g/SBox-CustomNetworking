@@ -22,19 +22,19 @@ public sealed class RpcCallResponseMessage : NetworkMessage
 	/// The return value from the <see cref="RpcCallMessage"/>.
 	/// </summary>
 	public INetworkable? ReturnValue { get; private set; }
+	
+	public RpcCallResponseMessage()
+	{
+		CallGuid = Guid.Empty;
+		State = RpcCallState.Failed;
+		ReturnValue = null;
+	}
 
 	public RpcCallResponseMessage( Guid callGuid, RpcCallState state, INetworkable? returnValue = null )
 	{
 		CallGuid = callGuid;
 		State = state;
 		ReturnValue = returnValue;
-	}
-
-	public RpcCallResponseMessage()
-	{
-		CallGuid = Guid.Empty;
-		State = RpcCallState.Failed;
-		ReturnValue = null;
 	}
 
 	public override void Deserialize( NetworkReader reader )
