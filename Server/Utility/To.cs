@@ -47,7 +47,7 @@ public readonly struct To : IEnumerable<INetworkClient>
 	/// <summary>
 	/// Targets all currently connected clients.
 	/// </summary>
-	public static To All => Multiple( NetworkServer.Instance.Clients.Values );
+	public static To All => Multiple( INetworkClient.All.Values );
 
 	/// <summary>
 	/// Targets a single client.
@@ -76,7 +76,7 @@ public readonly struct To : IEnumerable<INetworkClient>
 	/// <returns>The target.</returns>
 	public static To AllExcept( IEnumerable<INetworkClient> clientsToIgnore )
 	{
-		return new To( NetworkServer.Instance.Clients.Values, clientsToIgnore );
+		return new To( INetworkClient.All.Values, clientsToIgnore );
 	}
 
 	/// <summary>
