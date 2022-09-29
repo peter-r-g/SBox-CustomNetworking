@@ -2,7 +2,7 @@ using Sandbox;
 
 namespace CustomNetworking.Client;
 
-public class TestPlayer : Player
+public class TestPlayer : AnimatedEntity
 {
 	/// <summary>
 	/// The grubs movement controller.
