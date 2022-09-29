@@ -9,7 +9,7 @@ namespace CustomNetworking.Shared.Networkables.Builtin;
 /// Represents a networkable <see cref="HashSet{T}"/>.
 /// </summary>
 /// <typeparam name="T">The type contained in the <see cref="HashSet{T}"/>.</typeparam>
-public class NetworkedHashSet<T> : INetworkable, IEnumerable<T> where T : INetworkable
+public sealed class NetworkedHashSet<T> : INetworkable, IEnumerable<T> where T : INetworkable
 {
 	public event EventHandler? Changed;
 	

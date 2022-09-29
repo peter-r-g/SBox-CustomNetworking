@@ -9,7 +9,7 @@ namespace CustomNetworking.Shared.Utility;
 /// <summary>
 /// Writes any data relating to networking and primitive types.
 /// </summary>
-public class NetworkWriter : BinaryWriter
+public sealed class NetworkWriter : BinaryWriter
 {
 	public NetworkWriter( Stream output ) : base( output )
 	{
