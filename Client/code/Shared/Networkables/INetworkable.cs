@@ -1,4 +1,3 @@
-using System;
 using CustomNetworking.Shared.Utility;
 
 namespace CustomNetworking.Shared.Networkables;

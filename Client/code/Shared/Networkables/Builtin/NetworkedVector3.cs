@@ -67,12 +67,12 @@ public struct NetworkedVector3 : INetworkable, IEquatable<NetworkedVector3>
 
 	public void Serialize( NetworkWriter writer )
 	{
-		_oldValue = _value;
 		writer.Write( _value );
 	}
 
 	public void SerializeChanges( NetworkWriter writer )
 	{
+		_oldValue = _value;
 		Serialize( writer );
 	}
 	

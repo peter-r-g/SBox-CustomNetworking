@@ -2,6 +2,7 @@
 using System.Reflection;
 #endif
 using System;
+using System.Numerics;
 using CustomNetworking.Shared.Networkables;
 using CustomNetworking.Shared.Networkables.Builtin;
 using CustomNetworking.Shared.Utility;
@@ -32,7 +33,7 @@ public partial class NetworkEntity : BaseNetworkable, IEntity
 	/// </summary>
 	[ClientAuthority]
 	public NetworkedVector3 Position { get; set; }
-	
+
 	/// <summary>
 	/// The world rotation of the <see cref="NetworkEntity"/>.
 	/// </summary>

@@ -37,10 +37,14 @@ public abstract class BaseNetworkable : INetworkable
 	{
 		foreach ( var propertyInfo in PropertyNameCache.Values )
 		{
-			if ( ((INetworkable)propertyInfo.GetValue( this )!).Changed() )
+			// TODO: handle null values.
+			if ( propertyInfo.GetValue( this ) is not INetworkable networkable )
+				return false;
+
+			if ( networkable.Changed() )
 				return true;
 		}
-
+		
 		return false;
 	}
 
@@ -83,7 +87,9 @@ public abstract class BaseNetworkable : INetworkable
 
 			numChanged++;
 			writer.Write( propertyName );
-			writer.WriteNetworkableChanges( networkable );
+			writer.WriteNetworkableChanges( ref networkable );
+			if ( TypeHelper.IsStruct( propertyInfo.PropertyType ) )
+				propertyInfo.SetValue( this, networkable );
 		}
 
 		var tempPos = writer.BaseStream.Position;

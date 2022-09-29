@@ -1,5 +1,6 @@
 #if CLIENT
 using System;
+using CustomNetworking.Shared.Networkables.Builtin;
 using Sandbox;
 
 namespace CustomNetworking.Shared.Utility;
@@ -78,6 +79,18 @@ public static partial class TypeHelper
 	public static bool IsClass( Type type )
 	{
 		return TypeLibrary.GetDescription( type ).IsClass;
+	}
+
+	/// <summary>
+	/// Returns whether or not a type is a struct.
+	/// </summary>
+	/// <param name="type">The type to check if it is a struct.</param>
+	/// <returns>Whether or not a type is a struct.</returns>
+	public static bool IsStruct( Type type )
+	{
+		// TODO: Need a whitelisted way to access Type.IsValueType
+		var description = TypeLibrary.GetDescription( type );
+		return !description.IsClass && !description.IsEnum;
 	}
 }
 #endif
