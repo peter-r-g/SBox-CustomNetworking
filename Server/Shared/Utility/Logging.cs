@@ -20,7 +20,7 @@ public static class Logging
 	internal static void Initialize()
 	{
 		_logger = new LoggerConfiguration()
-			.MinimumLevel.Debug()
+			.MinimumLevel.Verbose()
 			.WriteTo.Console()
 			.WriteTo.File( "logs/log.txt", rollingInterval: RollingInterval.Day )
 			.CreateLogger();
