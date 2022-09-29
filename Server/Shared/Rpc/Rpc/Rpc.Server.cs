@@ -13,6 +13,9 @@ namespace CustomNetworking.Shared.RemoteProcedureCalls;
 
 public partial class Rpc
 {
+	/// <summary>
+	/// The dictionary to hold RPC responses.
+	/// </summary>
 	private static readonly ConcurrentDictionary<Guid, RpcCallResponseMessage> RpcResponses = new();
 	
 	/// <summary>
@@ -93,6 +96,12 @@ public partial class Rpc
 		NetworkServer.Instance.QueueMessage( to, CreateRpc( false, type, methodName, parameters ) );
 	}
 	
+	/// <summary>
+	/// Handles an incoming RPC from a client.
+	/// </summary>
+	/// <param name="client">The client that sent the RPC.</param>
+	/// <param name="message">The RPC call message.</param>
+	/// <exception cref="InvalidOperationException">Thrown when handling the RPC call failed.</exception>
 	internal static void HandleRpcCallMessage( INetworkClient client, NetworkMessage message )
 	{
 		if ( message is not RpcCallMessage rpcCall )
@@ -133,6 +142,12 @@ public partial class Rpc
 		NetworkServer.Instance.QueueMessage( To.Single( client ), response );
 	}
 
+	/// <summary>
+	/// Handles an incoming RPC call response.
+	/// </summary>
+	/// <param name="client">The client that sent the response.</param>
+	/// <param name="message">The RPC call response.</param>
+	/// <exception cref="InvalidOperationException">Thrown when handling the RPC call response failed.</exception>
 	internal static void HandleRpcCallResponseMessage( INetworkClient client, NetworkMessage message )
 	{
 		if ( message is not RpcCallResponseMessage rpcResponse )

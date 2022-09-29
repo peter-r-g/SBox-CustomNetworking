@@ -13,6 +13,9 @@ namespace CustomNetworking.Shared.RemoteProcedureCalls;
 
 public partial class Rpc
 {
+	/// <summary>
+	/// The dictionary to hold RPC responses.
+	/// </summary>
 	private static readonly Dictionary<Guid, RpcCallResponseMessage> RpcResponses = new();
 
 	/// <summary>
@@ -67,6 +70,11 @@ public partial class Rpc
 		return await WaitForResponseAsync( message.CallGuid );
 	}
 
+	/// <summary>
+	/// Handles an incoming RPC from the server.
+	/// </summary>
+	/// <param name="message">The RPC call message.</param>
+	/// <exception cref="InvalidOperationException">Thrown when handling the RPC call failed.</exception>
 	internal static void HandleRpcCallMessage( NetworkMessage message )
 	{
 		if ( message is not RpcCallMessage rpcCall )
@@ -124,6 +132,11 @@ public partial class Rpc
 		NetworkManager.Instance?.SendToServer( response );
 	}
 	
+	/// <summary>
+	/// Handles an incoming RPC call response.
+	/// </summary>
+	/// <param name="message">The RPC call response.</param>
+	/// <exception cref="InvalidOperationException">Thrown when handling the RPC call response failed.</exception>
 	internal static void HandleRpcCallResponseMessage( NetworkMessage message )
 	{
 		if ( message is not RpcCallResponseMessage rpcResponse )
