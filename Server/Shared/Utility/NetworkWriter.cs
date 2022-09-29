@@ -67,6 +67,10 @@ public class NetworkWriter : BinaryWriter
 		networkable.Serialize( this );
 	}
 
+	/// <summary>
+	/// Writes an instance of <see cref="IEntity"/>.
+	/// </summary>
+	/// <param name="entity">The entity to write.</param>
 	public void WriteEntity( IEntity entity )
 	{
 		Write( entity.EntityId );
