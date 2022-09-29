@@ -2,13 +2,11 @@
 using System.Buffers;
 #endif
 using System.Collections.Generic;
+using CustomNetworking.Shared.Entities;
 #if SERVER
 using System.IO;
 #endif
 using CustomNetworking.Shared.Utility;
-#if SERVER
-using CustomNetworking.Shared.Entities;
-#endif
 
 namespace CustomNetworking.Shared.Messages;
 
@@ -20,7 +18,7 @@ public sealed class EntityListMessage : NetworkMessage
 	/// <summary>
 	/// The data of all <see cref="IEntity"/>s passed.
 	/// </summary>
-	public List<byte[]> EntityData { get; private set; }
+	public List<byte[]> EntityData { get; private set; } = new();
 
 #if SERVER
 	public EntityListMessage( IEnumerable<IEntity> entityList )

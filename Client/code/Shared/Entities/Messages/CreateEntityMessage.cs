@@ -11,7 +11,7 @@ public sealed class CreateEntityMessage : NetworkMessage
 	/// <summary>
 	/// The class name of the <see cref="IEntity"/>.
 	/// </summary>
-	public string EntityClass { get; private set; }
+	public string EntityClass { get; private set; } = string.Empty;
 	/// <summary>
 	/// The unique identifier the <see cref="IEntity"/> has.
 	/// </summary>

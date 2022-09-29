@@ -1,3 +1,4 @@
+using System;
 using CustomNetworking.Shared.Utility;
 
 namespace CustomNetworking.Shared.Messages;
@@ -10,7 +11,7 @@ public sealed class MultiMessage : NetworkMessage
 	/// <summary>
 	/// The <see cref="NetworkMessage"/>s to send.
 	/// </summary>
-	public NetworkMessage[] Messages { get; private set; }
+	public NetworkMessage[] Messages { get; private set; } = Array.Empty<NetworkMessage>();
 	
 #if SERVER
 	public MultiMessage( params NetworkMessage[] messages )

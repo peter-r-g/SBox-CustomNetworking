@@ -1,7 +1,6 @@
-using CustomNetworking.Shared.Utility;
-#if SERVER
+using System;
 using CustomNetworking.Shared.Entities;
-#endif
+using CustomNetworking.Shared.Utility;
 
 namespace CustomNetworking.Shared.Messages;
 
@@ -13,7 +12,7 @@ public sealed class MultiEntityUpdateMessage : NetworkMessage
 	/// <summary>
 	/// Contains all data changes relating to entities.
 	/// </summary>
-	public byte[] PartialEntityData { get; private set; }
+	public byte[] PartialEntityData { get; private set; } = Array.Empty<byte>();
 	
 #if SERVER
 	public MultiEntityUpdateMessage( byte[] partialEntityData )

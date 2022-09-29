@@ -12,7 +12,7 @@ public sealed class DeleteEntityMessage : NetworkMessage
 	/// <summary>
 	/// The <see cref="IEntity"/> to delete.
 	/// </summary>
-	public IEntity Entity { get; private set; }
+	public IEntity Entity { get; private set; } = null!;
 	
 #if SERVER
 	public DeleteEntityMessage( IEntity entity )
