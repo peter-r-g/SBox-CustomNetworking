@@ -8,11 +8,41 @@ namespace CustomNetworking.Server;
 /// <summary>
 /// Represents a set of target clients to send information to.
 /// </summary>
-public struct To : IEnumerable<INetworkClient>
+public readonly struct To : IEnumerable<INetworkClient>
 {
-	private INetworkClient? _singleClient;
-	private IEnumerable<INetworkClient>? _multipleClients;
-	private IEnumerable<INetworkClient>? _ignoredClients;
+	/// <summary>
+	/// A single client that is being targeted.
+	/// </summary>
+	private readonly INetworkClient? _singleClient;
+	/// <summary>
+	/// Multiple clients that are being targeted.
+	/// </summary>
+	private readonly IEnumerable<INetworkClient>? _multipleClients;
+	/// <summary>
+	/// The clients to ignore in <see cref="_multipleClients"/>.
+	/// </summary>
+	private readonly IEnumerable<INetworkClient>? _ignoredClients;
+
+	private To( INetworkClient client )
+	{
+		_singleClient = client;
+		_multipleClients = null;
+		_ignoredClients = null;
+	}
+
+	private To( IEnumerable<INetworkClient> clients )
+	{
+		_singleClient = null;
+		_multipleClients = clients;
+		_ignoredClients = null;
+	}
+
+	private To( IEnumerable<INetworkClient> clients, IEnumerable<INetworkClient> ignoredClients )
+	{
+		_singleClient = null;
+		_multipleClients = clients;
+		_ignoredClients = ignoredClients;
+	}
 	
 	/// <summary>
 	/// Targets all currently connected clients.
@@ -26,7 +56,7 @@ public struct To : IEnumerable<INetworkClient>
 	/// <returns>The target.</returns>
 	public static To Single( INetworkClient client )
 	{
-		return new To {_singleClient = client};
+		return new To( client );
 	}
 
 	/// <summary>
@@ -36,7 +66,7 @@ public struct To : IEnumerable<INetworkClient>
 	/// <returns>The target.</returns>
 	public static To Multiple( IEnumerable<INetworkClient> clients )
 	{
-		return new To {_multipleClients = clients};
+		return new To( clients );
 	}
 
 	/// <summary>
@@ -46,7 +76,7 @@ public struct To : IEnumerable<INetworkClient>
 	/// <returns>The target.</returns>
 	public static To AllExcept( IEnumerable<INetworkClient> clientsToIgnore )
 	{
-		return All with {_ignoredClients = clientsToIgnore};
+		return new To( NetworkServer.Instance.Clients.Values, clientsToIgnore );
 	}
 
 	/// <summary>
