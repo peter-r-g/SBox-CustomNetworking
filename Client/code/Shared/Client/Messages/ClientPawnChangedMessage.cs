@@ -5,7 +5,7 @@ using CustomNetworking.Shared.Utility;
 namespace CustomNetworking.Shared.Messages;
 
 /// <summary>
-/// 
+/// A server to client <see cref="NetworkMessage"/> to notify some clients when a client has had its pawn changed.
 /// </summary>
 public sealed class ClientPawnChangedMessage : NetworkMessage
 {

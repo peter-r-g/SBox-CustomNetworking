@@ -24,20 +24,12 @@ public partial class NetworkClient
 		ClientSocket.MessageReceived -= OnMessageReceived;
 	}
 	
-	/// <summary>
-	/// Sends an array of bytes to the <see cref="NetworkClient"/>.
-	/// </summary>
-	/// <param name="bytes">The data to send to the <see cref="NetworkClient"/>.</param>
 	public void SendMessage( byte[] bytes )
 	{
 		NetworkServer.Instance.MessagesSentToClients++;
 		ClientSocket.Send( bytes );
 	}
 	
-	/// <summary>
-	/// Sends a <see cref="NetworkMessage"/> to the <see cref="NetworkClient"/>.
-	/// </summary>
-	/// <param name="message">The <see cref="NetworkMessage"/> to send to the <see cref="NetworkClient"/>.</param>
 	public void SendMessage( NetworkMessage message )
 	{
 		var stream = new MemoryStream();
