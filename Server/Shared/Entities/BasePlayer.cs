@@ -38,9 +38,9 @@ public class BasePlayer  : NetworkEntity
 
 		if ( _player.Position.Distance( Position ) >= 0.001 )
 			Position = _player.Position;
-
-		if ( _player.Rotation.Distance( Rotation ) >= 1 )
-			Rotation = _player.Rotation;
+		
+		if ( _player.EyeRotation.Distance( Rotation ) >= 0.1 )
+			Rotation = _player.EyeRotation;
 	}
 #endif
 
