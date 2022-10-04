@@ -1,5 +1,5 @@
 #if SERVER
-namespace CustomNetworking.Shared.Entities;
+namespace NetBolt.Shared.Entities;
 
 public partial class NetworkEntity
 {

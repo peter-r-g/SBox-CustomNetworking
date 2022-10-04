@@ -1,9 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using CustomNetworking.Shared;
+using NetBolt.Shared;
 
-namespace CustomNetworking.Server;
+namespace NetBolt.Server;
 
 /// <summary>
 /// Represents a set of target clients to send information to.

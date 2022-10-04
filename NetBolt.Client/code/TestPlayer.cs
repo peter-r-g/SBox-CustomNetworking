@@ -1,6 +1,6 @@
 using Sandbox;
 
-namespace CustomNetworking.Client;
+namespace NetBolt.Client;
 
 public class TestPlayer : AnimatedEntity
 {

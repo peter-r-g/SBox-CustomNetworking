@@ -3,11 +3,11 @@ using System.Reflection;
 #endif
 using System;
 using System.Numerics;
-using CustomNetworking.Shared.Networkables;
-using CustomNetworking.Shared.Networkables.Builtin;
-using CustomNetworking.Shared.Utility;
+using NetBolt.Shared.Networkables;
+using NetBolt.Shared.Networkables.Builtin;
+using NetBolt.Shared.Utility;
 
-namespace CustomNetworking.Shared.Entities;
+namespace NetBolt.Shared.Entities;
 
 /// <summary>
 /// The base class for all of your entity needs.

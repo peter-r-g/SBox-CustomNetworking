@@ -1,6 +1,6 @@
-using CustomNetworking.Shared.Utility;
+using NetBolt.Shared.Utility;
 
-namespace CustomNetworking.Shared.Messages;
+namespace NetBolt.Shared.Messages;
 
 /// <summary>
 /// A client to server <see cref="NetworkMessage"/> containing information about updates to a <see cref="INetworkClient"/>s pawn.

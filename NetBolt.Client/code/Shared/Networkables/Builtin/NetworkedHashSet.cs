@@ -1,9 +1,9 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using CustomNetworking.Shared.Utility;
+using NetBolt.Shared.Utility;
 
-namespace CustomNetworking.Shared.Networkables.Builtin;
+namespace NetBolt.Shared.Networkables.Builtin;
 
 /// <summary>
 /// Represents a networkable <see cref="HashSet{T}"/>.

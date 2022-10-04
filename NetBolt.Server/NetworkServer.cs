@@ -5,14 +5,14 @@ using System.IO;
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
-using CustomNetworking.Shared;
-using CustomNetworking.Shared.Messages;
-using CustomNetworking.Shared.Utility;
+using NetBolt.Shared;
+using NetBolt.Shared.Messages;
+using NetBolt.Shared.Utility;
 using vtortola.WebSockets;
 using vtortola.WebSockets.Http;
 using vtortola.WebSockets.Rfc6455;
 
-namespace CustomNetworking.Server;
+namespace NetBolt.Server;
 
 /// <summary>
 /// Handles a web socket server, its clients, and dispatches messages to and from them.

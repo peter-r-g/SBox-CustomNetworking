@@ -1,7 +1,7 @@
 #if CLIENT
-using CustomNetworking.Shared.Utility;
+using NetBolt.Shared.Utility;
 
-namespace CustomNetworking.Shared.Entities;
+namespace NetBolt.Shared.Entities;
 
 public partial class EntityManager
 {

@@ -1,10 +1,10 @@
 using System;
 using System.IO;
 using System.Numerics;
-using CustomNetworking.Shared.Entities;
-using CustomNetworking.Shared.Networkables;
+using NetBolt.Shared.Entities;
+using NetBolt.Shared.Networkables;
 
-namespace CustomNetworking.Shared.Utility;
+namespace NetBolt.Shared.Utility;
 
 /// <summary>
 /// Writes any data relating to networking and primitive types.

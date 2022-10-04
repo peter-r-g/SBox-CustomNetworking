@@ -2,10 +2,10 @@
 using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
-using CustomNetworking.Shared;
-using CustomNetworking.Shared.Utility;
+using NetBolt.Shared;
+using NetBolt.Shared.Utility;
 
-namespace CustomNetworking.Server;
+namespace NetBolt.Server;
 
 /// <summary>
 /// Bootstraps the server.

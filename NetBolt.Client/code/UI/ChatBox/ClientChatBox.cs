@@ -2,7 +2,7 @@ using Sandbox.UI.Construct;
 using Sandbox;
 using Sandbox.UI;
 
-namespace CustomNetworking.Client.UI;
+namespace NetBolt.Client.UI;
 
 public class ClientChatBox : Panel
 {

@@ -2,9 +2,9 @@
 #if CLIENT
 using System.Buffers;
 #endif
-using CustomNetworking.Shared.Utility;
+using NetBolt.Shared.Utility;
 
-namespace CustomNetworking.Shared.Messages;
+namespace NetBolt.Shared.Messages;
 
 /// <summary>
 /// A <see cref="NetworkMessage"/> that contains data that is a part of a bigger <see cref="NetworkMessage"/>.

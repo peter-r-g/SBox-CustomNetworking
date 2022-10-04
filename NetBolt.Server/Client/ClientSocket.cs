@@ -4,10 +4,10 @@ using System.IO;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using CustomNetworking.Shared.Utility;
+using NetBolt.Shared.Utility;
 using vtortola.WebSockets;
 
-namespace CustomNetworking.Server;
+namespace NetBolt.Server;
 
 /// <summary>
 /// A clients socket connection.
@@ -39,7 +39,7 @@ internal sealed class ClientSocket
 	/// <summary>
 	/// The underlying socket used by the client.
 	/// </summary>
-	private readonly WebSocket _socket;
+	private readonly vtortola.WebSockets.WebSocket _socket;
 	/// <summary>
 	/// The data queue to send to the client.
 	/// </summary>
@@ -53,7 +53,7 @@ internal sealed class ClientSocket
 	/// </summary>
 	private Task _receiveTask = Task.CompletedTask;
 
-	public ClientSocket( WebSocket socket )
+	public ClientSocket( vtortola.WebSockets.WebSocket socket )
 	{
 		_socket = socket;
 	}

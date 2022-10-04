@@ -1,6 +1,6 @@
-using CustomNetworking.Shared.Utility;
+using NetBolt.Shared.Utility;
 
-namespace CustomNetworking.Shared.Messages;
+namespace NetBolt.Shared.Messages;
 
 /// <summary>
 /// A <see cref="NetworkMessage"/> that notifies clients that the server is shutting down.

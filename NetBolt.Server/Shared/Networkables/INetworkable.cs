@@ -1,6 +1,6 @@
-using CustomNetworking.Shared.Utility;
+using NetBolt.Shared.Utility;
 
-namespace CustomNetworking.Shared.Networkables;
+namespace NetBolt.Shared.Networkables;
 
 /// <summary>
 /// Contract to define something that can be networked.

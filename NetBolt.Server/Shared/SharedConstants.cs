@@ -1,4 +1,4 @@
-﻿namespace CustomNetworking.Shared;
+﻿namespace NetBolt.Shared;
 
 /// <summary>
 /// Contains constants for both realms to be aware about.

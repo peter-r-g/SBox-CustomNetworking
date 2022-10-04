@@ -4,7 +4,7 @@ using Serilog;
 using Serilog.Core;
 #endif
 
-namespace CustomNetworking.Shared.Utility;
+namespace NetBolt.Shared.Utility;
 
 /// <summary>
 /// An abstraction layer for logging.

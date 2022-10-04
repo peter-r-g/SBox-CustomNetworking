@@ -1,9 +1,9 @@
 ﻿using System.Text;
-using CustomNetworking.Shared.Entities;
+using NetBolt.Shared.Entities;
 using Sandbox.UI;
 using Sandbox.UI.Construct;
 
-namespace CustomNetworking.Client;
+namespace NetBolt.Client;
 
 [UseTemplate]
 public class GameHud : RootPanel

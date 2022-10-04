@@ -1,4 +1,4 @@
-namespace CustomNetworking.Server;
+namespace NetBolt.Server;
 
 /// <summary>
 /// Holds all information regarding time.

@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 
-namespace CustomNetworking.Shared.Utility;
+namespace NetBolt.Shared.Utility;
 
 public static partial class TypeHelper
 {

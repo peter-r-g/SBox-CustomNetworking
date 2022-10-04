@@ -2,12 +2,12 @@
 #if SERVER
 using System.Collections.Generic;
 using System.Linq;
-using CustomNetworking.Shared.Messages;
+using NetBolt.Shared.Messages;
 #endif
-using CustomNetworking.Shared.Networkables;
-using CustomNetworking.Shared.Utility;
+using NetBolt.Shared.Networkables;
+using NetBolt.Shared.Utility;
 
-namespace CustomNetworking.Shared.Messages;
+namespace NetBolt.Shared.Messages;
 
 /// <summary>
 /// Base class for sending any information between a client and a server.

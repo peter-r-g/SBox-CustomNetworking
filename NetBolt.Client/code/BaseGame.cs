@@ -1,9 +1,9 @@
-﻿using CustomNetworking.Client.UI;
-using CustomNetworking.Shared;
+﻿using NetBolt.Client.UI;
+using NetBolt.Shared;
 using Sandbox;
-using Logging = CustomNetworking.Shared.Utility.Logging;
+using Logging = NetBolt.Shared.Utility.Logging;
 
-namespace CustomNetworking.Client;
+namespace NetBolt.Client;
 
 public class BaseGame : Game
 {

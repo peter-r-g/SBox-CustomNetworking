@@ -1,16 +1,16 @@
 ﻿using System.Collections.Generic;
 #if CLIENT
 using System;
-using CustomNetworking.Client;
-using CustomNetworking.Shared.Utility;
+using NetBolt.Client;
+using NetBolt.Shared.Utility;
 #endif
 #if SERVER
-using CustomNetworking.Server;
-using CustomNetworking.Shared.Messages;
+using NetBolt.Server;
+using NetBolt.Shared.Messages;
 #endif
-using CustomNetworking.Shared.Entities;
+using NetBolt.Shared.Entities;
 
-namespace CustomNetworking.Shared;
+namespace NetBolt.Shared;
 
 /// <summary>
 /// Contract to define something that is a client that can connect to a server.

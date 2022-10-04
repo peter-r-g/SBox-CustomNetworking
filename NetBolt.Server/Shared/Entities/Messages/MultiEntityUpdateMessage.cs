@@ -1,8 +1,8 @@
 using System;
-using CustomNetworking.Shared.Entities;
-using CustomNetworking.Shared.Utility;
+using NetBolt.Shared.Entities;
+using NetBolt.Shared.Utility;
 
-namespace CustomNetworking.Shared.Messages;
+namespace NetBolt.Shared.Messages;
 
 /// <summary>
 /// A server to client <see cref="NetworkMessage"/> containing information about an <see cref="IEntity"/> that has updated.

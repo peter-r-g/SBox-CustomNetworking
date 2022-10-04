@@ -1,10 +1,10 @@
 #if CLIENT
 using System;
 using System.Linq;
-using CustomNetworking.Shared.Networkables.Builtin;
+using NetBolt.Shared.Networkables.Builtin;
 using Sandbox;
 
-namespace CustomNetworking.Shared.Utility;
+namespace NetBolt.Shared.Utility;
 
 public static partial class TypeHelper
 {

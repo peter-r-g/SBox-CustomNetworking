@@ -1,9 +1,9 @@
 #if CLIENT
-using CustomNetworking.Client;
+using NetBolt.Client;
 using Sandbox;
 #endif
 
-namespace CustomNetworking.Shared.Entities;
+namespace NetBolt.Shared.Entities;
 
 /// <summary>
 /// A test class for player input and basic entity networking.

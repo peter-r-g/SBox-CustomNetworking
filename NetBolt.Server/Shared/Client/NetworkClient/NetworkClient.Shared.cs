@@ -1,6 +1,6 @@
-﻿using CustomNetworking.Shared.Entities;
+﻿using NetBolt.Shared.Entities;
 
-namespace CustomNetworking.Shared;
+namespace NetBolt.Shared;
 
 /// <summary>
 /// Base class for any non-bot clients connected to a server.

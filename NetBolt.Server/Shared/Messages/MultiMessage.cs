@@ -1,7 +1,7 @@
 using System;
-using CustomNetworking.Shared.Utility;
+using NetBolt.Shared.Utility;
 
-namespace CustomNetworking.Shared.Messages;
+namespace NetBolt.Shared.Messages;
 
 /// <summary>
 /// A <see cref="NetworkMessage"/> that contains multiple <see cref="NetworkMessage"/>s in itself.

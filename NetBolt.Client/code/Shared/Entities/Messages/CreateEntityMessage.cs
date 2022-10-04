@@ -1,7 +1,7 @@
-﻿using CustomNetworking.Shared.Entities;
-using CustomNetworking.Shared.Utility;
+﻿using NetBolt.Shared.Entities;
+using NetBolt.Shared.Utility;
 
-namespace CustomNetworking.Shared.Messages;
+namespace NetBolt.Shared.Messages;
 
 /// <summary>
 /// A server to client <see cref="NetworkMessage"/> that contains information to create a new <see cref="IEntity"/>.

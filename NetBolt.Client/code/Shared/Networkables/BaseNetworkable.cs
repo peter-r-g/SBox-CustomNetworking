@@ -1,13 +1,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using CustomNetworking.Shared.Utility;
+using NetBolt.Shared.Utility;
 #if CLIENT
 using Sandbox;
-using Logging = CustomNetworking.Shared.Utility.Logging;
+using Logging = NetBolt.Shared.Utility.Logging;
 #endif
 
-namespace CustomNetworking.Shared.Networkables;
+namespace NetBolt.Shared.Networkables;
 
 /// <summary>
 /// Base class for a networkable that contains other <see cref="INetworkable"/>s.

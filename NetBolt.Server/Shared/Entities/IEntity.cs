@@ -1,15 +1,15 @@
 #if CLIENT
 using System;
-using CustomNetworking.Client;
-using CustomNetworking.Shared.Utility;
+using NetBolt.Client;
+using NetBolt.Shared.Utility;
 #endif
 #if SERVER
-using CustomNetworking.Server;
+using NetBolt.Server;
 #endif
-using CustomNetworking.Shared.Networkables;
-using CustomNetworking.Shared.Networkables.Builtin;
+using NetBolt.Shared.Networkables;
+using NetBolt.Shared.Networkables.Builtin;
 
-namespace CustomNetworking.Shared.Entities;
+namespace NetBolt.Shared.Entities;
 
 /// <summary>
 /// Contract to define something that is an entity in the game world.

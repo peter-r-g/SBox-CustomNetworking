@@ -1,5 +1,5 @@
 #if CLIENT
-namespace CustomNetworking.Shared;
+namespace NetBolt.Shared;
 
 public partial class NetworkClient
 {

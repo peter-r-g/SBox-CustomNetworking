@@ -1,12 +1,12 @@
 using System;
 using System.IO;
-using CustomNetworking.Shared;
-using CustomNetworking.Shared.Entities;
-using CustomNetworking.Shared.Messages;
-using CustomNetworking.Shared.RemoteProcedureCalls;
-using CustomNetworking.Shared.Utility;
+using NetBolt.Shared;
+using NetBolt.Shared.Entities;
+using NetBolt.Shared.Messages;
+using NetBolt.Shared.RemoteProcedureCalls;
+using NetBolt.Shared.Utility;
 
-namespace CustomNetworking.Server;
+namespace NetBolt.Server;
 
 /// <summary>
 /// The base class for any game servers.

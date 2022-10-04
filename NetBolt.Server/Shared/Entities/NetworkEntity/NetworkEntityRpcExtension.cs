@@ -1,13 +1,13 @@
 #if !MONITOR
 using System.Threading.Tasks;
 #if SERVER
-using CustomNetworking.Server;
+using NetBolt.Server;
 #endif
-using CustomNetworking.Shared.Entities;
-using CustomNetworking.Shared.Messages;
-using CustomNetworking.Shared.Networkables;
+using NetBolt.Shared.Entities;
+using NetBolt.Shared.Messages;
+using NetBolt.Shared.Networkables;
 
-namespace CustomNetworking.Shared.RemoteProcedureCalls;
+namespace NetBolt.Shared.RemoteProcedureCalls;
 
 /// <summary>
 /// Extension of helper entity methods to call RPCs on themselves.

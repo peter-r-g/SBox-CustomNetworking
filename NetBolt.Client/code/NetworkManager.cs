@@ -4,16 +4,16 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
-using CustomNetworking.Shared;
-using CustomNetworking.Shared.Entities;
-using CustomNetworking.Shared.Messages;
-using CustomNetworking.Shared.Networkables;
-using CustomNetworking.Shared.RemoteProcedureCalls;
-using CustomNetworking.Shared.Utility;
+using NetBolt.Shared;
+using NetBolt.Shared.Entities;
+using NetBolt.Shared.Messages;
+using NetBolt.Shared.Networkables;
+using NetBolt.Shared.RemoteProcedureCalls;
+using NetBolt.Shared.Utility;
 using Sandbox;
-using Logging = CustomNetworking.Shared.Utility.Logging;
+using Logging = NetBolt.Shared.Utility.Logging;
 
-namespace CustomNetworking.Client;
+namespace NetBolt.Client;
 
 public class NetworkManager
 {

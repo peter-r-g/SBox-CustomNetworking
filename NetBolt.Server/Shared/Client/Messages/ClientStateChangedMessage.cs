@@ -1,6 +1,6 @@
-﻿using CustomNetworking.Shared.Utility;
+﻿using NetBolt.Shared.Utility;
 
-namespace CustomNetworking.Shared.Messages;
+namespace NetBolt.Shared.Messages;
 
 /// <summary>
 /// A server to client <see cref="NetworkMessage"/> containing a client ID and the state it is now in.

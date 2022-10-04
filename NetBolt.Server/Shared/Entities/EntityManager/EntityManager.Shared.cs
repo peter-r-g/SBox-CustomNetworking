@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
-using CustomNetworking.Shared.Utility;
+using NetBolt.Shared.Utility;
 
-namespace CustomNetworking.Shared.Entities;
+namespace NetBolt.Shared.Entities;
 
 /// <summary>
 /// Container for a collection of entities.

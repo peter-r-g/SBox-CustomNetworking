@@ -1,4 +1,4 @@
-﻿namespace CustomNetworking.Shared;
+﻿namespace NetBolt.Shared;
 
 /// <summary>
 /// Represents a state the client has changed to.

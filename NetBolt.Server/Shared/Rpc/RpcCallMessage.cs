@@ -1,9 +1,9 @@
 using System;
-using CustomNetworking.Shared.Entities;
-using CustomNetworking.Shared.Networkables;
-using CustomNetworking.Shared.Utility;
+using NetBolt.Shared.Entities;
+using NetBolt.Shared.Networkables;
+using NetBolt.Shared.Utility;
 
-namespace CustomNetworking.Shared.Messages;
+namespace NetBolt.Shared.Messages;
 
 /// <summary>
 /// A <see cref="NetworkMessage"/> containing information to call a method from a different realm.

@@ -3,13 +3,13 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using CustomNetworking.Client;
-using CustomNetworking.Shared.Entities;
-using CustomNetworking.Shared.Messages;
-using CustomNetworking.Shared.Networkables;
-using CustomNetworking.Shared.Utility;
+using NetBolt.Client;
+using NetBolt.Shared.Entities;
+using NetBolt.Shared.Messages;
+using NetBolt.Shared.Networkables;
+using NetBolt.Shared.Utility;
 
-namespace CustomNetworking.Shared.RemoteProcedureCalls;
+namespace NetBolt.Shared.RemoteProcedureCalls;
 
 public partial class Rpc
 {

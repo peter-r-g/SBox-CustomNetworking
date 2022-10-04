@@ -1,4 +1,4 @@
-namespace CustomNetworking.Shared.RemoteProcedureCalls;
+namespace NetBolt.Shared.RemoteProcedureCalls;
 
 /// <summary>
 /// Represents a state the Rpc resulted in.

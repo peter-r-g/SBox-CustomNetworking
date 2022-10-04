@@ -1,10 +1,10 @@
 #if SERVER
 using System.IO;
-using CustomNetworking.Server;
-using CustomNetworking.Shared.Messages;
-using CustomNetworking.Shared.Utility;
+using NetBolt.Server;
+using NetBolt.Shared.Messages;
+using NetBolt.Shared.Utility;
 
-namespace CustomNetworking.Shared;
+namespace NetBolt.Shared;
 
 public partial class NetworkClient
 {

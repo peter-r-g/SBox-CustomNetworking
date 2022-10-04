@@ -1,6 +1,6 @@
 using System;
 
-namespace CustomNetworking.Shared.Networkables;
+namespace NetBolt.Shared.Networkables;
 
 /// <summary>
 /// Marks a networked property to be editable by a client.

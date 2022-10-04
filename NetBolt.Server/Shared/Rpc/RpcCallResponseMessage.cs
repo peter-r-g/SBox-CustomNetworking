@@ -1,9 +1,9 @@
 using System;
-using CustomNetworking.Shared.Networkables;
-using CustomNetworking.Shared.RemoteProcedureCalls;
-using CustomNetworking.Shared.Utility;
+using NetBolt.Shared.Networkables;
+using NetBolt.Shared.RemoteProcedureCalls;
+using NetBolt.Shared.Utility;
 
-namespace CustomNetworking.Shared.Messages;
+namespace NetBolt.Shared.Messages;
 
 /// <summary>
 /// A <see cref="NetworkMessage"/> containing a response to a <see cref="RpcCallMessage"/>.

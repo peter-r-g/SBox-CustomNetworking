@@ -2,13 +2,13 @@
 using System.Buffers;
 #endif
 using System.Collections.Generic;
-using CustomNetworking.Shared.Entities;
+using NetBolt.Shared.Entities;
 #if SERVER
 using System.IO;
 #endif
-using CustomNetworking.Shared.Utility;
+using NetBolt.Shared.Utility;
 
-namespace CustomNetworking.Shared.Messages;
+namespace NetBolt.Shared.Messages;
 
 /// <summary>
 /// A server to client <see cref="NetworkMessage"/> containing a list of <see cref="IEntity"/>s to notify the client about.

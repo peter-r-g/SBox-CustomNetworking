@@ -1,7 +1,7 @@
 using System;
-using CustomNetworking.Shared.Utility;
+using NetBolt.Shared.Utility;
 
-namespace CustomNetworking.Shared.Networkables.Builtin;
+namespace NetBolt.Shared.Networkables.Builtin;
 
 // TODO: In .NET 7 make this generic where T : INumber https://devblogs.microsoft.com/dotnet/dotnet-7-generic-math/
 /// <summary>

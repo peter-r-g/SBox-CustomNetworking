@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using CustomNetworking.Shared;
-using CustomNetworking.Shared.Entities;
-using CustomNetworking.Shared.Messages;
-using CustomNetworking.Shared.Utility;
+using NetBolt.Shared;
+using NetBolt.Shared.Entities;
+using NetBolt.Shared.Messages;
+using NetBolt.Shared.Utility;
 
-namespace CustomNetworking.Server;
+namespace NetBolt.Server;
 
 /// <summary>
 /// A bot client.
