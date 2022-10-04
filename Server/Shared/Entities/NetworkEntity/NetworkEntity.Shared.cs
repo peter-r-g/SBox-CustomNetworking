@@ -40,16 +40,9 @@ public partial class NetworkEntity : BaseNetworkable, IEntity
 	[ClientAuthority]
 	public NetworkedQuaternion Rotation { get; set; }
 
-	public NetworkEntity( int entityId )
+	public NetworkEntity( int entityId ) : base( entityId )
 	{
 		EntityId = entityId;
-	}
-
-	/// <summary>
-	/// Deletes this entity. You should not use it after calling this.
-	/// </summary>
-	public virtual void Delete()
-	{
 	}
 	
 	/// <summary>
