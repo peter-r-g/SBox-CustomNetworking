@@ -1,10 +1,10 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetBolt.Server", "Server\NetBolt.Server.csproj", "{2C0BB0D3-3D87-4C92-8A76-64981FC1EE3F}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetBolt.Client", "Client\code\NetBolt.Client.csproj", "{9A0080BA-189B-42D7-A3F7-22498B806E30}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetBolt.WebSocketServer", "NetBolt.WebSocketServer\NetBolt.WebSocketServer.csproj", "{5788BA65-004D-428C-9ED0-C4EFDF29C0AB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetBolt.Server", "NetBolt.Server\NetBolt.Server.csproj", "{A3842C68-1551-4355-9377-883D2AA7BD95}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetBolt.Client", "NetBolt.Client\code\NetBolt.Client.csproj", "{1E426207-2229-4124-A84C-54893F6CC63C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -12,17 +12,17 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{2C0BB0D3-3D87-4C92-8A76-64981FC1EE3F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{2C0BB0D3-3D87-4C92-8A76-64981FC1EE3F}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{2C0BB0D3-3D87-4C92-8A76-64981FC1EE3F}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{2C0BB0D3-3D87-4C92-8A76-64981FC1EE3F}.Release|Any CPU.Build.0 = Release|Any CPU
-		{9A0080BA-189B-42D7-A3F7-22498B806E30}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{9A0080BA-189B-42D7-A3F7-22498B806E30}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{9A0080BA-189B-42D7-A3F7-22498B806E30}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{9A0080BA-189B-42D7-A3F7-22498B806E30}.Release|Any CPU.Build.0 = Release|Any CPU
 		{5788BA65-004D-428C-9ED0-C4EFDF29C0AB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{5788BA65-004D-428C-9ED0-C4EFDF29C0AB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5788BA65-004D-428C-9ED0-C4EFDF29C0AB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5788BA65-004D-428C-9ED0-C4EFDF29C0AB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A3842C68-1551-4355-9377-883D2AA7BD95}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A3842C68-1551-4355-9377-883D2AA7BD95}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A3842C68-1551-4355-9377-883D2AA7BD95}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A3842C68-1551-4355-9377-883D2AA7BD95}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1E426207-2229-4124-A84C-54893F6CC63C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1E426207-2229-4124-A84C-54893F6CC63C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1E426207-2229-4124-A84C-54893F6CC63C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1E426207-2229-4124-A84C-54893F6CC63C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
