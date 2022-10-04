@@ -27,6 +27,17 @@ public static partial class TypeHelper
 	}
 
 	/// <summary>
+	/// Creates an instance of <see cref="T"/>.
+	/// </summary>
+	/// <param name="parameters">The parameters to pass to the public constructor.</param>
+	/// <typeparam name="T">The type to create an instance of.</typeparam>
+	/// <returns>The created instance of <see cref="T"/>.</returns>
+	public static T? Create<T>( params object[] parameters )
+	{
+		return (T?)Activator.CreateInstance( typeof(T), parameters );
+	}
+
+	/// <summary>
 	/// Creates an instance of <see cref="typeToCreate"/> and casts it to <see cref="T"/>.
 	/// </summary>
 	/// <param name="typeToCreate">The type to create.</param>

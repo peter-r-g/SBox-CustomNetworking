@@ -4,6 +4,7 @@ using System.Reflection;
 using CustomNetworking.Shared.Utility;
 #if CLIENT
 using Sandbox;
+using Logging = CustomNetworking.Shared.Utility.Logging;
 #endif
 
 namespace CustomNetworking.Shared.Networkables;
@@ -13,6 +14,16 @@ namespace CustomNetworking.Shared.Networkables;
 /// </summary>
 public abstract class BaseNetworkable : INetworkable
 {
+	/// <summary>
+	/// The unique identifier of the networkable.
+	/// </summary>
+	public int NetworkId { get; }
+
+	/// <summary>
+	/// An internal map of <see cref="BaseNetworkable"/> identifiers that were not accessible at the time and need setting after de-serializing all <see cref="BaseNetworkable"/>s.
+	/// </summary>
+	internal readonly Dictionary<int, string> ClPendingNetworkables = new();
+	
 #if SERVER
 	/// <summary>
 	/// A <see cref="PropertyInfo"/> cache of all networked properties.
@@ -26,11 +37,24 @@ public abstract class BaseNetworkable : INetworkable
 	protected readonly Dictionary<string, PropertyDescription> PropertyNameCache = new();
 #endif
 
-	protected BaseNetworkable()
+	protected BaseNetworkable( int networkId )
 	{
+		NetworkId = networkId;
+		
 		foreach ( var property in TypeHelper.GetAllProperties( GetType() )
 			         .Where( property => property.PropertyType.IsAssignableTo( typeof(INetworkable) ) ) )
 			PropertyNameCache.Add( property.Name, property );
+
+		AllNetworkables.Add( NetworkId, this );
+	}
+
+	/// <summary>
+	/// Deletes the <see cref="BaseNetworkable"/>. You should not be using this after calling this.
+	/// </summary>
+	public virtual void Delete()
+	{
+		// TODO: Notify client of this
+		AllNetworkables.Remove( NetworkId );
 	}
 
 	public bool Changed()
@@ -50,8 +74,22 @@ public abstract class BaseNetworkable : INetworkable
 
 	public virtual void Deserialize( NetworkReader reader )
 	{
-		foreach ( var propertyInfo in PropertyNameCache.Values )
-			propertyInfo.SetValue( this, reader.ReadNetworkable() );
+		var count = reader.ReadInt32();
+		for ( var i = 0; i < count; i++ )
+		{
+			var propertyName = reader.ReadString();
+			var propertyInfo = PropertyNameCache[propertyName];
+			if ( propertyInfo.PropertyType.IsAssignableTo( typeof(BaseNetworkable) ) )
+			{
+				var networkId = reader.ReadInt32();
+				if ( All.TryGetValue( networkId, out var networkable ) )
+					propertyInfo.SetValue( this, networkable );
+				else
+					ClPendingNetworkables.Add( networkId, propertyName );
+			}
+			else
+				propertyInfo.SetValue( this, reader.ReadNetworkable() );
+		}
 	}
 
 	public virtual void DeserializeChanges( NetworkReader reader )
@@ -59,18 +97,38 @@ public abstract class BaseNetworkable : INetworkable
 		var changedCount = reader.ReadInt32();
 		for ( var i = 0; i < changedCount; i++ )
 		{
-			var property = PropertyNameCache[reader.ReadString()];
-			
-			var currentValue = property.GetValue( this );
-			(currentValue as INetworkable)!.DeserializeChanges( reader );
-			property.SetValue( this, currentValue );
+			var propertyName = reader.ReadString();
+			var property = PropertyNameCache[propertyName];
+			if ( property.PropertyType.IsAssignableTo( typeof(BaseNetworkable) ) )
+			{
+				var networkId = reader.ReadInt32();
+				if ( All.TryGetValue( networkId, out var networkable ) )
+					property.SetValue( this, networkable );
+				else
+					ClPendingNetworkables.Add( networkId, propertyName );
+			}
+			else
+			{
+				var currentValue = property.GetValue( this );
+				(currentValue as INetworkable)!.DeserializeChanges( reader );
+				property.SetValue( this, currentValue );
+			}
 		}
 	}
 	
 	public virtual void Serialize( NetworkWriter writer )
 	{
-		foreach ( var propertyInfo in PropertyNameCache.Values )
-			writer.WriteNetworkable( (INetworkable)propertyInfo.GetValue( this )! );
+		writer.Write( PropertyNameCache.Count );
+		foreach ( var (propertyName, propertyInfo) in PropertyNameCache )
+		{
+			writer.Write( propertyName );
+			var networkable = (INetworkable)propertyInfo.GetValue( this )!;
+			if ( propertyInfo.PropertyType.IsAssignableTo( typeof(BaseNetworkable) ) &&
+			     networkable is BaseNetworkable baseNetworkable )
+				writer.Write( baseNetworkable.NetworkId );
+			else
+				writer.WriteNetworkable( networkable );
+		}
 	}
 
 	public virtual void SerializeChanges( NetworkWriter writer )
@@ -87,14 +145,47 @@ public abstract class BaseNetworkable : INetworkable
 
 			numChanged++;
 			writer.Write( propertyName );
-			writer.WriteNetworkableChanges( ref networkable );
-			if ( TypeHelper.IsStruct( propertyInfo.PropertyType ) )
-				propertyInfo.SetValue( this, networkable );
+			if ( networkable is BaseNetworkable baseNetworkable )
+				writer.Write( baseNetworkable.NetworkId );
+			else
+			{
+				writer.WriteNetworkableChanges( ref networkable );
+				if ( TypeHelper.IsStruct( propertyInfo.PropertyType ) )
+					propertyInfo.SetValue( this, networkable );
+			}
 		}
 
 		var tempPos = writer.BaseStream.Position;
 		writer.BaseStream.Position = changedStreamPos;
 		writer.Write( numChanged );
 		writer.BaseStream.Position = tempPos;
+	}
+
+	internal static IReadOnlyDictionary<int, BaseNetworkable> All => AllNetworkables;
+	private static readonly Dictionary<int, BaseNetworkable> AllNetworkables = new();
+	private static int _nextNetworkId = SharedConstants.MaxEntities + 1;
+
+	/// <summary>
+	/// Creates a new <see cref="BaseNetworkable"/>.
+	/// </summary>
+	/// <typeparam name="T">The type of <see cref="BaseNetworkable"/> to create.</typeparam>
+	/// <returns>The created instance of <see cref="BaseNetworkable"/>.</returns>
+	public static T Create<T>() where T : BaseNetworkable
+	{
+		var networkable = TypeHelper.Create<T>( StepNextId() );
+		if ( networkable is not null )
+			return networkable;
+
+		Logging.Error( $"Failed to create networkable type {typeof(T)}" );
+		return default!;
+	}
+
+	/// <summary>
+	/// Gets a new <see cref="NetworkId"/> and steps the internal counter.
+	/// </summary>
+	/// <returns>A unique network identifier.</returns>
+	public static int StepNextId()
+	{
+		return _nextNetworkId++;
 	}
 }

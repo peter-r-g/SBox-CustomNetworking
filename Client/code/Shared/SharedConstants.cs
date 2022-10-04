@@ -6,6 +6,10 @@
 public static class SharedConstants
 {
 	/// <summary>
+	/// The maximum amount of entities to have in the game.
+	/// </summary>
+	public const int MaxEntities = 100_000;
+	/// <summary>
 	/// The max byte size of any data going between server and client.
 	/// </summary>
 	public const int MaxBufferSize = 65536;
