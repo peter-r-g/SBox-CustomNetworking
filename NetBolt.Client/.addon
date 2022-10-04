@@ -1,8 +1,8 @@
 {
-  "Title": "CNClient",
+  "Title": "NetBoltClient",
   "Type": "game",
   "Org": "local",
-  "Ident": "cnclient",
+  "Ident": "nbclient",
   "Schema": 1,
   "HasAssets": false,
   "AssetsPath": "",
@@ -24,7 +24,7 @@
     "ProjectTemplate": null,
     "GameCategory": "None",
     "Compiler": {
-      "RootNamespace": "CustomNetworking.Client",
+      "RootNamespace": "NetBolt.Client",
       "DefineConstants": "SANDBOX;ADDON;DEBUG;CLIENT",
       "NoWarn": "1701;1702;1591;",
       "Nullables": true
