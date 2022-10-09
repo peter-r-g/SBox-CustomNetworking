@@ -5,6 +5,16 @@
         <TargetFramework>net6.0</TargetFramework>
         <RootNamespace>NetBolt.Server</RootNamespace>
         <Nullable>enable</Nullable>
+
+        <Title>NetBolt.Server</Title>
+        <Description>A custom networking solution for S&amp;box. This is the server-side portion.</Description>
+        <Authors>peter-r-g</Authors>
+        <PackageIcon>icon.png</PackageIcon>
+        <PackageTags>Networking S&amp;box</PackageTags>
+        <RepositoryType>git</RepositoryType>
+        <RepositoryUrl>https://github.com/Sbox-NetBolt/NetBolt</RepositoryUrl>
+        <PackageProjectUrl>https://github.com/Sbox-NetBolt/NetBolt</PackageProjectUrl>
+        <PackageLicenseFile>LICENSE.md</PackageLicenseFile>
     </PropertyGroup>
 
     <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
@@ -16,14 +26,15 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="deniszykov.WebSocketListener" Version="4.2.15" />
+      <PackageReference Include="NetBolt.WebSocketServer" Version="1.0.0" />
       <PackageReference Include="Serilog" Version="2.12.0" />
       <PackageReference Include="Serilog.Sinks.Console" Version="4.1.1-dev-00896" />
       <PackageReference Include="Serilog.Sinks.File" Version="5.0.1-dev-00947" />
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\NetBolt.WebSocketServer\NetBolt.WebSocketServer.csproj" />
+        <None Include="../LICENSE.md" Pack="true" PackagePath="" />
+        <None Include="../icon.png" Pack="true" PackagePath="" />
     </ItemGroup>
 
 </Project>
