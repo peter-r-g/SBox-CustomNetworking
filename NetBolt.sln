@@ -1,7 +1,5 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetBolt.WebSocketServer", "NetBolt.WebSocketServer\NetBolt.WebSocketServer.csproj", "{5788BA65-004D-428C-9ED0-C4EFDF29C0AB}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetBolt.Server", "NetBolt.Server\NetBolt.Server.csproj", "{A3842C68-1551-4355-9377-883D2AA7BD95}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetBolt.Client", "NetBolt.Client\code\NetBolt.Client.csproj", "{00924711-066A-445B-ABA3-9C26927E501E}"
@@ -12,10 +10,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{5788BA65-004D-428C-9ED0-C4EFDF29C0AB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{5788BA65-004D-428C-9ED0-C4EFDF29C0AB}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{5788BA65-004D-428C-9ED0-C4EFDF29C0AB}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{5788BA65-004D-428C-9ED0-C4EFDF29C0AB}.Release|Any CPU.Build.0 = Release|Any CPU
 		{A3842C68-1551-4355-9377-883D2AA7BD95}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{A3842C68-1551-4355-9377-883D2AA7BD95}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A3842C68-1551-4355-9377-883D2AA7BD95}.Release|Any CPU.ActiveCfg = Release|Any CPU
