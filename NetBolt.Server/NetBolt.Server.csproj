@@ -3,8 +3,9 @@
     <PropertyGroup>
         <OutputType>Exe</OutputType>
         <TargetFramework>net6.0</TargetFramework>
-        <RootNamespace>NetBolt.Server</RootNamespace>
         <Nullable>enable</Nullable>
+        <RootNamespace>NetBolt.Server</RootNamespace>
+        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
 
         <Title>NetBolt.Server</Title>
         <Description>A custom networking solution for S&amp;box. This is the server-side portion.</Description>
