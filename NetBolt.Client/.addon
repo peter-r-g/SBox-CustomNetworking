@@ -2,7 +2,7 @@
   "Title": "NetBoltClient",
   "Type": "game",
   "Org": "local",
-  "Ident": "nbclient",
+  "Ident": "netbolt_client",
   "Schema": 1,
   "HasAssets": false,
   "AssetsPath": "",
