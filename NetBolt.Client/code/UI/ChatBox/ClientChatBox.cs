@@ -72,22 +72,22 @@ public class ClientChatBox : Panel
 		if ( lobbyState is "ready" or "staging" )
 			entry.SetClass( "is-lobby", true );
 	}
-	
+
 	public static void OpenChat()
 	{
 		Current?.Open();
 	}
-	
+
 	public static void AddChatEntry( string name, string message, string? avatar = null, string? lobbyState = null )
 	{
 		Current?.AddEntry( name, message, avatar, lobbyState );
 	}
-	
+
 	public static void AddInformation( string message, string? avatar = null )
 	{
 		Current?.AddEntry( null, message, avatar );
 	}
-	
+
 	private static void Say( string message )
 	{
 		// TODO: Reject more stuff

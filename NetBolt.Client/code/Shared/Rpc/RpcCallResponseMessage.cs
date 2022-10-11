@@ -22,7 +22,7 @@ public sealed class RpcCallResponseMessage : NetworkMessage
 	/// The return value from the <see cref="RpcCallMessage"/>.
 	/// </summary>
 	public INetworkable? ReturnValue { get; private set; }
-	
+
 	public RpcCallResponseMessage()
 	{
 		CallGuid = Guid.Empty;
@@ -48,7 +48,7 @@ public sealed class RpcCallResponseMessage : NetworkMessage
 	{
 		writer.Write( CallGuid );
 		writer.Write( (byte)State );
-		
+
 		var hasReturnValue = ReturnValue is not null;
 		writer.Write( hasReturnValue );
 		if ( hasReturnValue )

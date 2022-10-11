@@ -11,7 +11,7 @@ public interface INetworkable
 	/// Returns whether or not the <see cref="INetworkable"/> has changed.
 	/// </summary>
 	bool Changed();
-	
+
 	/// <summary>
 	/// Deserializes all information relating to the <see cref="INetworkable"/>.
 	/// </summary>

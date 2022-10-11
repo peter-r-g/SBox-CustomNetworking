@@ -31,7 +31,7 @@ public sealed partial class EntityManager
 	/// Called when an <see cref="IEntity"/> has been deleted in the <see cref="EntityManager"/>.
 	/// </summary>
 	public DeletedEventHandler? EntityDeleted;
-	
+
 	/// <summary>
 	/// The list of all entities contained in this manager.
 	/// </summary>
@@ -59,9 +59,9 @@ public sealed partial class EntityManager
 	/// <exception cref="Exception">Thrown when <see cref="entityType"/> is not a class or does not implement <see cref="IEntity"/>.</exception>
 	public IEntity Create( Type entityType )
 	{
-		if ( !TypeHelper.IsClass( entityType ) || !entityType.IsAssignableTo( typeof(IEntity) ) )
+		if ( !TypeHelper.IsClass( entityType ) || !entityType.IsAssignableTo( typeof( IEntity ) ) )
 		{
-			Logging.Error( $"Failed to create entity ({nameof(entityType)} is not a class that implementes {nameof(IEntity)})." );
+			Logging.Error( $"Failed to create entity ({nameof( entityType )} is not a class that implementes {nameof( IEntity )})." );
 			return null!;
 		}
 
@@ -104,7 +104,7 @@ public sealed partial class EntityManager
 	{
 		foreach ( var entity in _entities.Values )
 			DeleteEntity( entity );
-		
+
 		_entities.Clear();
 	}
 
@@ -118,12 +118,12 @@ public sealed partial class EntityManager
 		foreach ( var (entId, entity) in _entities )
 		{
 			if ( entId == entityId )
-				return entity;	
+				return entity;
 		}
 
 		return null;
 	}
-	
+
 	/// <summary>
 	/// Creates an entity.
 	/// </summary>
@@ -133,13 +133,13 @@ public sealed partial class EntityManager
 	/// <returns>The created entity.</returns>
 	private T CreateInternal<T>( int entityId, Type? entityType = null ) where T : IEntity
 	{
-		var entity = TypeHelper.Create<T>( entityType ?? typeof(T), entityId );
+		var entity = TypeHelper.Create<T>( entityType ?? typeof( T ), entityId );
 		if ( entity is null )
 		{
-			Logging.Error( $"Failed to create instance of {entityType ?? typeof(T)}" );
+			Logging.Error( $"Failed to create instance of {entityType ?? typeof( T )}" );
 			return default!;
 		}
-		
+
 		_entities.Add( entityId, entity );
 		EntityCreated?.Invoke( entity );
 		return entity;

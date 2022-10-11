@@ -26,7 +26,7 @@ public static class Program
 	/// The target delta time for the server.
 	/// </summary>
 	private static float TickRateDt => (float)1000 / TickRate;
-	
+
 	/// <summary>
 	/// The network server handling communication of the game.
 	/// </summary>
@@ -44,7 +44,7 @@ public static class Program
 	{
 		Logging.Initialize();
 		Logging.Info( "Log started" );
-		
+
 		AppDomain.CurrentDomain.ProcessExit += OnProcessExit;
 		AppDomain.CurrentDomain.UnhandledException += OnUnhandledException;
 		_server = new NetworkServer( WebSocketServerOptions.Default.WithPort( SharedConstants.Port ) );
@@ -63,7 +63,7 @@ public static class Program
 
 			Time.Delta = (float)sw.Elapsed.TotalMilliseconds;
 			sw.Restart();
-			
+
 			_server.DispatchIncoming();
 			_game?.Update();
 		}
@@ -78,11 +78,11 @@ public static class Program
 		_game.Shutdown();
 		ProgramCancellation.Cancel();
 		_server.StopAsync().Wait();
-		
+
 		Logging.Info( "Log finished" );
 		Logging.Dispose();
 	}
-	
+
 	private static void OnUnhandledException( object sender, UnhandledExceptionEventArgs e )
 	{
 		Logging.Fatal( (Exception)e.ExceptionObject );

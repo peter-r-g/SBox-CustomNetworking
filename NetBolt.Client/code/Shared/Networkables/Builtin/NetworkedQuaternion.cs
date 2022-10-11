@@ -95,10 +95,10 @@ public struct NetworkedQuaternion : INetworkable, IEquatable<NetworkedQuaternion
 	{
 		return Value.ToString();
 	}
-	
+
 	public static bool operator ==( NetworkedQuaternion left, NetworkedQuaternion right ) => left.Equals( right );
 	public static bool operator !=( NetworkedQuaternion left, NetworkedQuaternion right ) => !(left == right);
-	
+
 #if CLIENT
 	public static implicit operator Rotation( NetworkedQuaternion networkedQuaternion )
 	{
@@ -115,7 +115,7 @@ public struct NetworkedQuaternion : INetworkable, IEquatable<NetworkedQuaternion
 	{
 		return networkedQuaternion.Value;
 	}
-	
+
 	public static implicit operator NetworkedQuaternion( Quaternion quaternion )
 	{
 		return new NetworkedQuaternion( quaternion );

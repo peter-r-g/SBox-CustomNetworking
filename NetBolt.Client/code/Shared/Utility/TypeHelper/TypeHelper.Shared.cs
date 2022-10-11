@@ -5,5 +5,5 @@ namespace NetBolt.Shared.Utility;
 /// </summary>
 public static partial class TypeHelper
 {
-	
+
 }

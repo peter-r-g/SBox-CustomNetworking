@@ -8,15 +8,15 @@ namespace NetBolt.Shared.Entities;
 /// <summary>
 /// A test class for player input and basic entity networking.
 /// </summary>
-public class BasePlayer  : NetworkEntity
+public class BasePlayer : NetworkEntity
 {
-#if CLIENT 
+#if CLIENT
 	/// <summary>
 	/// The Sbox entity of the player.
 	/// </summary>
 	private readonly TestPlayer _player;
 #endif
-	
+
 	public BasePlayer( int entityId ) : base( entityId )
 	{
 #if CLIENT

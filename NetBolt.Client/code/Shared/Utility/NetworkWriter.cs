@@ -63,7 +63,7 @@ public sealed class NetworkWriter : BinaryWriter
 			foreach ( var type in genericArguments )
 				Write( type.Name );
 		}
-		
+
 		networkable.Serialize( this );
 	}
 

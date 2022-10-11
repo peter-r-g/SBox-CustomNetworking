@@ -55,15 +55,15 @@ public struct NetworkedInt : INetworkable, IEquatable<NetworkedInt>
 		_oldValue = _value;
 		Serialize( writer );
 	}
-	
-	public bool Equals(NetworkedInt other)
+
+	public bool Equals( NetworkedInt other )
 	{
 		return _value == other._value;
 	}
 
-	public override bool Equals(object? obj)
+	public override bool Equals( object? obj )
 	{
-		return obj is NetworkedInt other && Equals(other);
+		return obj is NetworkedInt other && Equals( other );
 	}
 
 	public override int GetHashCode()
@@ -92,7 +92,7 @@ public struct NetworkedInt : INetworkable, IEquatable<NetworkedInt>
 	public static bool operator >( NetworkedInt left, NetworkedInt right ) => left.Value > right.Value;
 	public static bool operator <=( NetworkedInt left, NetworkedInt right ) => left.Value <= right.Value;
 	public static bool operator >=( NetworkedInt left, NetworkedInt right ) => left.Value >= right.Value;
-	
+
 	public static implicit operator int( NetworkedInt networkedInt )
 	{
 		return networkedInt.Value;

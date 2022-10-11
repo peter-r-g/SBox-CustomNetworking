@@ -44,7 +44,7 @@ public partial class NetworkEntity : BaseNetworkable, IEntity
 	{
 		EntityId = entityId;
 	}
-	
+
 	/// <summary>
 	/// Updates the entity.
 	/// </summary>
@@ -81,7 +81,7 @@ public partial class NetworkEntity : BaseNetworkable, IEntity
 				continue;
 			}
 #endif
-			
+
 			var currentValue = property.GetValue( this );
 			(currentValue as INetworkable)!.DeserializeChanges( reader );
 			property.SetValue( this, currentValue );

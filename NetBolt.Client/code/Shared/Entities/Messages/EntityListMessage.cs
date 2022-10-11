@@ -42,11 +42,11 @@ public sealed class EntityListMessage : NetworkMessage
 			ArrayPool<byte>.Shared.Return( data, true );
 	}
 #endif
-	
+
 	public override void Deserialize( NetworkReader reader )
 	{
 #if CLIENT
-		EntityData = new List<byte[]> {Capacity = reader.ReadInt32()};
+		EntityData = new List<byte[]> { Capacity = reader.ReadInt32() };
 		for ( var i = 0; i < EntityData.Capacity; i++ )
 		{
 			var dataLength = reader.ReadInt32();

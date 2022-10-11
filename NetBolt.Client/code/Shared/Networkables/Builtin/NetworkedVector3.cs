@@ -75,15 +75,15 @@ public struct NetworkedVector3 : INetworkable, IEquatable<NetworkedVector3>
 		_oldValue = _value;
 		Serialize( writer );
 	}
-	
-	public bool Equals(NetworkedVector3 other)
+
+	public bool Equals( NetworkedVector3 other )
 	{
-		return _value.Equals(other._value);
+		return _value.Equals( other._value );
 	}
 
-	public override bool Equals(object? obj)
+	public override bool Equals( object? obj )
 	{
-		return obj is NetworkedVector3 other && Equals(other);
+		return obj is NetworkedVector3 other && Equals( other );
 	}
 
 	public override int GetHashCode()
@@ -124,7 +124,7 @@ public struct NetworkedVector3 : INetworkable, IEquatable<NetworkedVector3>
 	{
 		return networkedVector3.Value;
 	}
-	
+
 	public static implicit operator NetworkedVector3( System.Numerics.Vector3 vector3 )
 	{
 		return new NetworkedVector3( vector3 );

@@ -20,7 +20,7 @@ public sealed class NetworkedHashSet<T> : INetworkable, IEnumerable<T> where T :
 		set
 		{
 			_value = value;
-			
+
 			_changes.Clear();
 			_changes.Add( (HashSetChangeType.Clear, default) );
 			foreach ( var val in value )
@@ -28,18 +28,18 @@ public sealed class NetworkedHashSet<T> : INetworkable, IEnumerable<T> where T :
 		}
 	}
 	private HashSet<T> _value;
-	
+
 	/// <summary>
 	/// Gets the number of elements that are contained in a set.
 	/// <returns>The number of elements that are contained in the set.</returns>
 	/// </summary>
 	public int Count => Value.Count;
-	
+
 	/// <summary>
 	/// The list of changes that have happened since the last time this was networked.
 	/// </summary>
 	private readonly List<(HashSetChangeType, T?)> _changes = new();
-	
+
 	public NetworkedHashSet( HashSet<T> hashSet )
 	{
 		_value = hashSet;
@@ -49,7 +49,7 @@ public sealed class NetworkedHashSet<T> : INetworkable, IEnumerable<T> where T :
 	{
 		_value = new HashSet<T>();
 	}
-	
+
 	/// <summary>
 	/// Adds the specified element to a set.
 	/// </summary>
@@ -85,7 +85,7 @@ public sealed class NetworkedHashSet<T> : INetworkable, IEnumerable<T> where T :
 		var result = Value.Remove( item );
 		if ( !result )
 			return false;
-		
+
 		_changes.Add( (HashSetChangeType.Remove, item) );
 		return true;
 	}
@@ -99,7 +99,7 @@ public sealed class NetworkedHashSet<T> : INetworkable, IEnumerable<T> where T :
 		_changes.Clear();
 		_changes.Add( (HashSetChangeType.Clear, default) );
 	}
-	
+
 	public IEnumerator<T> GetEnumerator()
 	{
 		return Value.GetEnumerator();
@@ -109,7 +109,7 @@ public sealed class NetworkedHashSet<T> : INetworkable, IEnumerable<T> where T :
 	{
 		return GetEnumerator();
 	}
-	
+
 	public bool Changed()
 	{
 		return _changes.Count > 0;
@@ -132,7 +132,7 @@ public sealed class NetworkedHashSet<T> : INetworkable, IEnumerable<T> where T :
 			T? value = default;
 			if ( reader.ReadBoolean() )
 				value = reader.ReadNetworkable<T>();
-			
+
 			switch ( action )
 			{
 				case HashSetChangeType.Add:
@@ -145,7 +145,7 @@ public sealed class NetworkedHashSet<T> : INetworkable, IEnumerable<T> where T :
 					Clear();
 					break;
 				default:
-					throw new ArgumentOutOfRangeException( nameof(action) );
+					throw new ArgumentOutOfRangeException( nameof( action ) );
 			}
 		}
 	}
@@ -165,7 +165,7 @@ public sealed class NetworkedHashSet<T> : INetworkable, IEnumerable<T> where T :
 			writer.Write( (byte)change.Item1 );
 			var isNull = change.Item2 is null;
 			writer.Write( isNull );
-			
+
 			if ( !isNull )
 				writer.WriteNetworkable( change.Item2! );
 		}

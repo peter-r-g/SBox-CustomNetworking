@@ -17,7 +17,7 @@ public static class SharedConstants
 	/// The port the monitor server will run on.
 	/// </summary>
 	public const int MonitorPort = Port + 1;
-	
+
 #if SERVER
 	/// <summary>
 	/// Whether we're in the server realm or not.

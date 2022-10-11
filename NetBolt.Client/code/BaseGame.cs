@@ -35,22 +35,22 @@ public class BaseGame : Game
 		NetworkManager.Update();
 		NetworkManager.DispatchOutgoing();
 	}
-	
+
 	protected virtual void OnConnectedToServer()
 	{
 		Logging.Info( "Connected" );
 	}
-	
+
 	protected virtual void OnDisconnectedFromServer()
 	{
 		Logging.Info( "Disconnected" );
 	}
-	
+
 	protected virtual void OnClientConnected( INetworkClient client )
 	{
 		ClientChatBox.AddInformation( $"{client.ClientId} has joined", $"avatar:{client.ClientId}" );
 	}
-	
+
 	protected virtual void OnClientDisconnected( INetworkClient client )
 	{
 		ClientChatBox.AddInformation( $"{client.ClientId} has left", $"avatar{client.ClientId}" );

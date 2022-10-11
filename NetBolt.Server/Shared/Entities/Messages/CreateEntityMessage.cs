@@ -24,7 +24,7 @@ public sealed class CreateEntityMessage : NetworkMessage
 		EntityId = entity.EntityId;
 	}
 #endif
-	
+
 	public override void Deserialize( NetworkReader reader )
 	{
 		EntityClass = reader.ReadString();

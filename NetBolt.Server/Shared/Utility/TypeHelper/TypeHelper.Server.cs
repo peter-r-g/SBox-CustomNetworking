@@ -34,7 +34,7 @@ public static partial class TypeHelper
 	/// <returns>The created instance of <see cref="T"/>.</returns>
 	public static T? Create<T>( params object[] parameters )
 	{
-		return (T?)Activator.CreateInstance( typeof(T), parameters );
+		return (T?)Activator.CreateInstance( typeof( T ), parameters );
 	}
 
 	/// <summary>
@@ -80,7 +80,7 @@ public static partial class TypeHelper
 	{
 		return type.GetProperties( BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic );
 	}
-	
+
 	/// <summary>
 	/// Gets a C# type by its name.
 	/// </summary>
@@ -90,16 +90,16 @@ public static partial class TypeHelper
 	{
 		if ( TypeNameCache.TryGetValue( name, out var cachedType ) )
 			return cachedType;
-		
+
 		foreach ( var type in Assembly.DefinedTypes )
 		{
 			if ( type.Name != name )
 				continue;
-			
+
 			TypeNameCache.Add( name, type );
 			return type;
 		}
-		
+
 		return null;
 	}
 
@@ -112,7 +112,7 @@ public static partial class TypeHelper
 	{
 		return type.IsClass;
 	}
-	
+
 	/// <summary>
 	/// Returns whether or not a type is a struct.
 	/// </summary>

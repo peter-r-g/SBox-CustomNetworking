@@ -27,7 +27,7 @@ public static class NetworkEntityRpcExtension
 	{
 		Rpc.Call( entity, methodName, parameters );
 	}
-	
+
 #if CLIENT
 	/// <summary>
 	/// Wrapper for <see cref="Rpc"/>.<see cref="Rpc.CallAsync( IEntity, string, INetworkable[] )"/>.
@@ -55,7 +55,7 @@ public static class NetworkEntityRpcExtension
 	{
 		Rpc.Call( to, entity, methodName, parameters );
 	}
-	
+
 	/// <summary>
 	/// Wrapper for <see cref="Rpc"/>.<see cref="Rpc.CallAsync( INetworkClient, IEntity, string, INetworkable[] )"/>.
 	/// </summary>

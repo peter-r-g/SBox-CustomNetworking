@@ -48,7 +48,7 @@ internal sealed class NetworkServer : WebSocketServer
 	/// The queue for messages incoming to the server.
 	/// </summary>
 	private readonly ConcurrentQueue<(INetworkClient, NetworkMessage)> _incomingQueue = new();
-	
+
 	internal NetworkServer( IReadOnlyWebSocketServerOptions options ) : base( options )
 	{
 	}
@@ -57,7 +57,7 @@ internal sealed class NetworkServer : WebSocketServer
 	{
 		return Clients.FirstOrDefault( client => client.ClientId == clientId );
 	}
-	
+
 	/// <summary>
 	/// Queues a message to be processed by the server.
 	/// </summary>
@@ -68,7 +68,7 @@ internal sealed class NetworkServer : WebSocketServer
 	{
 		_incomingQueue.Enqueue( (client, message) );
 	}
-	
+
 	/// <summary>
 	/// Queues a message to be sent to clients.
 	/// </summary>
@@ -82,19 +82,19 @@ internal sealed class NetworkServer : WebSocketServer
 			if ( client is BotClient bot )
 				bot.QueueSend( message );
 		}
-		
+
 		// Write message once.
 		var stream = new MemoryStream();
 		var writer = new NetworkWriter( stream );
 		writer.WriteNetworkable( message );
 		writer.Close();
-		
+
 		var bytes = stream.ToArray();
 		foreach ( var client in to )
 		{
 			if ( client is BotClient )
 				continue;
-				
+
 			client.QueueSend( bytes );
 		}
 	}
@@ -103,7 +103,7 @@ internal sealed class NetworkServer : WebSocketServer
 	{
 		if ( client is not NetworkClient networkClient )
 			throw new Exception( "Cannot accept non network clients to the server" );
-		
+
 		base.AcceptClient( client );
 
 		_networkClients.Add( networkClient );
@@ -119,14 +119,14 @@ internal sealed class NetworkServer : WebSocketServer
 	public override void OnClientUpgraded( IWebSocketClient client )
 	{
 		base.OnClientUpgraded( client );
-		
+
 		BaseGame.Current.OnClientConnected( (client as INetworkClient)! );
 	}
 
 	public override void OnClientDisconnected( IWebSocketClient client, WebSocketDisconnectReason reason, WebSocketError? error )
 	{
 		base.OnClientDisconnected( client, reason, error );
-		
+
 		BaseGame.Current.OnClientDisconnected( (client as INetworkClient)! );
 	}
 
@@ -142,11 +142,11 @@ internal sealed class NetworkServer : WebSocketServer
 				Logging.Error( $"Unhandled message type {pair.Item2.GetType()}." );
 				continue;
 			}
-		
-			cb.Invoke( pair.Item1, pair.Item2 );	
+
+			cb.Invoke( pair.Item1, pair.Item2 );
 		}
 	}
-	
+
 	/// <summary>
 	/// Adds a handler for the server to dispatch the message to.
 	/// </summary>
@@ -155,7 +155,7 @@ internal sealed class NetworkServer : WebSocketServer
 	/// <exception cref="Exception">Thrown when a handler has already been set for <see cref="T"/>.</exception>
 	internal void HandleMessage<T>( Action<INetworkClient, NetworkMessage> cb ) where T : NetworkMessage
 	{
-		var messageType = typeof(T);
+		var messageType = typeof( T );
 		if ( _messageHandlers.ContainsKey( messageType ) )
 		{
 			Logging.Error( $"Message type {messageType} is already being handled." );

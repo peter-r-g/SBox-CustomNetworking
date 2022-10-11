@@ -13,14 +13,14 @@ public sealed class MultiEntityUpdateMessage : NetworkMessage
 	/// Contains all data changes relating to entities.
 	/// </summary>
 	public byte[] PartialEntityData { get; private set; } = Array.Empty<byte>();
-	
+
 #if SERVER
 	public MultiEntityUpdateMessage( byte[] partialEntityData )
 	{
 		PartialEntityData = partialEntityData;
 	}
 #endif
-	
+
 	public override void Deserialize( NetworkReader reader )
 	{
 #if CLIENT
@@ -28,7 +28,7 @@ public sealed class MultiEntityUpdateMessage : NetworkMessage
 		_ = reader.Read( PartialEntityData, 0, PartialEntityData.Length );
 #endif
 	}
-	
+
 	public override void Serialize( NetworkWriter writer )
 	{
 #if SERVER

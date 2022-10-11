@@ -12,14 +12,14 @@ public sealed class MultiMessage : NetworkMessage
 	/// The <see cref="NetworkMessage"/>s to send.
 	/// </summary>
 	public NetworkMessage[] Messages { get; private set; } = Array.Empty<NetworkMessage>();
-	
+
 #if SERVER
 	public MultiMessage( params NetworkMessage[] messages )
 	{
 		Messages = messages;
 	}
 #endif
-	
+
 	public override void Deserialize( NetworkReader reader )
 	{
 		Messages = new NetworkMessage[reader.ReadInt32()];

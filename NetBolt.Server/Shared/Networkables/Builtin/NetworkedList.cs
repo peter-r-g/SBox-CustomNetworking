@@ -20,7 +20,7 @@ public sealed class NetworkedList<T> : INetworkable, IEnumerable<T> where T : IN
 		set
 		{
 			_value = value;
-			
+
 			_changes.Clear();
 			_changes.Add( (ListChangeType.Clear, default) );
 			foreach ( var val in value )
@@ -91,7 +91,7 @@ public sealed class NetworkedList<T> : INetworkable, IEnumerable<T> where T : IN
 		_changes.Clear();
 		_changes.Add( (ListChangeType.Clear, default) );
 	}
-	
+
 	public IEnumerator<T> GetEnumerator()
 	{
 		return Value.GetEnumerator();
@@ -124,7 +124,7 @@ public sealed class NetworkedList<T> : INetworkable, IEnumerable<T> where T : IN
 			T? value = default;
 			if ( reader.ReadBoolean() )
 				value = reader.ReadNetworkable<T>();
-			
+
 			switch ( action )
 			{
 				case ListChangeType.Add:
@@ -137,7 +137,7 @@ public sealed class NetworkedList<T> : INetworkable, IEnumerable<T> where T : IN
 					Clear();
 					break;
 				default:
-					throw new ArgumentOutOfRangeException( nameof(action) );
+					throw new ArgumentOutOfRangeException( nameof( action ) );
 			}
 		}
 	}
@@ -157,13 +157,13 @@ public sealed class NetworkedList<T> : INetworkable, IEnumerable<T> where T : IN
 			writer.Write( (byte)change.Item1 );
 			var isNull = change.Item2 is null;
 			writer.Write( isNull );
-			
+
 			if ( !isNull )
 				writer.WriteNetworkable( change.Item2! );
 		}
 		_changes.Clear();
 	}
-	
+
 	public static implicit operator List<T>( NetworkedList<T> networkedList )
 	{
 		return networkedList.Value;

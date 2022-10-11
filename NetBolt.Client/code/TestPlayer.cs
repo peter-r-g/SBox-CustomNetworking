@@ -8,7 +8,7 @@ public class TestPlayer : AnimatedEntity
 	/// The grubs movement controller.
 	/// </summary>
 	public BasePlayerController Controller { get; private set; } = null!;
-	
+
 	/// <summary>
 	/// The camera that the team client will see the game through.
 	/// </summary>
@@ -17,7 +17,7 @@ public class TestPlayer : AnimatedEntity
 		get => Components.Get<CameraMode>();
 		private set => Components.Add( value );
 	}
-	
+
 	/// <summary>
 	/// Called when the entity is first created 
 	/// </summary>
@@ -40,7 +40,7 @@ public class TestPlayer : AnimatedEntity
 	public override void Simulate( Sandbox.Client cl )
 	{
 		base.Simulate( cl );
-		
+
 		Controller.Simulate( cl, this, null );
 
 		if ( Input.Pressed( InputButton.View ) )

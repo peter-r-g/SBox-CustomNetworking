@@ -18,12 +18,13 @@ public sealed class ClientPawnUpdateMessage : NetworkMessage
 		PartialPawnData = partialPawnData;
 	}
 #endif
-	
+
 	public override void Deserialize( NetworkReader reader )
 	{
 		PartialPawnData = new byte[reader.ReadInt32()];
 		_ = reader.Read( PartialPawnData, 0, PartialPawnData.Length );
-;	}
+		;
+	}
 
 	public override void Serialize( NetworkWriter writer )
 	{

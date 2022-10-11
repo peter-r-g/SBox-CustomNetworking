@@ -23,7 +23,7 @@ public abstract class BaseNetworkable : INetworkable
 	/// An internal map of <see cref="BaseNetworkable"/> identifiers that were not accessible at the time and need setting after de-serializing all <see cref="BaseNetworkable"/>s.
 	/// </summary>
 	internal readonly Dictionary<int, string> ClPendingNetworkables = new();
-	
+
 #if SERVER
 	/// <summary>
 	/// A <see cref="PropertyInfo"/> cache of all networked properties.
@@ -40,9 +40,9 @@ public abstract class BaseNetworkable : INetworkable
 	protected BaseNetworkable( int networkId )
 	{
 		NetworkId = networkId;
-		
+
 		foreach ( var property in TypeHelper.GetAllProperties( GetType() )
-			         .Where( property => property.PropertyType.IsAssignableTo( typeof(INetworkable) ) ) )
+					 .Where( property => property.PropertyType.IsAssignableTo( typeof( INetworkable ) ) ) )
 			PropertyNameCache.Add( property.Name, property );
 
 		AllNetworkables.Add( NetworkId, this );
@@ -68,7 +68,7 @@ public abstract class BaseNetworkable : INetworkable
 			if ( networkable.Changed() )
 				return true;
 		}
-		
+
 		return false;
 	}
 
@@ -79,7 +79,7 @@ public abstract class BaseNetworkable : INetworkable
 		{
 			var propertyName = reader.ReadString();
 			var propertyInfo = PropertyNameCache[propertyName];
-			if ( propertyInfo.PropertyType.IsAssignableTo( typeof(BaseNetworkable) ) )
+			if ( propertyInfo.PropertyType.IsAssignableTo( typeof( BaseNetworkable ) ) )
 			{
 				var networkId = reader.ReadInt32();
 				if ( All.TryGetValue( networkId, out var networkable ) )
@@ -99,7 +99,7 @@ public abstract class BaseNetworkable : INetworkable
 		{
 			var propertyName = reader.ReadString();
 			var property = PropertyNameCache[propertyName];
-			if ( property.PropertyType.IsAssignableTo( typeof(BaseNetworkable) ) )
+			if ( property.PropertyType.IsAssignableTo( typeof( BaseNetworkable ) ) )
 			{
 				var networkId = reader.ReadInt32();
 				if ( All.TryGetValue( networkId, out var networkable ) )
@@ -115,7 +115,7 @@ public abstract class BaseNetworkable : INetworkable
 			}
 		}
 	}
-	
+
 	public virtual void Serialize( NetworkWriter writer )
 	{
 		writer.Write( PropertyNameCache.Count );
@@ -123,8 +123,8 @@ public abstract class BaseNetworkable : INetworkable
 		{
 			writer.Write( propertyName );
 			var networkable = (INetworkable)propertyInfo.GetValue( this )!;
-			if ( propertyInfo.PropertyType.IsAssignableTo( typeof(BaseNetworkable) ) &&
-			     networkable is BaseNetworkable baseNetworkable )
+			if ( propertyInfo.PropertyType.IsAssignableTo( typeof( BaseNetworkable ) ) &&
+				 networkable is BaseNetworkable baseNetworkable )
 				writer.Write( baseNetworkable.NetworkId );
 			else
 				writer.WriteNetworkable( networkable );
@@ -135,8 +135,8 @@ public abstract class BaseNetworkable : INetworkable
 	{
 		var numChanged = 0;
 		var changedStreamPos = writer.BaseStream.Position;
-		writer.BaseStream.Position += sizeof(int);
-		
+		writer.BaseStream.Position += sizeof( int );
+
 		foreach ( var (propertyName, propertyInfo) in PropertyNameCache )
 		{
 			var networkable = (INetworkable)propertyInfo.GetValue( this )!;
@@ -176,7 +176,7 @@ public abstract class BaseNetworkable : INetworkable
 		if ( networkable is not null )
 			return networkable;
 
-		Logging.Error( $"Failed to create networkable type {typeof(T)}" );
+		Logging.Error( $"Failed to create networkable type {typeof( T )}" );
 		return default!;
 	}
 

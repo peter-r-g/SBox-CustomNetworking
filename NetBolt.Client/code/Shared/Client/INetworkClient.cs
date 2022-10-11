@@ -32,12 +32,12 @@ public interface INetworkClient
 	/// Called when a clients pawn has changed.
 	/// </summary>
 	event PawnChangedEventHandler? PawnChanged;
-	
+
 	/// <summary>
 	/// The unique identifier of the client.
 	/// </summary>
 	long ClientId { get; }
-	
+
 	/// <summary>
 	/// 
 	/// </summary>
@@ -78,10 +78,10 @@ public interface INetworkClient
 		{
 			if ( NetworkManager.Instance is null )
 			{
-				Logging.Error( $"Attempted to access all clients when the {nameof(NetworkManager)} doesn't exist." );
+				Logging.Error( $"Attempted to access all clients when the {nameof( NetworkManager )} doesn't exist." );
 				return null!;
 			}
-			
+
 			return NetworkManager.Instance.Clients;
 		}
 	}
@@ -95,10 +95,10 @@ public interface INetworkClient
 		{
 			if ( NetworkManager.Instance is null )
 			{
-				Logging.Error( $"Attempted to access local client when the {nameof(NetworkManager)} doesn't exist." );
+				Logging.Error( $"Attempted to access local client when the {nameof( NetworkManager )} doesn't exist." );
 				return null!;
 			}
-			
+
 			return NetworkManager.Instance.LocalClient;
 		}
 	}

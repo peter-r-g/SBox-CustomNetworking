@@ -23,7 +23,7 @@ public sealed class ClientStateChangedMessage : NetworkMessage
 		ClientState = clientState;
 	}
 #endif
-	
+
 	public override void Deserialize( NetworkReader reader )
 	{
 		ClientId = reader.ReadInt64();

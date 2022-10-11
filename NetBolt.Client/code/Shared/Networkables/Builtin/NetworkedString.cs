@@ -60,9 +60,9 @@ public struct NetworkedString : INetworkable, IEquatable<NetworkedString>
 		return _value == other._value;
 	}
 
-	public override bool Equals(object? obj)
+	public override bool Equals( object? obj )
 	{
-		return obj is NetworkedString other && Equals(other);
+		return obj is NetworkedString other && Equals( other );
 	}
 
 	public override int GetHashCode()
@@ -84,7 +84,7 @@ public struct NetworkedString : INetworkable, IEquatable<NetworkedString>
 	{
 		return networkedString.Value;
 	}
-	
+
 	public static implicit operator NetworkedString( string s )
 	{
 		return new NetworkedString( s );

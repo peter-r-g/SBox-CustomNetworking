@@ -19,14 +19,14 @@ public sealed class BotClient : INetworkClient
 	/// </summary>
 	private static readonly Dictionary<Type, Action<BotClient, NetworkMessage>> MessageHandlers = new();
 	public event INetworkClient.PawnChangedEventHandler? PawnChanged;
-	
+
 	public long ClientId { get; }
 	public bool IsBot => true;
-	
+
 	public bool Connected => true;
 	public bool ConnectedAndUpgraded => true;
 	public int Ping => 0;
-	
+
 	public IEntity? Pawn
 	{
 		get => _pawn;
@@ -34,10 +34,10 @@ public sealed class BotClient : INetworkClient
 		{
 			if ( value is not null && _pawn is not null )
 				return;
-			
+
 			if ( value is not null && _pawn is not null && value.EntityId == _pawn.EntityId )
 				return;
-			
+
 			var oldPawn = _pawn;
 			_pawn = value;
 			PawnChanged?.Invoke( this, oldPawn, _pawn );
@@ -49,7 +49,7 @@ public sealed class BotClient : INetworkClient
 	{
 		ClientId = clientId;
 	}
-	
+
 	public void QueueSend( NetworkMessage message )
 	{
 		if ( !MessageHandlers.TryGetValue( message.GetType(), out var cb ) )
@@ -57,7 +57,7 @@ public sealed class BotClient : INetworkClient
 			Logging.Error( $"Unhandled message type {message.GetType()} for bot." );
 			return;
 		}
-		
+
 		cb.Invoke( this, message );
 	}
 
@@ -74,7 +74,7 @@ public sealed class BotClient : INetworkClient
 	/// <exception cref="Exception">Thrown when a handler has already been set for <see cref="T"/>.</exception>
 	public static void HandleBotMessage<T>( Action<BotClient, NetworkMessage> cb ) where T : NetworkMessage
 	{
-		var messageType = typeof(T);
+		var messageType = typeof( T );
 		if ( MessageHandlers.ContainsKey( messageType ) )
 		{
 			Logging.Error( $"Message type {messageType} is already being handled for bots." );

@@ -21,10 +21,10 @@ public sealed class ClientListMessage : NetworkMessage
 			ClientIds.Add( (client.ClientId, client.Pawn?.EntityId ?? -1) );
 	}
 #endif
-	
+
 	public override void Deserialize( NetworkReader reader )
 	{
-		var list = new List<(long, int)> {Capacity = reader.ReadInt32()};
+		var list = new List<(long, int)> { Capacity = reader.ReadInt32() };
 		for ( var i = 0; i < list.Capacity; i++ )
 			list.Add( (reader.ReadInt64(), reader.ReadInt32()) );
 

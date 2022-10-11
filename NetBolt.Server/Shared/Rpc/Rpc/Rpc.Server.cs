@@ -18,7 +18,7 @@ public partial class Rpc
 	/// The dictionary to hold RPC responses.
 	/// </summary>
 	private static readonly ConcurrentDictionary<Guid, RpcCallResponseMessage> RpcResponses = new();
-	
+
 	/// <summary>
 	/// Executes an RPC relating to an entities instance.
 	/// </summary>
@@ -29,7 +29,7 @@ public partial class Rpc
 	{
 		Call( To.All( NetworkServer.Instance ), entity, methodName, parameters );
 	}
-	
+
 	/// <summary>
 	/// Executes an asynchronous RPC relating to an entities instance.
 	/// </summary>
@@ -56,7 +56,7 @@ public partial class Rpc
 	{
 		Call( To.All( NetworkServer.Instance ), type, methodName, parameters );
 	}
-	
+
 	/// <summary>
 	/// Executes an asynchronous RPC on a static method.
 	/// </summary>
@@ -72,7 +72,7 @@ public partial class Rpc
 		NetworkServer.Instance.QueueSend( To.Single( client ), message );
 		return await WaitForResponseAsync( message.CallGuid );
 	}
-	
+
 	/// <summary>
 	/// Executes an RPC relating to an entities instance that is sent to specific clients.
 	/// </summary>
@@ -84,7 +84,7 @@ public partial class Rpc
 	{
 		NetworkServer.Instance.QueueSend( to, CreateRpc( false, entity, methodName, parameters ) );
 	}
-	
+
 	/// <summary>
 	/// Executes an RPC on a static method that is sent to specific clients.
 	/// </summary>
@@ -96,7 +96,7 @@ public partial class Rpc
 	{
 		NetworkServer.Instance.QueueSend( to, CreateRpc( false, type, methodName, parameters ) );
 	}
-	
+
 	/// <summary>
 	/// Handles an incoming RPC from a client.
 	/// </summary>
@@ -118,9 +118,9 @@ public partial class Rpc
 			throw new InvalidOperationException(
 				$"Failed to handle RPC call (\"{rpcCall.MethodName}\" does not exist on \"{type}\")." );
 
-		if ( method.GetCustomAttribute( typeof(ServerAttribute) ) is null )
+		if ( method.GetCustomAttribute( typeof( ServerAttribute ) ) is null )
 			throw new InvalidOperationException( "Failed to handle RPC call (Attempted to invoke a non-RPC method)." );
-		
+
 		var entity = BaseGame.Current.GetNetworkedEntityById( rpcCall.EntityId );
 		if ( entity is null && rpcCall.EntityId != -1 )
 			throw new InvalidOperationException(

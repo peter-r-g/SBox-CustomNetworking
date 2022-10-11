@@ -52,16 +52,16 @@ public static partial class Rpc
 	{
 		// TODO: Surely there's a better way to do this right?
 		// TODO: This does not account for disconnects or the environment shutting down.
-		while ( !RpcResponses.ContainsKey( callGuid  ) )
+		while ( !RpcResponses.ContainsKey( callGuid ) )
 			await Task.Delay( 1 );
-		
+
 		RpcResponses.Remove( callGuid, out var response );
 		if ( response is null )
 		{
 			Logging.Error( $"Failed to return RPC response (\"{callGuid}\" became invalid unexpectedly)." );
 			return default!;
 		}
-		
+
 		return response;
 	}
 
@@ -95,7 +95,7 @@ public static partial class Rpc
 
 		public ServerAttribute( double limitPerSecond = double.MaxValue )
 		{
-			
+
 		}
 	}
 }

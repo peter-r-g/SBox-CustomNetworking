@@ -39,7 +39,7 @@ public sealed class RpcCallMessage : NetworkMessage
 		EntityId = -1;
 		Parameters = Array.Empty<INetworkable>();
 	}
-	
+
 	public RpcCallMessage( bool respondable, Type entityType, IEntity? entity, string methodName,
 		params INetworkable[] parameters )
 	{
@@ -60,7 +60,7 @@ public sealed class RpcCallMessage : NetworkMessage
 		ClassName = reader.ReadString();
 		MethodName = reader.ReadString();
 		EntityId = reader.ReadInt32();
-		
+
 		Parameters = new INetworkable[reader.ReadInt32()];
 		for ( var i = 0; i < Parameters.Length; i++ )
 			Parameters[i] = reader.ReadNetworkable();
@@ -72,7 +72,7 @@ public sealed class RpcCallMessage : NetworkMessage
 		writer.Write( ClassName );
 		writer.Write( MethodName );
 		writer.Write( EntityId );
-		
+
 		writer.Write( Parameters.Length );
 		foreach ( var argument in Parameters )
 			writer.WriteNetworkable( argument );

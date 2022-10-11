@@ -15,7 +15,7 @@ namespace NetBolt.Shared.Messages;
 public abstract class NetworkMessage : INetworkable
 {
 	public bool Changed() => false;
-	
+
 	public abstract void Deserialize( NetworkReader reader );
 	public void DeserializeChanges( NetworkReader reader )
 	{

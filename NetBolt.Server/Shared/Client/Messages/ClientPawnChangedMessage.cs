@@ -22,7 +22,7 @@ public sealed class ClientPawnChangedMessage : NetworkMessage
 	/// The new <see cref="IEntity"/> the <see cref="Client"/> is controlling.
 	/// </summary>
 	public IEntity? NewPawn { get; private set; }
-	
+
 #if SERVER
 	public ClientPawnChangedMessage( INetworkClient client, IEntity? oldEntity, IEntity? newEntity )
 	{
@@ -31,7 +31,7 @@ public sealed class ClientPawnChangedMessage : NetworkMessage
 		NewPawn = newEntity;
 	}
 #endif
-	
+
 	public override void Deserialize( NetworkReader reader )
 	{
 		var clientId = reader.ReadInt64();
@@ -52,7 +52,7 @@ public sealed class ClientPawnChangedMessage : NetworkMessage
 	public override void Serialize( NetworkWriter writer )
 	{
 		writer.Write( Client.ClientId );
-		
+
 		var hasOldPawn = OldPawn is not null;
 		writer.Write( hasOldPawn );
 		if ( hasOldPawn )

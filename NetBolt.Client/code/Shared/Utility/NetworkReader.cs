@@ -79,13 +79,13 @@ public sealed class NetworkReader : BinaryReader
 		}
 		else
 			networkable = TypeHelper.Create<INetworkable>( type );
-		
+
 		if ( networkable is null )
 		{
 			Logging.Error( "Failed to read networkable (instance creation failed)." );
 			return null!;
 		}
-		
+
 		networkable.Deserialize( this );
 		return networkable;
 	}
@@ -98,19 +98,19 @@ public sealed class NetworkReader : BinaryReader
 	/// <exception cref="InvalidOperationException">Thrown when reading the <see cref="INetworkable"/> has failed.</exception>
 	public T ReadNetworkable<T>() where T : INetworkable
 	{
-		if ( typeof(T).IsAssignableTo( typeof(IEntity) ) )
+		if ( typeof( T ).IsAssignableTo( typeof( IEntity ) ) )
 			return ReadEntity<T>();
-		
+
 		var networkable = ReadNetworkable();
 		if ( networkable is not T outputNetworkable )
 		{
-			Logging.Error( $"Failed to read networkable ({networkable.GetType()} is not assignable to {typeof(T)})." );
+			Logging.Error( $"Failed to read networkable ({networkable.GetType()} is not assignable to {typeof( T )})." );
 			return default!;
 		}
 
 		return outputNetworkable;
 	}
-	
+
 	/// <summary>
 	/// Reads all changes relating to an <see cref="INetworkable"/> instance.
 	/// </summary>
@@ -130,7 +130,7 @@ public sealed class NetworkReader : BinaryReader
 	{
 		var entityId = ReadInt32();
 		var typeName = ReadString();
-		
+
 		var type = TypeHelper.GetTypeByName( typeName );
 		if ( type is null )
 		{
@@ -144,11 +144,11 @@ public sealed class NetworkReader : BinaryReader
 			Logging.Error( "Failed to read entity (instance creation failed)." );
 			return null!;
 		}
-		
+
 		entity.Deserialize( this );
 		return entity;
 	}
-	
+
 	/// <summary>
 	/// Reads an instance of <see cref="IEntity"/> and casts it to <see cref="T"/>.
 	/// </summary>
@@ -160,7 +160,7 @@ public sealed class NetworkReader : BinaryReader
 		var entity = ReadEntity();
 		if ( entity is not T outputEntity )
 		{
-			Logging.Error( $"Failed to read entity ({entity.GetType()} is not assignable to {typeof(T)})" );
+			Logging.Error( $"Failed to read entity ({entity.GetType()} is not assignable to {typeof( T )})" );
 			return default!;
 		}
 

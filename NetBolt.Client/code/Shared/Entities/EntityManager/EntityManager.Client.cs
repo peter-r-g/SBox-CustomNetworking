@@ -13,15 +13,15 @@ public partial class EntityManager
 	public void Create( string entityClass, int entityId )
 	{
 		var entityType = TypeHelper.GetTypeByName( entityClass );
-		if ( entityType is null || !TypeHelper.IsClass( entityType ) || !entityType.IsAssignableTo( typeof(IEntity) ) )
+		if ( entityType is null || !TypeHelper.IsClass( entityType ) || !entityType.IsAssignableTo( typeof( IEntity ) ) )
 		{
-			Logging.Error( $"Failed to create entity (type is not a class that implements {nameof(IEntity)})." );
+			Logging.Error( $"Failed to create entity (type is not a class that implements {nameof( IEntity )})." );
 			return;
 		}
 
 		CreateInternal<IEntity>( entityId, entityType );
 	}
-	
+
 	/// <summary>
 	/// Deserializes an instance of <see cref="IEntity"/> and adds it to this <see cref="EntityManager"/>.
 	/// </summary>

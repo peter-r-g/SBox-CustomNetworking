@@ -10,7 +10,7 @@ public class GameHud : RootPanel
 {
 	public string ClientCount => $"{NetworkManager.Instance?.Clients.Count} clients connected";
 	public string NetworkedEntityCount => $"{IEntity.All.Entities.Count} networked entities";
-	
+
 #if DEBUG
 	public string MessagesReceived => $"{NetworkManager.Instance?.MessagesReceived} messages received";
 	public string MessagesSent => $"{NetworkManager.Instance?.MessagesSent} messages sent";
@@ -21,7 +21,7 @@ public class GameHud : RootPanel
 		{
 			if ( NetworkManager.Instance is null )
 				return string.Empty;
-			
+
 			var sb = new StringBuilder();
 			sb.Append( "Received Types:\n" );
 

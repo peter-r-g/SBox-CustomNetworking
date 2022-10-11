@@ -34,7 +34,7 @@ public static class Logging
 		_logger.Dispose();
 	}
 #endif
-	
+
 	/// <summary>
 	/// Logs information.
 	/// </summary>

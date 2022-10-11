@@ -94,13 +94,13 @@ public partial class Rpc
 			Logging.Error( $"Failed to handle RPC call (\"{rpcCall.MethodName}\" does not exist on \"{type}\")." );
 			return;
 		}
-		
+
 		if ( !method.Attributes.Any( attribute => attribute is ClientAttribute ) )
 		{
 			Logging.Error( "Failed to handle RPC call (Attempted to invoke a non-RPC method)." );
 			return;
 		}
-		
+
 		var entity = IEntity.All.GetEntityById( rpcCall.EntityId );
 		if ( entity is null && rpcCall.EntityId != -1 )
 		{
@@ -112,7 +112,7 @@ public partial class Rpc
 		parameters.AddRange( rpcCall.Parameters );
 		if ( entity is not null )
 			parameters.Insert( 0, entity );
-		
+
 		if ( rpcCall.CallGuid == Guid.Empty )
 		{
 			method.Invoke( null, parameters.ToArray() );
@@ -127,11 +127,11 @@ public partial class Rpc
 			Logging.Error( $"Failed to handle RPC call (\"{rpcCall.MethodName}\" returned a non-networkable value)." );
 			return;
 		}
-		
+
 		var response = new RpcCallResponseMessage( rpcCall.CallGuid, RpcCallState.Completed, returnValue as INetworkable ?? null );
 		NetworkManager.Instance?.SendToServer( response );
 	}
-	
+
 	/// <summary>
 	/// Handles an incoming RPC call response.
 	/// </summary>

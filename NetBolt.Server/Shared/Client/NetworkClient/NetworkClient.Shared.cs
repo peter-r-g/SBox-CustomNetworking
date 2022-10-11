@@ -16,7 +16,7 @@ public partial class NetworkClient : INetworkClient
 #endif
 {
 	public event INetworkClient.PawnChangedEventHandler? PawnChanged;
-	
+
 	public long ClientId { get; private set; }
 
 	public bool IsBot => false;
@@ -28,10 +28,10 @@ public partial class NetworkClient : INetworkClient
 		{
 			if ( value is not null && _pawn is not null )
 				return;
-			
+
 			if ( value is not null && _pawn is not null && value.EntityId == _pawn.EntityId )
 				return;
-			
+
 			var oldPawn = _pawn;
 			_pawn = value;
 			PawnChanged?.Invoke( this, oldPawn, _pawn );

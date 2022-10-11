@@ -20,7 +20,7 @@ public interface IEntity : INetworkable
 	/// The unique identifier of the <see cref="IEntity"/>.
 	/// </summary>
 	int EntityId { get; }
-	
+
 	/// <summary>
 	/// The <see cref="INetworkClient"/> that owns this <see cref="IEntity"/>.
 	/// </summary>
@@ -36,7 +36,7 @@ public interface IEntity : INetworkable
 	/// <remarks>This will be called every server tick or client frame.</remarks>
 	/// </summary>
 	void Update();
-	
+
 #if SERVER
 	/// <summary>
 	/// Contains all networked entities in the server.
@@ -58,10 +58,10 @@ public interface IEntity : INetworkable
 		{
 			if ( NetworkManager.Instance is null )
 			{
-				Logging.Error( $"Attempted to access all networked entities when the {nameof(NetworkManager)} doesn't exist." );
+				Logging.Error( $"Attempted to access all networked entities when the {nameof( NetworkManager )} doesn't exist." );
 				return null!;
 			}
-			
+
 			return NetworkManager.Instance.SharedEntityManager;
 		}
 	}

@@ -32,12 +32,12 @@ public interface INetworkClient
 	/// Called when a clients pawn has changed.
 	/// </summary>
 	event PawnChangedEventHandler? PawnChanged;
-	
+
 	/// <summary>
 	/// The unique identifier of the client.
 	/// </summary>
 	long ClientId { get; }
-	
+
 	/// <summary>
 	/// 
 	/// </summary>

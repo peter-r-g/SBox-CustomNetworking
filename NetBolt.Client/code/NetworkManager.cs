@@ -19,14 +19,14 @@ namespace NetBolt.Client;
 public class NetworkManager
 {
 	public static NetworkManager? Instance;
-	
+
 #if DEBUG
 	public int MessagesReceived;
 	public int MessagesSent;
 
 	public readonly Dictionary<Type, int> MessageTypesReceived = new();
 #endif
-	
+
 	public readonly List<INetworkClient> Clients = new();
 	public INetworkClient LocalClient => GetClientById( _localClientId )!;
 	public readonly EntityManager SharedEntityManager = new();
@@ -38,10 +38,10 @@ public class NetworkManager
 
 	public delegate void DisconnectedEventHandler();
 	public static event DisconnectedEventHandler? DisconnectedFromServer;
-	
+
 	public delegate void ClientConnectedEventHandler( INetworkClient client );
 	public static event ClientConnectedEventHandler? ClientConnected;
-	
+
 	public delegate void ClientDisconnectedEventHandler( INetworkClient client );
 	public static event ClientDisconnectedEventHandler? ClientDisconnected;
 
@@ -55,14 +55,14 @@ public class NetworkManager
 	public NetworkManager()
 	{
 		if ( Instance is not null )
-			Logging.Fatal( new InvalidOperationException( $"An instance of {nameof(NetworkManager)} already exists." ) );
-		
+			Logging.Fatal( new InvalidOperationException( $"An instance of {nameof( NetworkManager )} already exists." ) );
+
 		Instance = this;
 		_webSocket = new WebSocket();
 		_webSocket.OnDisconnected += WebSocketOnDisconnected;
 		_webSocket.OnDataReceived += WebSocketOnDataReceived;
 		_webSocket.OnMessageReceived += WebSocketOnMessageReceived;
-		
+
 		HandleMessage<RpcCallMessage>( Rpc.HandleRpcCallMessage );
 		HandleMessage<RpcCallResponseMessage>( Rpc.HandleRpcCallResponseMessage );
 		HandleMessage<MultiMessage>( HandleMultiMessage );
@@ -80,13 +80,13 @@ public class NetworkManager
 	{
 		if ( Connected )
 			Close();
-		
+
 		try
 		{
 			var rand = new Random( Time.Tick );
 			_localClientId = rand.NextInt64();
-			var headers = new Dictionary<string, string> {{"Steam", _localClientId.ToString()}};
-			var webSocketUri = (secure ? "wss://" : "ws://") + uri + ':' + port + '/' ;
+			var headers = new Dictionary<string, string> { { "Steam", _localClientId.ToString() } };
+			var webSocketUri = (secure ? "wss://" : "ws://") + uri + ':' + port + '/';
 			Logging.Info( "Connecting..." );
 			await _webSocket.Connect( webSocketUri, headers );
 			Clients.Add( new NetworkClient( _localClientId ) );
@@ -107,13 +107,13 @@ public class NetworkManager
 		_webSocket = new WebSocket();
 		Clients.Clear();
 		SharedEntityManager.DeleteAllEntities();
-		
+
 #if DEBUG
 		MessagesReceived = 0;
 		MessagesSent = 0;
 		MessageTypesReceived.Clear();
 #endif
-		
+
 		DisconnectedFromServer?.Invoke();
 	}
 
@@ -124,28 +124,28 @@ public class NetworkManager
 
 		if ( LocalClient.Pawn is not INetworkable pawn || !pawn.Changed() || _pawnSw.Elapsed.TotalMilliseconds < 100 )
 			return;
-		
+
 		var stream = new MemoryStream();
 		var writer = new NetworkWriter( stream );
-		
+
 		writer.WriteNetworkableChanges( ref pawn );
 		writer.Close();
 
 		SendToServer( new ClientPawnUpdateMessage( stream.ToArray() ) );
 		_pawnSw.Restart();
 	}
-	
+
 	private void WebSocketOnDisconnected( int status, string reason )
 	{
 		Close();
 	}
-	
+
 	private void WebSocketOnDataReceived( Span<byte> data )
 	{
 #if DEBUG
 		MessagesReceived++;
 #endif
-		
+
 		_incomingQueue.Enqueue( data.ToArray() );
 	}
 
@@ -175,8 +175,8 @@ public class NetworkManager
 			var writer = new NetworkWriter( stream );
 			writer.WriteNetworkable( message );
 			writer.Close();
-		
-			_ = _webSocket?.Send( stream.ToArray() );	
+
+			_ = _webSocket?.Send( stream.ToArray() );
 		}
 	}
 
@@ -184,11 +184,11 @@ public class NetworkManager
 	{
 		if ( message is not MultiMessage multiMessage )
 			return;
-		
+
 		foreach ( var msg in multiMessage.Messages )
 			DispatchMessage( msg );
 	}
-		
+
 	private void HandleShutdownMessage( NetworkMessage message )
 	{
 		if ( message is not ShutdownMessage )
@@ -206,12 +206,12 @@ public class NetworkManager
 		{
 			if ( clientId == _localClientId )
 				continue;
-			
-			var client = new NetworkClient( clientId ) {Pawn = SharedEntityManager.GetEntityById( pawnId )};
+
+			var client = new NetworkClient( clientId ) { Pawn = SharedEntityManager.GetEntityById( pawnId ) };
 			Clients.Add( client );
 		}
 	}
-	
+
 	private void HandleEntityListMessage( NetworkMessage message )
 	{
 		if ( message is not EntityListMessage entityListMessage )
@@ -237,10 +237,10 @@ public class NetworkManager
 	{
 		if ( message is not DeleteEntityMessage deleteEntityMessage )
 			return;
-		
+
 		SharedEntityManager.DeleteEntity( deleteEntityMessage.Entity );
 	}
-		
+
 	private void HandleClientStateChangedMessage( NetworkMessage message )
 	{
 		if ( message is not ClientStateChangedMessage clientStateChangedMessage )
@@ -257,16 +257,16 @@ public class NetworkManager
 				var disconnectedClient = Clients.FirstOrDefault( cl => cl.ClientId == clientStateChangedMessage.ClientId );
 				if ( disconnectedClient is null )
 					return;
-				
+
 				Clients.Remove( disconnectedClient );
 				ClientDisconnected?.Invoke( disconnectedClient );
 				break;
 			default:
-				Logging.Error( "Got unexpected client state.", new ArgumentOutOfRangeException( nameof(clientStateChangedMessage.ClientState) ) );
+				Logging.Error( "Got unexpected client state.", new ArgumentOutOfRangeException( nameof( clientStateChangedMessage.ClientState ) ) );
 				break;
 		}
 	}
-		
+
 	private void HandleClientPawnChangedMessage( NetworkMessage message )
 	{
 		if ( message is not ClientPawnChangedMessage clientPawnChangedMessage )
@@ -280,7 +280,7 @@ public class NetworkManager
 		if ( clientPawnChangedMessage.Client.Pawn is not null )
 			clientPawnChangedMessage.Client.Pawn.Owner = clientPawnChangedMessage.Client;
 	}
-	
+
 	private void HandleMultiEntityUpdateMessage( NetworkMessage message )
 	{
 		if ( message is not MultiEntityUpdateMessage entityUpdateMessage )
@@ -296,7 +296,7 @@ public class NetworkManager
 				Logging.Error( "Attempted to update an entity that does not exist." );
 				continue;
 			}
-		
+
 			reader.ReadNetworkableChanges( entity );
 		}
 		reader.Close();
@@ -321,13 +321,13 @@ public class NetworkManager
 			Logging.Error( $"Unhandled message type {message.GetType()}." );
 			return;
 		}
-		
+
 		cb.Invoke( message );
 	}
 
 	public void HandleMessage<T>( Action<NetworkMessage> cb ) where T : NetworkMessage
 	{
-		var messageType = typeof(T);
+		var messageType = typeof( T );
 		if ( _messageHandlers.ContainsKey( messageType ) )
 			throw new Exception( $"Message type {messageType} is already being handled." );
 

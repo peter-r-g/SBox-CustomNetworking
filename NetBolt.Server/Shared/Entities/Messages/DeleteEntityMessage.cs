@@ -13,14 +13,14 @@ public sealed class DeleteEntityMessage : NetworkMessage
 	/// The <see cref="IEntity"/> to delete.
 	/// </summary>
 	public IEntity Entity { get; private set; } = null!;
-	
+
 #if SERVER
 	public DeleteEntityMessage( IEntity entity )
 	{
 		Entity = entity;
 	}
 #endif
-	
+
 	public override void Deserialize( NetworkReader reader )
 	{
 		var entityId = reader.ReadInt32();

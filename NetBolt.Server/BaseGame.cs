@@ -18,7 +18,7 @@ public class BaseGame
 	/// The only instance of the game in existence.
 	/// </summary>
 	public static BaseGame Current = null!;
-	
+
 	/// <summary>
 	/// Manages all server-side only entities.
 	/// </summary>
@@ -36,8 +36,8 @@ public class BaseGame
 	public BaseGame()
 	{
 		if ( Current is not null )
-			Logging.Fatal( new InvalidOperationException( $"An instance of {nameof(BaseGame)} already exists." ) );
-		
+			Logging.Fatal( new InvalidOperationException( $"An instance of {nameof( BaseGame )} already exists." ) );
+
 		Current = this;
 	}
 
@@ -62,7 +62,7 @@ public class BaseGame
 	/// </summary>
 	public virtual void Shutdown()
 	{
-		ServerEntityManager.DeleteAllEntities();	
+		ServerEntityManager.DeleteAllEntities();
 		SharedEntityManager.DeleteAllEntities();
 	}
 
@@ -74,7 +74,7 @@ public class BaseGame
 	{
 		foreach ( var serverEntity in ServerEntityManager.Entities.Values )
 			serverEntity.Update();
-		
+
 		foreach ( var sharedEntity in SharedEntityManager.Entities.Values )
 			sharedEntity.Update();
 
@@ -82,14 +82,14 @@ public class BaseGame
 		var stream = new MemoryStream();
 		var writer = new NetworkWriter( stream );
 		var countPos = writer.BaseStream.Position;
-		writer.BaseStream.Position += sizeof(int);
+		writer.BaseStream.Position += sizeof( int );
 
 		var count = 0;
 		foreach ( var entity in SharedEntityManager.Entities.Values )
 		{
 			if ( !entity.Changed() )
 				continue;
-			
+
 			count++;
 			writer.Write( entity.EntityId );
 			entity.SerializeChanges( writer );
@@ -100,11 +100,11 @@ public class BaseGame
 		writer.Write( count );
 		writer.BaseStream.Position = tempPos;
 		writer.Close();
-		
+
 		if ( count != 0 )
 			NetworkServer.Instance.QueueSend( To.All( NetworkServer.Instance ), new MultiEntityUpdateMessage( stream.ToArray() ) );
 	}
-	
+
 	/// <summary>
 	/// Called when a <see cref="INetworkClient"/> has been authorized and has joined the server.
 	/// </summary>
@@ -112,12 +112,12 @@ public class BaseGame
 	public virtual void OnClientConnected( INetworkClient client )
 	{
 		Logging.Info( $"{client} has connected" );
-		
+
 		var toClient = To.Single( client );
 		NetworkServer.Instance.QueueSend( toClient, new ClientListMessage( NetworkServer.Instance.Clients ) );
 		NetworkServer.Instance.QueueSend( toClient, new EntityListMessage( SharedEntityManager.Entities.Values ) );
 		NetworkServer.Instance.QueueSend( To.AllExcept( NetworkServer.Instance, client ), new ClientStateChangedMessage( client.ClientId, ClientState.Connected ) );
-		
+
 		client.PawnChanged += ClientOnPawnChanged;
 		client.Pawn = SharedEntityManager.Create<BasePlayer>();
 		client.Pawn.Owner = client;
@@ -130,13 +130,13 @@ public class BaseGame
 	public virtual void OnClientDisconnected( INetworkClient client )
 	{
 		Logging.Info( $"{client} has disconnected" );
-		
+
 		NetworkServer.Instance.QueueSend( To.AllExcept( NetworkServer.Instance, client ), new ClientStateChangedMessage( client.ClientId, ClientState.Disconnected ) );
 		if ( client.Pawn is not null )
 			SharedEntityManager.DeleteEntity( client.Pawn );
 		client.PawnChanged -= ClientOnPawnChanged;
 	}
-	
+
 	/// <summary>
 	/// Gets an <see cref="IEntity"/> that is local to the server.
 	/// </summary>
@@ -174,7 +174,7 @@ public class BaseGame
 	{
 		NetworkServer.Instance.QueueSend( To.All( NetworkServer.Instance ), new DeleteEntityMessage( entity ) );
 	}
-	
+
 	/// <summary>
 	/// Called when a <see cref="INetworkClient"/>s pawn has been swapped.
 	/// </summary>
@@ -198,10 +198,10 @@ public class BaseGame
 
 		if ( client.Pawn is null )
 		{
-			Logging.Error( $"Received a {nameof(ClientPawnUpdateMessage)} when the client has no pawn." );
+			Logging.Error( $"Received a {nameof( ClientPawnUpdateMessage )} when the client has no pawn." );
 			return;
 		}
-		
+
 		var reader = new NetworkReader( new MemoryStream( clientPawnUpdateMessage.PartialPawnData ) );
 		client.Pawn.DeserializeChanges( reader );
 		reader.Close();

@@ -16,14 +16,14 @@ public partial class NetworkClient
 	internal NetworkClient( TcpClient socket, IWebSocketServer server ) : base( socket, server )
 	{
 	}
-	
+
 	public void QueueSend( NetworkMessage message )
 	{
 		var stream = new MemoryStream();
 		var writer = new NetworkWriter( stream );
 		writer.WriteNetworkable( message );
 		writer.Close();
-		
+
 		QueueSend( stream.ToArray() );
 	}
 
@@ -34,7 +34,7 @@ public partial class NetworkClient
 		var reader = new NetworkReader( new MemoryStream( bytes.ToArray() ) );
 		var message = NetworkMessage.DeserializeMessage( reader );
 		reader.Close();
-		
+
 		NetworkServer.Instance.QueueIncoming( this, message );
 	}
 
