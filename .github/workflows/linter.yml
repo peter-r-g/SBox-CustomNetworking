@@ -6,7 +6,7 @@ name: Lint Code Base
 
 on:
   push:
-    branches-ignore: [master]
+    branches: [master]
   pull_request:
     branches: [master]
 
@@ -24,7 +24,9 @@ jobs:
         run: dotnet tool install -g dotnet-format
 
       - name: Checkout Code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
 
       - name: Run dotnet format
-        run: dotnet format '.\' --folder --check --verbosity diagnostic
+        run: dotnet format --verbosity diagnostic
