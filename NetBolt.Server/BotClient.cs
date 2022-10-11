@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using NetBolt.Shared;
 using NetBolt.Shared.Entities;
 using NetBolt.Shared.Messages;
 using NetBolt.Shared.Utility;
+using NetBolt.WebSocket.Enums;
 
 namespace NetBolt.Server;
 
@@ -19,6 +21,12 @@ public sealed class BotClient : INetworkClient
 	public event INetworkClient.PawnChangedEventHandler? PawnChanged;
 	
 	public long ClientId { get; }
+	public bool IsBot => true;
+	
+	public bool Connected => true;
+	public bool ConnectedAndUpgraded => true;
+	public int Ping => 0;
+	
 	public IEntity? Pawn
 	{
 		get => _pawn;
@@ -42,14 +50,8 @@ public sealed class BotClient : INetworkClient
 		ClientId = clientId;
 	}
 	
-	public void SendMessage( byte[] bytes )
+	public void QueueSend( NetworkMessage message )
 	{
-		Logging.Error( $"You should not be sending bytes to a bot. Use {nameof(SendMessage)} with the {nameof(NetworkMessage)} overload" );
-	}
-	
-	public void SendMessage( NetworkMessage message )
-	{
-		NetworkServer.Instance.MessagesSentToClients++;
 		if ( !MessageHandlers.TryGetValue( message.GetType(), out var cb ) )
 		{
 			Logging.Error( $"Unhandled message type {message.GetType()} for bot." );
@@ -80,5 +82,31 @@ public sealed class BotClient : INetworkClient
 		}
 
 		MessageHandlers.Add( messageType, cb );
+	}
+
+	public Task DisconnectAsync( WebSocketDisconnectReason reason = WebSocketDisconnectReason.Requested, string strReason = "",
+		WebSocketError? error = null )
+	{
+		throw new NotImplementedException();
+	}
+
+	public Task HandleAsync()
+	{
+		return Task.CompletedTask;
+	}
+
+	public ValueTask<int> PingAsync( int timeout = int.MaxValue )
+	{
+		return new ValueTask<int>( 0 );
+	}
+
+	public void QueueSend( byte[] bytes )
+	{
+		throw new NotImplementedException();
+	}
+
+	public void QueueSend( string message )
+	{
+		throw new NotImplementedException();
 	}
 }

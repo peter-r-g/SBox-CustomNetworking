@@ -1,15 +1,25 @@
 ﻿using NetBolt.Shared.Entities;
+#if SERVER
+using NetBolt.WebSocket;
+#endif
 
 namespace NetBolt.Shared;
 
 /// <summary>
 /// Base class for any non-bot clients connected to a server.
 /// </summary>
+#if SERVER
+public partial class NetworkClient : WebSocketClient, INetworkClient
+#endif
+#if CLIENT
 public partial class NetworkClient : INetworkClient
+#endif
 {
 	public event INetworkClient.PawnChangedEventHandler? PawnChanged;
 	
-	public long ClientId { get; }
+	public long ClientId { get; private set; }
+
+	public bool IsBot => false;
 
 	public IEntity? Pawn
 	{

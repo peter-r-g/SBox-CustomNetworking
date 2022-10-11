@@ -3,6 +3,7 @@ using System.Buffers;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using NetBolt.Shared;
 using NetBolt.Shared.Entities;
@@ -26,7 +27,7 @@ public class NetworkManager
 	public readonly Dictionary<Type, int> MessageTypesReceived = new();
 #endif
 	
-	public readonly Dictionary<long, INetworkClient> Clients = new();
+	public readonly List<INetworkClient> Clients = new();
 	public INetworkClient LocalClient => GetClientById( _localClientId )!;
 	public readonly EntityManager SharedEntityManager = new();
 
@@ -46,7 +47,6 @@ public class NetworkManager
 
 	private WebSocket _webSocket;
 	private readonly Dictionary<Type, Action<NetworkMessage>> _messageHandlers = new();
-	private readonly Dictionary<Guid, List<PartialMessage>> _partialMessages = new();
 	private readonly Queue<byte[]> _incomingQueue = new();
 	private readonly Queue<NetworkMessage> _outgoingQueue = new();
 	private readonly Stopwatch _pawnSw = Stopwatch.StartNew();
@@ -58,14 +58,13 @@ public class NetworkManager
 			Logging.Fatal( new InvalidOperationException( $"An instance of {nameof(NetworkManager)} already exists." ) );
 		
 		Instance = this;
-		_webSocket = new WebSocket( SharedConstants.MaxBufferSize );
+		_webSocket = new WebSocket();
 		_webSocket.OnDisconnected += WebSocketOnDisconnected;
 		_webSocket.OnDataReceived += WebSocketOnDataReceived;
 		_webSocket.OnMessageReceived += WebSocketOnMessageReceived;
 		
 		HandleMessage<RpcCallMessage>( Rpc.HandleRpcCallMessage );
 		HandleMessage<RpcCallResponseMessage>( Rpc.HandleRpcCallResponseMessage );
-		HandleMessage<PartialMessage>( HandlePartialMessage );
 		HandleMessage<MultiMessage>( HandleMultiMessage );
 		HandleMessage<ShutdownMessage>( HandleShutdownMessage );
 		HandleMessage<ClientListMessage>( HandleClientListMessage );
@@ -88,8 +87,9 @@ public class NetworkManager
 			_localClientId = rand.NextInt64();
 			var headers = new Dictionary<string, string> {{"Steam", _localClientId.ToString()}};
 			var webSocketUri = (secure ? "wss://" : "ws://") + uri + ':' + port + '/' ;
+			Logging.Info( "Connecting..." );
 			await _webSocket.Connect( webSocketUri, headers );
-			Clients.Add( _localClientId, new NetworkClient( _localClientId ) );
+			Clients.Add( new NetworkClient( _localClientId ) );
 			Connected = true;
 			ConnectedToServer?.Invoke();
 		}
@@ -104,10 +104,9 @@ public class NetworkManager
 	{
 		Connected = false;
 		_webSocket.Dispose();
-		_webSocket = new WebSocket( SharedConstants.MaxBufferSize );
+		_webSocket = new WebSocket();
 		Clients.Clear();
 		SharedEntityManager.DeleteAllEntities();
-		_partialMessages.Clear();
 		
 #if DEBUG
 		MessagesReceived = 0;
@@ -181,42 +180,6 @@ public class NetworkManager
 		}
 	}
 
-	private void HandlePartialMessage( NetworkMessage message )
-	{
-		if ( message is not PartialMessage partialMessage )
-			return;
-
-		var messageGuid = partialMessage.MessageGuid;
-		if ( !_partialMessages.ContainsKey( messageGuid ) )
-			_partialMessages.Add( messageGuid, new List<PartialMessage>() );
-
-		var messages = _partialMessages[messageGuid];
-		messages.Insert( partialMessage.Piece, partialMessage );
-		if ( messages.Count < partialMessage.NumPieces )
-			return;
-
-		var totalDataLength = 0;
-		foreach ( var part in messages )
-			totalDataLength += part.Data.Length;
-
-		var bytes = ArrayPool<byte>.Shared.Rent( totalDataLength );
-		var currentIndex = 0;
-		foreach ( var part in messages )
-		{
-			Array.Copy( part.Data, 0, bytes, currentIndex, part.Data.Length );
-			currentIndex += part.Data.Length;
-		}
-		
-		_partialMessages.Remove( messageGuid );
-		
-		var reader = new NetworkReader( new MemoryStream( bytes ) );
-		var finalMessage = NetworkMessage.DeserializeMessage( reader );
-		reader.Close();
-		ArrayPool<byte>.Shared.Return( bytes );
-		
-		DispatchMessage( finalMessage );
-	}
-
 	private void HandleMultiMessage( NetworkMessage message )
 	{
 		if ( message is not MultiMessage multiMessage )
@@ -245,7 +208,7 @@ public class NetworkManager
 				continue;
 			
 			var client = new NetworkClient( clientId ) {Pawn = SharedEntityManager.GetEntityById( pawnId )};
-			Clients.Add( clientId, client );
+			Clients.Add( client );
 		}
 	}
 	
@@ -287,14 +250,15 @@ public class NetworkManager
 		{
 			case ClientState.Connected:
 				var client = new NetworkClient( clientStateChangedMessage.ClientId );
-				Clients.Add( clientStateChangedMessage.ClientId, client );
+				Clients.Add( client );
 				ClientConnected?.Invoke( client );
 				break;
 			case ClientState.Disconnected:
-				if ( !Clients.TryGetValue( clientStateChangedMessage.ClientId, out var disconnectedClient ) )
+				var disconnectedClient = Clients.FirstOrDefault( cl => cl.ClientId == clientStateChangedMessage.ClientId );
+				if ( disconnectedClient is null )
 					return;
 				
-				Clients.Remove( clientStateChangedMessage.ClientId );
+				Clients.Remove( disconnectedClient );
 				ClientDisconnected?.Invoke( disconnectedClient );
 				break;
 			default:
@@ -370,8 +334,8 @@ public class NetworkManager
 		_messageHandlers.Add( messageType, cb );
 	}
 
-	public INetworkClient? GetClientById( long playerId )
+	public INetworkClient? GetClientById( long clientId )
 	{
-		return playerId == -1 ? null : Clients[playerId];
+		return clientId == -1 ? null : Clients.FirstOrDefault( client => client.ClientId == clientId );
 	}
 }

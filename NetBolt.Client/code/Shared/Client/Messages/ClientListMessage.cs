@@ -14,7 +14,7 @@ public sealed class ClientListMessage : NetworkMessage
 	public List<(long, int)> ClientIds { get; private set; } = null!;
 
 #if SERVER
-	public ClientListMessage( ICollection<INetworkClient> clients )
+	public ClientListMessage( IReadOnlyCollection<INetworkClient> clients )
 	{
 		ClientIds = new List<(long, int)> {Capacity = clients.Count};
 		foreach ( var client in clients )

@@ -10,10 +10,6 @@ public static class SharedConstants
 	/// </summary>
 	public const int MaxEntities = 100_000;
 	/// <summary>
-	/// The max byte size of any data going between server and client.
-	/// </summary>
-	public const int MaxBufferSize = 65536;
-	/// <summary>
 	/// The port the game server will run on.
 	/// </summary>
 	public const int Port = 7087;

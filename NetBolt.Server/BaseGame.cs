@@ -5,6 +5,7 @@ using NetBolt.Shared.Entities;
 using NetBolt.Shared.Messages;
 using NetBolt.Shared.RemoteProcedureCalls;
 using NetBolt.Shared.Utility;
+using NetBolt.WebSocket;
 
 namespace NetBolt.Server;
 
@@ -101,7 +102,7 @@ public class BaseGame
 		writer.Close();
 		
 		if ( count != 0 )
-			NetworkServer.Instance.QueueMessage( To.All, new MultiEntityUpdateMessage( stream.ToArray() ) );
+			NetworkServer.Instance.QueueSend( To.All( NetworkServer.Instance ), new MultiEntityUpdateMessage( stream.ToArray() ) );
 	}
 	
 	/// <summary>
@@ -113,9 +114,9 @@ public class BaseGame
 		Logging.Info( $"{client} has connected" );
 		
 		var toClient = To.Single( client );
-		NetworkServer.Instance.QueueMessage( toClient, new ClientListMessage( NetworkServer.Instance.Clients.Values ) );
-		NetworkServer.Instance.QueueMessage( toClient, new EntityListMessage( SharedEntityManager.Entities.Values ) );
-		NetworkServer.Instance.QueueMessage( To.AllExcept( client ), new ClientStateChangedMessage( client.ClientId, ClientState.Connected ) );
+		NetworkServer.Instance.QueueSend( toClient, new ClientListMessage( NetworkServer.Instance.Clients ) );
+		NetworkServer.Instance.QueueSend( toClient, new EntityListMessage( SharedEntityManager.Entities.Values ) );
+		NetworkServer.Instance.QueueSend( To.AllExcept( NetworkServer.Instance, client ), new ClientStateChangedMessage( client.ClientId, ClientState.Connected ) );
 		
 		client.PawnChanged += ClientOnPawnChanged;
 		client.Pawn = SharedEntityManager.Create<BasePlayer>();
@@ -130,7 +131,7 @@ public class BaseGame
 	{
 		Logging.Info( $"{client} has disconnected" );
 		
-		NetworkServer.Instance.QueueMessage( To.AllExcept( client ), new ClientStateChangedMessage( client.ClientId, ClientState.Disconnected ) );
+		NetworkServer.Instance.QueueSend( To.AllExcept( NetworkServer.Instance, client ), new ClientStateChangedMessage( client.ClientId, ClientState.Disconnected ) );
 		if ( client.Pawn is not null )
 			SharedEntityManager.DeleteEntity( client.Pawn );
 		client.PawnChanged -= ClientOnPawnChanged;
@@ -162,7 +163,7 @@ public class BaseGame
 	/// <param name="entity">The <see cref="IEntity"/> that has been created.</param>
 	protected virtual void OnNetworkedEntityCreated( IEntity entity )
 	{
-		NetworkServer.Instance.QueueMessage( To.All, new CreateEntityMessage( entity ) );
+		NetworkServer.Instance.QueueSend( To.All( NetworkServer.Instance ), new CreateEntityMessage( entity ) );
 	}
 
 	/// <summary>
@@ -171,7 +172,7 @@ public class BaseGame
 	/// <param name="entity">The <see cref="IEntity"/> that has been deleted.</param>
 	protected virtual void OnNetworkedEntityDeleted( IEntity entity )
 	{
-		NetworkServer.Instance.QueueMessage( To.All, new DeleteEntityMessage( entity ) );
+		NetworkServer.Instance.QueueSend( To.All( NetworkServer.Instance ), new DeleteEntityMessage( entity ) );
 	}
 	
 	/// <summary>
@@ -182,7 +183,7 @@ public class BaseGame
 	/// <param name="newPawn">The new <see cref="IEntity"/> the <see cref="client"/> is now controlling.</param>
 	protected virtual void ClientOnPawnChanged( INetworkClient client, IEntity? oldpawn, IEntity? newPawn )
 	{
-		NetworkServer.Instance.QueueMessage( To.All, new ClientPawnChangedMessage( client, oldpawn, newPawn ) );
+		NetworkServer.Instance.QueueSend( To.All( NetworkServer.Instance ), new ClientPawnChangedMessage( client, oldpawn, newPawn ) );
 	}
 
 	/// <summary>

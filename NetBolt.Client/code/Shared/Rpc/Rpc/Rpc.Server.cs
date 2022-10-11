@@ -8,6 +8,7 @@ using NetBolt.Shared.Entities;
 using NetBolt.Shared.Messages;
 using NetBolt.Shared.Networkables;
 using NetBolt.Shared.Utility;
+using NetBolt.WebSocket;
 
 namespace NetBolt.Shared.RemoteProcedureCalls;
 
@@ -26,7 +27,7 @@ public partial class Rpc
 	/// <param name="parameters">The parameters to pass to the method.</param>
 	public static void Call( IEntity entity, string methodName, params INetworkable[] parameters )
 	{
-		Call( To.All, entity, methodName, parameters );
+		Call( To.All( NetworkServer.Instance ), entity, methodName, parameters );
 	}
 	
 	/// <summary>
@@ -41,7 +42,7 @@ public partial class Rpc
 		params INetworkable[] parameters )
 	{
 		var message = CreateRpc( true, entity, methodName, parameters );
-		NetworkServer.Instance.QueueMessage( To.Single( client ), message );
+		NetworkServer.Instance.QueueSend( To.Single( client ), message );
 		return await WaitForResponseAsync( message.CallGuid );
 	}
 
@@ -53,7 +54,7 @@ public partial class Rpc
 	/// <param name="parameters">The parameters to pass to the method.</param>
 	public static void Call( Type type, string methodName, params INetworkable[] parameters )
 	{
-		Call( To.All, type, methodName, parameters );
+		Call( To.All( NetworkServer.Instance ), type, methodName, parameters );
 	}
 	
 	/// <summary>
@@ -68,7 +69,7 @@ public partial class Rpc
 		params INetworkable[] parameters )
 	{
 		var message = CreateRpc( true, type, methodName, parameters );
-		NetworkServer.Instance.QueueMessage( To.Single( client ), message );
+		NetworkServer.Instance.QueueSend( To.Single( client ), message );
 		return await WaitForResponseAsync( message.CallGuid );
 	}
 	
@@ -81,7 +82,7 @@ public partial class Rpc
 	/// <param name="parameters">The parameters to pass to the method.</param>
 	public static void Call( To to, IEntity entity, string methodName, params INetworkable[] parameters )
 	{
-		NetworkServer.Instance.QueueMessage( to, CreateRpc( false, entity, methodName, parameters ) );
+		NetworkServer.Instance.QueueSend( to, CreateRpc( false, entity, methodName, parameters ) );
 	}
 	
 	/// <summary>
@@ -93,7 +94,7 @@ public partial class Rpc
 	/// <param name="parameters">The parameters to pass to the method.</param>
 	public static void Call( To to, Type type, string methodName, params INetworkable[] parameters )
 	{
-		NetworkServer.Instance.QueueMessage( to, CreateRpc( false, type, methodName, parameters ) );
+		NetworkServer.Instance.QueueSend( to, CreateRpc( false, type, methodName, parameters ) );
 	}
 	
 	/// <summary>
@@ -132,14 +133,14 @@ public partial class Rpc
 		if ( returnValue is not INetworkable && returnValue is not null )
 		{
 			var failedMessage = new RpcCallResponseMessage( rpcCall.CallGuid, RpcCallState.Failed );
-			NetworkServer.Instance.QueueMessage( To.Single( client ), failedMessage );
+			NetworkServer.Instance.QueueSend( To.Single( client ), failedMessage );
 			throw new InvalidOperationException(
 				$"Failed to handle RPC call (\"{rpcCall.MethodName}\" returned a non-networkable value)." );
 		}
 
 		var response = new RpcCallResponseMessage( rpcCall.CallGuid, RpcCallState.Completed,
 			returnValue as INetworkable ?? null );
-		NetworkServer.Instance.QueueMessage( To.Single( client ), response );
+		NetworkServer.Instance.QueueSend( To.Single( client ), response );
 	}
 
 	/// <summary>

@@ -6,6 +6,9 @@ using NetBolt.Server;
 using NetBolt.Shared.Entities;
 using NetBolt.Shared.Messages;
 using NetBolt.Shared.Networkables;
+#if SERVER
+using NetBolt.WebSocket;
+#endif
 
 namespace NetBolt.Shared.RemoteProcedureCalls;
 

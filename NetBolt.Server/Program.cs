@@ -4,6 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using NetBolt.Shared;
 using NetBolt.Shared.Utility;
+using NetBolt.WebSocket.Options;
 
 namespace NetBolt.Server;
 
@@ -31,10 +32,6 @@ public static class Program
 	/// </summary>
 	private static NetworkServer _server = null!;
 	/// <summary>
-	/// The start method task of the server.
-	/// </summary>
-	private static Task? _serverTask;
-	/// <summary>
 	/// The game to run.
 	/// </summary>
 	private static BaseGame _game = null!;
@@ -50,8 +47,9 @@ public static class Program
 		
 		AppDomain.CurrentDomain.ProcessExit += OnProcessExit;
 		AppDomain.CurrentDomain.UnhandledException += OnUnhandledException;
-		_server = new NetworkServer( SharedConstants.Port, true );
-		_serverTask = _server.Start();
+		_server = new NetworkServer( WebSocketServerOptions.Default.WithPort( SharedConstants.Port ) );
+		NetworkServer.Instance = _server;
+		_server.Start();
 		_game = new BaseGame();
 		_game.Start();
 
@@ -68,7 +66,6 @@ public static class Program
 			
 			_server.DispatchIncoming();
 			_game?.Update();
-			_server.DispatchOutgoing();
 		}
 	}
 
@@ -80,7 +77,7 @@ public static class Program
 		Logging.Info( "Shutting down..." );
 		_game.Shutdown();
 		ProgramCancellation.Cancel();
-		_serverTask?.Wait();
+		_server.StopAsync().Wait();
 		
 		Logging.Info( "Log finished" );
 		Logging.Dispose();

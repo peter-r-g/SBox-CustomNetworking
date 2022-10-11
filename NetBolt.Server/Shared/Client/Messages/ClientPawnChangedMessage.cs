@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using NetBolt.Shared.Entities;
 using NetBolt.Shared.Utility;
 
@@ -34,7 +35,8 @@ public sealed class ClientPawnChangedMessage : NetworkMessage
 	public override void Deserialize( NetworkReader reader )
 	{
 		var clientId = reader.ReadInt64();
-		if ( !INetworkClient.All.TryGetValue( clientId, out var client ) )
+		var client = INetworkClient.All.FirstOrDefault( client => client.ClientId == clientId );
+		if ( client is null )
 		{
 			Logging.Error( $"Failed to get client with ID \"{clientId}\"" );
 			return;

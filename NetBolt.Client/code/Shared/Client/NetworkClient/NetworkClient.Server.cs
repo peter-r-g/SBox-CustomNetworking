@@ -1,64 +1,56 @@
 #if SERVER
+using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Net.Sockets;
+using System.Threading.Tasks;
 using NetBolt.Server;
 using NetBolt.Shared.Messages;
 using NetBolt.Shared.Utility;
+using NetBolt.WebSocket;
 
 namespace NetBolt.Shared;
 
 public partial class NetworkClient
 {
-	internal ClientSocket ClientSocket { get; }
-	
-	internal NetworkClient( long clientId, ClientSocket clientSocket )
+	internal NetworkClient( TcpClient socket, IWebSocketServer server ) : base( socket, server )
 	{
-		ClientId = clientId;
-		ClientSocket = clientSocket;
-		clientSocket.DataReceived += OnDataReceived;
-		clientSocket.MessageReceived += OnMessageReceived;
-	}
-
-	~NetworkClient()
-	{
-		ClientSocket.DataReceived -= OnDataReceived;
-		ClientSocket.MessageReceived -= OnMessageReceived;
 	}
 	
-	public void SendMessage( byte[] bytes )
-	{
-		NetworkServer.Instance.MessagesSentToClients++;
-		ClientSocket.Send( bytes );
-	}
-	
-	public void SendMessage( NetworkMessage message )
+	public void QueueSend( NetworkMessage message )
 	{
 		var stream = new MemoryStream();
 		var writer = new NetworkWriter( stream );
 		writer.WriteNetworkable( message );
 		writer.Close();
 		
-		SendMessage( stream.ToArray() );
+		QueueSend( stream.ToArray() );
 	}
-	
-	/// <summary>
-	/// Called when data has been received from the client.
-	/// </summary>
-	/// <param name="stream">The data the client has sent.</param>
-	protected virtual void OnDataReceived( MemoryStream stream )
+
+	protected override void OnData( ReadOnlySpan<byte> bytes )
 	{
-		var reader = new NetworkReader( stream );
+		base.OnData( bytes );
+
+		var reader = new NetworkReader( new MemoryStream( bytes.ToArray() ) );
 		var message = NetworkMessage.DeserializeMessage( reader );
 		reader.Close();
 		
 		NetworkServer.Instance.QueueIncoming( this, message );
 	}
 
-	/// <summary>
-	/// Called when a message has been received from the client.
-	/// </summary>
-	/// <param name="message">The message the client has sent.</param>
-	protected virtual void OnMessageReceived( string message )
+	protected override ValueTask<bool> VerifyHandshake( IReadOnlyDictionary<string, string> headers, string request )
 	{
+		if ( !headers.TryGetValue( "Steam", out var clientIdStr ) )
+			return new ValueTask<bool>( false );
+
+		if ( !long.TryParse( clientIdStr, out var clientId ) )
+			return new ValueTask<bool>( false );
+
+		if ( NetworkServer.Instance.GetClientById( clientId ) is not null )
+			return new ValueTask<bool>( false );
+
+		ClientId = clientId;
+		return base.VerifyHandshake( headers, request );
 	}
 }
 #endif
